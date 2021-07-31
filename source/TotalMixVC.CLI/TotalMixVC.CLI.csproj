@@ -22,4 +22,8 @@
     <AdditionalFiles Include="..\..\stylecop.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TotalMixVC.Communicator\TotalMixVC.Communicator.csproj" />
+  </ItemGroup>
+
 </Project>
