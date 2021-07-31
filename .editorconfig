@@ -1,0 +1,71 @@
+# See https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/code-style-rule-options
+# for C# defaults.
+
+# Set this to the top-most EditorConfig file.
+root = true
+
+# Don't use tabs for indentation.
+[*]
+indent_style = space
+
+# XML project and config files.
+[*.{csprojj}]
+indent_size = 2
+
+# C# code.
+[*.cs]
+
+# Configure indentation, new lines and encoding.
+charset = utf-8-bom
+end_of_line = crlf
+indent_size = 4
+max_line_length = 100
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# StyleCop
+
+# Disable forced documentation generation.
+dotnet_diagnostic.SA0001.severity = none
+
+# Don't force trailing commas.
+dotnet_diagnostic.SA1413.severity = none
+
+# Don't force a particular order by method type.
+dotnet_diagnostic.SA1201.severity = none
+
+# Don't force a particular order by access modifier.
+dotnet_diagnostic.SA1202.severity = none
+
+# Disable a requirement of having a file header at the top of all files.
+dotnet_diagnostic.SA1633.severity = none
+
+# Disable forced documentation of elements.
+dotnet_diagnostic.SA1600.severity = none
+
+# Disable forced documentation of enums.
+dotnet_diagnostic.SA1602.severity = none
+
+# Don't force the terms get or set in front of property summaries.
+dotnet_diagnostic.SA1623.severity = none
+
+# Allow defining more than one type per file.
+dotnet_diagnostic.SA1402.severity = none
+
+# Don't force usage of this to prefix local calls.
+dotnet_diagnostic.SA1101.severity = none
+
+# Allow fields to be prefixed with an underscore for private and protected members.
+dotnet_diagnostic.SA1309.severity = none
+
+# Don't force the filename to match the first type in case we define interfaces too.
+dotnet_diagnostic.SA1649.severity = none
+
+# Roslynator
+
+# Don't force strings to be joined as the + operator is used to split long strings.
+dotnet_diagnostic.RCS1190.severity = none
+
+# Ensure that long lines are flagged.
+dotnet_diagnostic.RCS0056.severity = error
+roslynator.max_line_length = 100
