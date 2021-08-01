@@ -115,7 +115,17 @@ namespace TotalMixVC.Communicator
 
         public async Task<bool> ReceiveVolume()
         {
-            OscPacket packet = await _listener.Receive().ConfigureAwait(false);
+            // Ping events are sent from the device every around every 1 second, so we only
+            // wait until a given timeout of 5 seconds before giving up and forcing a fresh
+            // receive request.  This ensures that the receiver can detect a device which was
+            // previous offline.
+            var task = _listener.Receive();
+            if (await Task.WhenAny(task, Task.Delay(5000)).ConfigureAwait(false) != task)
+            {
+                return false;
+            }
+
+            OscPacket packet = task.Result;
 
             // Volume changes are presented in bundles, but we'll also check message just in case
             // this changes in the future.
