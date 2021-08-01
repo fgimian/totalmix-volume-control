@@ -19,11 +19,11 @@ namespace TotalMixVC.Communicator
             }
         }
 
-        public float VolumeIncrement
+        public float VolumeRegularIncrement
         {
             get
             {
-                return _volumeIncrement;
+                return _volumeRegularIncrement;
             }
 
             set
@@ -31,10 +31,29 @@ namespace TotalMixVC.Communicator
                 if (value <= 0.0f || value > 0.10f)
                 {
                     throw new ArgumentException(
-                        "Volume increment must be greater than 0 and less than 0.1.");
+                        "Regular volume increment must be greater than 0 and less than 0.1.");
                 }
 
-                _volumeIncrement = value;
+                _volumeRegularIncrement = value;
+            }
+        }
+
+        public float VolumeFineIncrement
+        {
+            get
+            {
+                return _volumeFineIncrement;
+            }
+
+            set
+            {
+                if (value <= 0.0f || value > 0.05f)
+                {
+                    throw new ArgumentException(
+                        "Fine volume increment must be greater than 0 and less than 0.05.");
+                }
+
+                _volumeFineIncrement = value;
             }
         }
 
@@ -64,7 +83,9 @@ namespace TotalMixVC.Communicator
 
         private float _volume = -1.0f;
 
-        private float _volumeIncrement;
+        private float _volumeRegularIncrement;
+
+        private float _volumeFineIncrement;
 
         private float _volumeMax = 1.0f;
 
@@ -119,13 +140,14 @@ namespace TotalMixVC.Communicator
             }
         }
 
-        public async Task<bool> IncreaseVolume()
+        public async Task<bool> IncreaseVolume(bool fine = false)
         {
             await _volumeMutex.WaitAsync().ConfigureAwait(false);
             try
             {
                 // Calculate the new volume.
-                float newVolume = Volume + VolumeIncrement;
+                float increment = fine ? VolumeFineIncrement : VolumeRegularIncrement;
+                float newVolume = Volume + increment;
 
                 // Ensure it doesn't exceed the max.
                 if (newVolume >= VolumeMax)
@@ -149,13 +171,14 @@ namespace TotalMixVC.Communicator
             }
         }
 
-        public async Task<bool> DecreaseVolume()
+        public async Task<bool> DecreaseVolume(bool fine = false)
         {
             await _volumeMutex.WaitAsync().ConfigureAwait(false);
             try
             {
                 // Calculate the new volume.
-                float newVolume = Volume - VolumeIncrement;
+                float increment = fine ? VolumeFineIncrement : VolumeRegularIncrement;
+                float newVolume = Volume - increment;
 
                 // Ensure it doesn't go below the minimum possible volume.
                 if (newVolume < 0.0f)

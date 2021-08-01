@@ -13,7 +13,8 @@ namespace TotalMixVC.CLI
                 incomingEP: new IPEndPoint(IPAddress.Loopback, 7001),
                 outgoingEP: new IPEndPoint(IPAddress.Loopback, 9001))
             {
-                VolumeIncrement = 0.01f
+                VolumeRegularIncrement = 0.01f,
+                VolumeFineIncrement = 0.005f
             };
 
             var listenerTask = Task.Run(async () =>
@@ -24,7 +25,7 @@ namespace TotalMixVC.CLI
                 {
                     if (await volumeManager.ReceiveVolume().ConfigureAwait(false))
                     {
-                        Console.WriteLine($"--- Volume updated to {volumeManager.Volume}");
+                        Console.WriteLine($"─── Volume updated to {volumeManager.Volume}");
                     }
                 }
             });
@@ -39,19 +40,29 @@ namespace TotalMixVC.CLI
                 {
                     ConsoleKeyInfo keyInfo = Console.ReadKey();
 
-                    if (keyInfo.Key == ConsoleKey.UpArrow)
+                    if (
+                        keyInfo.Key == ConsoleKey.UpArrow &&
+                        await volumeManager.IncreaseVolume().ConfigureAwait(false))
                     {
-                        if (await volumeManager.IncreaseVolume().ConfigureAwait(false))
-                        {
-                            Console.WriteLine($"↑↑↑ Increased volume to {volumeManager.Volume}");
-                        }
+                        Console.WriteLine($"↑↑↑ Increased volume to {volumeManager.Volume}");
                     }
-                    else
+                    else if (
+                        keyInfo.Key == ConsoleKey.DownArrow &&
+                        await volumeManager.DecreaseVolume().ConfigureAwait(false))
                     {
-                        if (await volumeManager.DecreaseVolume().ConfigureAwait(false))
-                        {
-                            Console.WriteLine($"↓↓↓ Decreased volume to {volumeManager.Volume}");
-                        }
+                        Console.WriteLine($"↓↓↓ Decreased volume to {volumeManager.Volume}");
+                    }
+                    else if (
+                        keyInfo.Key == ConsoleKey.PageUp &&
+                        await volumeManager.IncreaseVolume(fine: true).ConfigureAwait(false))
+                    {
+                        Console.WriteLine($" ↑  Increased volume to {volumeManager.Volume}");
+                    }
+                    else if (
+                        keyInfo.Key == ConsoleKey.PageDown &&
+                        await volumeManager.DecreaseVolume(fine: true).ConfigureAwait(false))
+                    {
+                        Console.WriteLine($" ↓  Decreased volume to {volumeManager.Volume}");
                     }
                 }
             });
