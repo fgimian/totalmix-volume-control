@@ -11,6 +11,12 @@ namespace TotalMixVC.CLI
     {
         internal static void Main()
         {
+            // Configure the volume increment.
+            const float volumeIncrement = 0.01f;
+
+            // Configure the OSC address for the master volume.
+            const string volumeAddress = "/1/mastervolume";
+
             // Initialise the current volume to an invalid value so we can track when it's ready.
             float currentVolume = -1.0f;
 
@@ -34,7 +40,7 @@ namespace TotalMixVC.CLI
                         OscMessage message = messageEnumerator.Current;
 
                         // Only process master volume messages.
-                        if (message.Address != "/1/mastervolume")
+                        if (message.Address != volumeAddress)
                         {
                             continue;
                         }
@@ -66,7 +72,7 @@ namespace TotalMixVC.CLI
 
                 // Send an initial invalid value so that TotalMix can send us the current volume.
                 await sender
-                    .Send(new OscMessage("/1/mastervolume", -1.0f))
+                    .Send(new OscMessage(volumeAddress, -1.0f))
                     .ConfigureAwait(false);
 
                 while (currentVolume == -1.0f)
@@ -77,24 +83,25 @@ namespace TotalMixVC.CLI
                 while (true)
                 {
                     ConsoleKeyInfo keyInfo = Console.ReadKey();
+                    if (keyInfo.Key is not ConsoleKey.UpArrow and not ConsoleKey.DownArrow)
+                    {
+                        continue;
+                    }
+
                     if (keyInfo.Key == ConsoleKey.UpArrow)
                     {
-                        currentVolume += 0.01f;
+                        currentVolume += volumeIncrement;
                         Console.WriteLine($"Increasing volume to {currentVolume}");
-
-                        await sender
-                            .Send(new OscMessage("/1/mastervolume", currentVolume))
-                            .ConfigureAwait(false);
                     }
-                    else if (keyInfo.Key == ConsoleKey.DownArrow)
+                    else
                     {
-                        currentVolume -= 0.01f;
+                        currentVolume -= volumeIncrement;
                         Console.WriteLine($"Decreasing volume to {currentVolume}");
-
-                        await sender
-                            .Send(new OscMessage("/1/mastervolume", currentVolume))
-                            .ConfigureAwait(false);
                     }
+
+                    await sender
+                        .Send(new OscMessage(volumeAddress, currentVolume))
+                        .ConfigureAwait(false);
                 }
             });
 
