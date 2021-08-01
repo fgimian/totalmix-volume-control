@@ -98,13 +98,18 @@ namespace TotalMixVC.Communicator
 
         public async Task GetDeviceVolume()
         {
-            // Send an initial invalid value (-1.0) so that TotalMix can send us the current volume.
-            await SendCurrentVolume().ConfigureAwait(false);
-
-            // Wait until the current volume is updated by the listener.
             while (Volume == -1.0f)
             {
-                await Task.Delay(25).ConfigureAwait(false);
+                // Send an initial invalid value (-1.0) so that TotalMix can send us the current
+                // volume.
+                await SendCurrentVolume().ConfigureAwait(false);
+
+                // Wait up until one second for the current volume to updated by the listener.
+                // If no update is received, the initial value will be resent.
+                for (uint iterations = 0; Volume == -1.0f && iterations < 40; iterations++)
+                {
+                    await Task.Delay(25).ConfigureAwait(false);
+                }
             }
         }
 
