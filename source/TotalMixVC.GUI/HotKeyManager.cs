@@ -20,15 +20,20 @@ namespace TotalMixVC.GUI
 
     public record Hotkey(KeyModifier KeyModifier, Key Key);
 
-    public class HotKeyManager
+    public class HotKeyManager : IDisposable
     {
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool RegisterHotKey(
             IntPtr hWnd, int id, uint fsModifiers, uint vlc);
 
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+
         private const int WmHotkey = 0x0312;
 
         private readonly Dictionary<Hotkey, Action> _actions;
+
+        private bool _disposed = false;
 
         public HotKeyManager()
         {
@@ -36,6 +41,35 @@ namespace TotalMixVC.GUI
 
             // TODO: What is the difference between ThreadFilterMessage and ThreadPreprocessMessage?
             ComponentDispatcher.ThreadPreprocessMessage += OnThreadPreprocessMessage;
+        }
+
+        ~HotKeyManager()
+        {
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                foreach (KeyValuePair<Hotkey, Action> kvp in _actions)
+                {
+                    UnregisterHotKey(IntPtr.Zero, kvp.Key.GetHashCode());
+                }
+            }
+
+            _disposed = true;
         }
 
         public void OnThreadPreprocessMessage(ref MSG msg, ref bool handled)
