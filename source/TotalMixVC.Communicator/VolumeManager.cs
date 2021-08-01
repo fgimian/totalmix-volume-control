@@ -77,9 +77,9 @@ namespace TotalMixVC.Communicator
 
         private readonly SemaphoreSlim _volumeMutex;
 
-        private readonly Listener _listener;
-
         private readonly Sender _sender;
+
+        private readonly Listener _listener;
 
         private float _volume = -1.0f;
 
@@ -150,8 +150,7 @@ namespace TotalMixVC.Communicator
             else
             {
                 OscMessage message = packet as OscMessage;
-                await UpdateVolumeFromMessage(message).ConfigureAwait(false);
-                return true;
+                return await UpdateVolumeFromMessage(message).ConfigureAwait(false);
             }
         }
 
