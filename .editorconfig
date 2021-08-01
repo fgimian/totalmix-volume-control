@@ -43,6 +43,9 @@ dotnet_diagnostic.SA1633.severity = none
 # Disable forced documentation of elements.
 dotnet_diagnostic.SA1600.severity = none
 
+# Disable forced documentation of partial classes.
+dotnet_diagnostic.SA1601.severity = none
+
 # Disable forced documentation of enums.
 dotnet_diagnostic.SA1602.severity = none
 
