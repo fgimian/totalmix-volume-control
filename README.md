@@ -3,6 +3,9 @@
 This project uses the OSC protocol to communicate with RME TotalMixFX software and binds
 the volume keys on your keyboard to control the master volume in Windows.
 
+You may see the [related thread on the RME forums](https://forum.rme-audio.de/viewtopic.php?pid=174137)
+for a discussion about the tool.
+
 The keyboard bindings are as follows:
 
 * **Volume Up / Down**: Increase or decrease the volume by 1% respectively.
