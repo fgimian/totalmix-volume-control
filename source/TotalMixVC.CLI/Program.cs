@@ -78,6 +78,7 @@ namespace TotalMixVC.CLI
                 while (currentVolume == -1.0f)
                 {
                     // Wait until the current volume is updated by the listener.
+                    await Task.Delay(25).ConfigureAwait(false);
                 }
 
                 while (true)
