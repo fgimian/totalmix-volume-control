@@ -19,8 +19,8 @@ And now verify the following settings (these should be set by default);
 1. Open **Options** / **Settings**
 2. Click the **OSC** tab and ensure **Remote Controller Select** is set to **1**
 3. Ensure that **In Use** is ticked
-4. Ensure that **Port incoming** is set to 7001
-5. Ensure that **Port outgoing** is set to 9001
+4. Ensure that **Port incoming** is set to **7001**
+5. Ensure that **Port outgoing** is set to **9001**
 
 ## Building the Application
 
@@ -44,3 +44,9 @@ and then follow the steps below:
 
 You may simply execute the program which will run in the background and watch for your keystrokes.
 The application doesn't have an interface or tray icon yet.
+
+## License
+
+TotalMix Volume Control is released under the **MIT** license. Please see the
+[LICENSE](https://github.com/fgimian/totalmix-volume-control/blob/main/LICENSE) file for more
+details.
