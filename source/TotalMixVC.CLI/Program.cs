@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using OscCore;
 using TotalMixVC.Communicator;
 
 namespace TotalMixVC.CLI

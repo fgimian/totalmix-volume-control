@@ -23,6 +23,9 @@ max_line_length = 100
 insert_final_newline = true
 trim_trailing_whitespace = true
 
+# Ensure that unused imports are treated as warnings.
+dotnet_diagnostic.CS8019.severity = warning
+
 # StyleCop
 
 # Disable forced documentation generation.
