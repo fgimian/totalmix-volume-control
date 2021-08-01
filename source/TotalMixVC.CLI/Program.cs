@@ -10,8 +10,8 @@ namespace TotalMixVC.CLI
         internal static void Main()
         {
             var volumeManager = new VolumeManager(
-                incomingEP: new IPEndPoint(IPAddress.Loopback, 7001),
-                outgoingEP: new IPEndPoint(IPAddress.Loopback, 9001))
+                outgoingEP: new IPEndPoint(IPAddress.Loopback, 7001),
+                incomingEP: new IPEndPoint(IPAddress.Loopback, 9001))
             {
                 VolumeRegularIncrement = 0.01f,
                 VolumeFineIncrement = 0.005f

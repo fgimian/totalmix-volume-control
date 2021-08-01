@@ -89,11 +89,11 @@ namespace TotalMixVC.Communicator
 
         private float _volumeMax = 1.0f;
 
-        public VolumeManager(IPEndPoint incomingEP, IPEndPoint outgoingEP)
+        public VolumeManager(IPEndPoint outgoingEP, IPEndPoint incomingEP)
         {
             _volumeMutex = new SemaphoreSlim(1);
-            _listener = new Listener(outgoingEP);
-            _sender = new Sender(incomingEP);
+            _sender = new Sender(outgoingEP);
+            _listener = new Listener(incomingEP);
         }
 
         public async Task GetDeviceVolume()
