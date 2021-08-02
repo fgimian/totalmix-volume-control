@@ -11,11 +11,21 @@ namespace TotalMixVC.Communicator
     {
         public const string VolumeAddress = "/1/mastervolume";
 
+        public const string VolumeDecibelsAddress = "/1/mastervolumeVal";
+
         public float Volume
         {
             get
             {
                 return _volume;
+            }
+        }
+
+        public string VolumeDecibels
+        {
+            get
+            {
+                return _volumeDecibels;
             }
         }
 
@@ -77,11 +87,15 @@ namespace TotalMixVC.Communicator
 
         private readonly SemaphoreSlim _volumeMutex;
 
+        private readonly SemaphoreSlim _volumeDecibelsMutex;
+
         private readonly Sender _sender;
 
         private readonly Listener _listener;
 
         private float _volume = -1.0f;
+
+        private string _volumeDecibels;
 
         private float _volumeRegularIncrement;
 
@@ -92,6 +106,7 @@ namespace TotalMixVC.Communicator
         public VolumeManager(IPEndPoint outgoingEP, IPEndPoint incomingEP)
         {
             _volumeMutex = new SemaphoreSlim(1);
+            _volumeDecibelsMutex = new SemaphoreSlim(1);
             _sender = new Sender(outgoingEP);
             _listener = new Listener(incomingEP);
         }
@@ -139,6 +154,8 @@ namespace TotalMixVC.Communicator
                 while (messageEnumerator.MoveNext())
                 {
                     OscMessage message = messageEnumerator.Current;
+                    await UpdateVolumeDecibelsFromMessage(message).ConfigureAwait(false);
+
                     if (await UpdateVolumeFromMessage(message).ConfigureAwait(false))
                     {
                         updated = true;
@@ -150,6 +167,7 @@ namespace TotalMixVC.Communicator
             else
             {
                 OscMessage message = packet as OscMessage;
+                await UpdateVolumeDecibelsFromMessage(message).ConfigureAwait(false);
                 return await UpdateVolumeFromMessage(message).ConfigureAwait(false);
             }
         }
@@ -256,6 +274,44 @@ namespace TotalMixVC.Communicator
             finally
             {
                 _volumeMutex.Release();
+            }
+
+            return true;
+        }
+
+        private async Task<bool> UpdateVolumeDecibelsFromMessage(OscMessage message)
+        {
+            // Only process volume messages.
+            if (message.Address != VolumeDecibelsAddress)
+            {
+                return false;
+            }
+
+            // Volume messages should only contain one value.
+            if (message.Count != 1)
+            {
+                return false;
+            }
+
+            // Obtain the decibel value as a string.
+            string newVolumeDecibels;
+            try
+            {
+                newVolumeDecibels = (string)message[0];
+            }
+            catch (InvalidCastException)
+            {
+                return false;
+            }
+
+            await _volumeDecibelsMutex.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                _volumeDecibels = newVolumeDecibels;
+            }
+            finally
+            {
+                _volumeDecibelsMutex.Release();
             }
 
             return true;
