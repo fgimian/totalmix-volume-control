@@ -1,0 +1,65 @@
+﻿<Window x:Class="TotalMixVC.GUI.VolumeIndicator"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TotalMixVC.GUI"
+        mc:Ignorable="d"
+        Title="VolumeIndicator" Height="165" Width="165"
+        WindowStartupLocation="Manual"
+        Left="40"
+        Top="40"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        AllowsTransparency="True"
+        Background="Transparent">
+
+    <Border BorderThickness="25"
+            BorderBrush="#e21e2328"
+            CornerRadius="1">
+        <Grid Background="#e21e2328">
+            <StackPanel>
+                <!-- Title -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock VerticalAlignment="Center"
+                               Foreground="White"
+                               FontWeight="Bold"
+                               FontSize="15"
+                               Text="TotalMix ">
+                    </TextBlock>
+                    <TextBlock VerticalAlignment="Center"
+                               Foreground="#e06464"
+                               FontSize="15"
+                               Text="Volume">
+                    </TextBlock>
+                </StackPanel>
+
+                <!-- Volume Reading -->
+                <TextBlock x:Name="VolumeDecibelsTextBox"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Margin="0 15 0 25"
+                           Foreground="White"
+                           FontSize="30"
+                           Text="-">
+                </TextBlock>
+
+                <!-- Volume Bar -->
+                <Grid>
+                    <!-- Background -->
+                    <Rectangle x:Name="VolumeReadingBackgroundRectangle"
+                               HorizontalAlignment="Stretch"
+                               Fill="#333"
+                               Height="10"/>
+
+                    <!-- Current Reading -->
+                    <Rectangle x:Name="VolumeReadingCurrentRectangle"
+                               HorizontalAlignment="Left"
+                               Width="0"
+                               Fill="#999"
+                               Height="10"/>
+                </Grid>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

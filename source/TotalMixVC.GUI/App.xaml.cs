@@ -13,6 +13,8 @@ namespace TotalMixVC.GUI
     {
         internal void App_Startup(object sender, StartupEventArgs e)
         {
+            var volumeIndicator = new VolumeIndicator();
+
             var volumeManager = new VolumeManager(
                 outgoingEP: new IPEndPoint(IPAddress.Loopback, 7001),
                 incomingEP: new IPEndPoint(IPAddress.Loopback, 9001))
@@ -41,19 +43,39 @@ namespace TotalMixVC.GUI
 
             hotKeyManager.Register(
                 new Hotkey(KeyModifier.None, Key.VolumeUp),
-                async () => await volumeManager.IncreaseVolume().ConfigureAwait(false));
+                async () =>
+                {
+                    await volumeManager.IncreaseVolume().ConfigureAwait(false);
+                    volumeIndicator.DisplayCurrentVolume(
+                        volumeManager.Volume, volumeManager.VolumeDecibels);
+                });
 
             hotKeyManager.Register(
                 new Hotkey(KeyModifier.None, Key.VolumeDown),
-                async () => await volumeManager.DecreaseVolume().ConfigureAwait(false));
+                async () =>
+                {
+                    await volumeManager.DecreaseVolume().ConfigureAwait(false);
+                    volumeIndicator.DisplayCurrentVolume(
+                        volumeManager.Volume, volumeManager.VolumeDecibels);
+                });
 
             hotKeyManager.Register(
                 new Hotkey(KeyModifier.Shift, Key.VolumeUp),
-                async () => await volumeManager.IncreaseVolume(fine: true).ConfigureAwait(false));
+                async () =>
+                {
+                    await volumeManager.IncreaseVolume(fine: true).ConfigureAwait(false);
+                    volumeIndicator.DisplayCurrentVolume(
+                        volumeManager.Volume, volumeManager.VolumeDecibels);
+                });
 
             hotKeyManager.Register(
                 new Hotkey(KeyModifier.Shift, Key.VolumeDown),
-                async () => await volumeManager.DecreaseVolume(fine: true).ConfigureAwait(false));
+                async () =>
+                {
+                    await volumeManager.DecreaseVolume(fine: true).ConfigureAwait(false);
+                    volumeIndicator.DisplayCurrentVolume(
+                        volumeManager.Volume, volumeManager.VolumeDecibels);
+                });
         }
     }
 }
