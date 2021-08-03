@@ -12,7 +12,8 @@
         WindowStyle="None"
         ResizeMode="NoResize"
         AllowsTransparency="True"
-        Background="Transparent">
+        Background="Transparent"
+        ShowInTaskbar="False">
 
     <Border BorderThickness="25"
             BorderBrush="#e21e2328"
