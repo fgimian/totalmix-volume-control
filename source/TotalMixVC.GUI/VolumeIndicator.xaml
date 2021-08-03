@@ -38,42 +38,42 @@
             <!-- Title -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <TextBlock VerticalAlignment="Center"
-                            Foreground="White"
-                            FontWeight="Bold"
-                            FontSize="15"
-                            Text="TotalMix ">
+                           Foreground="White"
+                           FontWeight="Bold"
+                           FontSize="15"
+                           Text="TotalMix ">
                 </TextBlock>
                 <TextBlock VerticalAlignment="Center"
-                            Foreground="#e06464"
-                            FontSize="15"
-                            Text="Volume">
+                           Foreground="#e06464"
+                           FontSize="15"
+                           Text="Volume">
                 </TextBlock>
             </StackPanel>
 
             <!-- Volume Reading -->
             <TextBlock x:Name="VolumeDecibelsTextBox"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Margin="0 15 0 25"
-                        Foreground="White"
-                        FontSize="30"
-                        Text="-">
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Margin="0 15 0 25"
+                       Foreground="White"
+                       FontSize="30"
+                       Text="-">
             </TextBlock>
 
             <!-- Volume Bar -->
             <Grid>
                 <!-- Background -->
                 <Rectangle x:Name="VolumeReadingBackgroundRectangle"
-                            HorizontalAlignment="Stretch"
-                            Fill="#333"
-                            Height="10"/>
+                           HorizontalAlignment="Stretch"
+                           Fill="#333"
+                           Height="10"/>
 
                 <!-- Current Reading -->
                 <Rectangle x:Name="VolumeReadingCurrentRectangle"
-                            HorizontalAlignment="Left"
-                            Width="0"
-                            Fill="#999"
-                            Height="10"/>
+                           HorizontalAlignment="Left"
+                           Width="0"
+                           Fill="#999"
+                           Height="10"/>
             </Grid>
         </StackPanel>
     </Border>
