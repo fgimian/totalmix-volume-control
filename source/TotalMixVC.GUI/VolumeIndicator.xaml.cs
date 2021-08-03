@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
@@ -66,6 +67,11 @@ namespace TotalMixVC.GUI
                     (int)(VolumeReadingBackgroundRectangle.ActualWidth * Volume);
                 VolumeDecibelsTextBox.Text = VolumeDecibels;
             };
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            e.Cancel = true;
         }
     }
 }
