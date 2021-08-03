@@ -17,8 +17,8 @@ namespace TotalMixVC.GUI
                 outgoingEP: new IPEndPoint(IPAddress.Loopback, 7001),
                 incomingEP: new IPEndPoint(IPAddress.Loopback, 9001))
             {
-                VolumeRegularIncrement = 0.01f,
-                VolumeFineIncrement = 0.005f
+                VolumeRegularIncrement = 0.02f,
+                VolumeFineIncrement = 0.01f
             };
 
             // Start a task that will receive and record volume changes.
