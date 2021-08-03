@@ -15,6 +15,22 @@ namespace TotalMixVC.GUI
         {
             var volumeIndicator = new VolumeIndicator();
 
+            // Create a parent window which is not visible in the taskbar or Alt+Tab.
+            var hiddenParentWindow = new Window
+            {
+                Top = -100,
+                Left = -100,
+                Width = 0,
+                Height = 0,
+                WindowStyle = WindowStyle.ToolWindow,
+                ShowInTaskbar = false
+            };
+
+            // Set the owner of our volume indicator window to the hidden parent.
+            hiddenParentWindow.Show();
+            volumeIndicator.Owner = hiddenParentWindow;
+            hiddenParentWindow.Hide();
+
             var volumeManager = new VolumeManager(
                 outgoingEP: new IPEndPoint(IPAddress.Loopback, 7001),
                 incomingEP: new IPEndPoint(IPAddress.Loopback, 9001))
