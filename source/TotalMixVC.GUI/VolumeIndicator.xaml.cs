@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
 namespace TotalMixVC.GUI
@@ -9,20 +10,25 @@ namespace TotalMixVC.GUI
     /// </summary>
     public partial class VolumeIndicator : Window
     {
+        public float Volume { get; set; }
+
+        public string VolumeDecibels { get; set; }
+
         private readonly DispatcherTimer _closeWindowTimer;
 
         public void DisplayCurrentVolume(float volume, string volumeDecibels)
         {
+            Volume = volume;
+            VolumeDecibels = volumeDecibels;
+
             // Display the volume indicator with the current volume details.
             //
             // This method may be called from inside a task, so we must use the dispatcher to
             // ensure that this work will occur in the UI thread.
             Dispatcher.BeginInvoke((Action)(() =>
             {
-                Show();
-                VolumeReadingCurrentRectangle.Width =
-                    (int)(VolumeReadingBackgroundRectangle.ActualWidth * volume);
-                VolumeDecibelsTextBox.Text = volumeDecibels;
+                var showStoryboard = FindResource("show") as Storyboard;
+                showStoryboard?.Begin(this);
             }));
 
             // Restart the timer to close the window.
@@ -47,7 +53,18 @@ namespace TotalMixVC.GUI
             {
                 var timer = (DispatcherTimer)sender;
                 timer.Stop();
-                Hide();
+
+                var hideStoryboard = FindResource("hide") as Storyboard;
+                hideStoryboard?.Begin(this);
+            };
+
+            var showStoryboard = FindResource("show") as Storyboard;
+            showStoryboard.Completed += (s, e) =>
+            {
+                Show();
+                VolumeReadingCurrentRectangle.Width =
+                    (int)(VolumeReadingBackgroundRectangle.ActualWidth * Volume);
+                VolumeDecibelsTextBox.Text = VolumeDecibels;
             };
         }
     }

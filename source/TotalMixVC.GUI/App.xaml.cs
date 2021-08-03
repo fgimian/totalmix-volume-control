@@ -62,6 +62,8 @@ namespace TotalMixVC.GUI
                 async () =>
                 {
                     await volumeManager.IncreaseVolume().ConfigureAwait(false);
+                    volumeIndicator.Volume = volumeManager.Volume;
+                    volumeIndicator.VolumeDecibels = volumeManager.VolumeDecibels;
                     volumeIndicator.DisplayCurrentVolume(
                         volumeManager.Volume, volumeManager.VolumeDecibels);
                 });
