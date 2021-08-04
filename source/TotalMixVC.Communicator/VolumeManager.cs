@@ -110,7 +110,7 @@ namespace TotalMixVC.Communicator
 
         public async Task GetDeviceVolume()
         {
-            while (Volume == -1.0f)
+            while (_volume == -1.0f)
             {
                 // Send an initial invalid value (-1.0) so that TotalMix can send us the current
                 // volume.
@@ -118,7 +118,7 @@ namespace TotalMixVC.Communicator
 
                 // Wait up until one second for the current volume to updated by the listener.
                 // If no update is received, the initial value will be resent.
-                for (uint iterations = 0; Volume == -1.0f && iterations < 40; iterations++)
+                for (uint iterations = 0; _volume == -1.0f && iterations < 40; iterations++)
                 {
                     await Task.Delay(25).ConfigureAwait(false);
                 }
@@ -165,8 +165,8 @@ namespace TotalMixVC.Communicator
             try
             {
                 // Calculate the new volume.
-                float increment = fine ? VolumeFineIncrement : VolumeRegularIncrement;
-                float newVolume = Volume + increment;
+                float increment = fine ? _volumeFineIncrement : _volumeRegularIncrement;
+                float newVolume = _volume + increment;
 
                 // Ensure it doesn't exceed the max.
                 if (newVolume >= VolumeMax)
@@ -175,7 +175,7 @@ namespace TotalMixVC.Communicator
                 }
 
                 // Only send an update via OSC if the value has changed.
-                if (newVolume != Volume)
+                if (newVolume != _volume)
                 {
                     _volume = newVolume;
                     await SendCurrentVolume().ConfigureAwait(false);
@@ -197,7 +197,7 @@ namespace TotalMixVC.Communicator
             {
                 // Calculate the new volume.
                 float increment = fine ? VolumeFineIncrement : VolumeRegularIncrement;
-                float newVolume = Volume - increment;
+                float newVolume = _volume - increment;
 
                 // Ensure it doesn't go below the minimum possible volume.
                 if (newVolume < 0.0f)
@@ -206,7 +206,7 @@ namespace TotalMixVC.Communicator
                 }
 
                 // Only send an update via OSC if the value has changed.
-                if (newVolume != Volume)
+                if (newVolume != _volume)
                 {
                     _volume = newVolume;
                     await SendCurrentVolume().ConfigureAwait(false);
@@ -224,7 +224,7 @@ namespace TotalMixVC.Communicator
         private async Task SendCurrentVolume()
         {
             await _sender
-                .Send(new OscMessage(VolumeAddress, Volume))
+                .Send(new OscMessage(VolumeAddress, _volume))
                 .ConfigureAwait(false);
         }
 
