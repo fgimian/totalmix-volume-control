@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
@@ -28,10 +28,6 @@ namespace TotalMixVC.Communicator
 
         private readonly Listener _listener;
 
-        private float _volume = -1.0f;
-
-        private string _volumeDecibels;
-
         private float _volumeRegularIncrement;
 
         private float _volumeFineIncrement;
@@ -59,38 +55,26 @@ namespace TotalMixVC.Communicator
         /// <summary>
         /// Gets the current device volume as a float (with a range of 0.0 to 1.0).
         /// </summary>
-        public float Volume
-        {
-            get
-            {
-                return _volume;
-            }
-        }
+        public float Volume { get; private set; } = -1.0f;
 
         /// <summary>
         /// Gets the current device volume as a string in decibels.
         /// </summary>
-        public string VolumeDecibels
-        {
-            get
-            {
-                return _volumeDecibels;
-            }
-        }
+        public string VolumeDecibels { get; private set; }
 
         /// <summary>
         /// Gets or sets the increment to use when regularly increasing or decreasing the volume.
         /// </summary>
+        /// <exception cref="ArgumentException">
+        /// The regular volume increment is not within the required range.
+        /// </exception>
         public float VolumeRegularIncrement
         {
-            get
-            {
-                return _volumeRegularIncrement;
-            }
+            get => _volumeRegularIncrement;
 
             set
             {
-                if (value <= 0.0f || value > 0.10f)
+                if (value is <= 0.0f or > 0.10f)
                 {
                     throw new ArgumentException(
                         "Regular volume increment must be greater than 0 and less than 0.1.");
@@ -103,16 +87,16 @@ namespace TotalMixVC.Communicator
         /// <summary>
         /// Gets or sets the increment to use when finely increasing or decreasing the volume.
         /// </summary>
+        /// <exception cref="ArgumentException">
+        /// The fine volume increment is not within the required range.
+        /// </exception>
         public float VolumeFineIncrement
         {
-            get
-            {
-                return _volumeFineIncrement;
-            }
+            get => _volumeFineIncrement;
 
             set
             {
-                if (value <= 0.0f || value > 0.05f)
+                if (value is <= 0.0f or > 0.05f)
                 {
                     throw new ArgumentException(
                         "Fine volume increment must be greater than 0 and less than 0.05.");
@@ -125,16 +109,16 @@ namespace TotalMixVC.Communicator
         /// <summary>
         /// Gets or sets the maximum volume that should be allowed when increasing the volume.
         /// </summary>
+        /// <exception cref="ArgumentException">
+        /// The max volume increment not within the required range.
+        /// </exception>
         public float VolumeMax
         {
-            get
-            {
-                return _volumeMax;
-            }
+            get => _volumeMax;
 
             set
             {
-                if (value > 1.0)
+                if (value is <= 0.0f or > 1.0f)
                 {
                     throw new ArgumentException("Volume max can't be greater than 1.0.");
                 }
@@ -151,7 +135,7 @@ namespace TotalMixVC.Communicator
         /// <returns>The task object representing the asynchronous operation.</returns>
         public async Task GetDeviceVolume()
         {
-            while (_volume == -1.0f)
+            while (Volume == -1.0f)
             {
                 // Send an initial invalid value (-1.0) so that TotalMix can send us the current
                 // volume.
@@ -159,7 +143,7 @@ namespace TotalMixVC.Communicator
 
                 // Wait up until one second for the current volume to updated by the listener.
                 // If no update is received, the initial value will be resent.
-                for (uint iterations = 0; _volume == -1.0f && iterations < 40; iterations++)
+                for (uint iterations = 0; Volume == -1.0f && iterations < 40; iterations++)
                 {
                     await Task.Delay(25).ConfigureAwait(false);
                 }
@@ -225,7 +209,7 @@ namespace TotalMixVC.Communicator
             {
                 // Calculate the new volume.
                 float increment = fine ? _volumeFineIncrement : _volumeRegularIncrement;
-                float newVolume = _volume + increment;
+                float newVolume = Volume + increment;
 
                 // Ensure it doesn't exceed the max.
                 if (newVolume >= VolumeMax)
@@ -234,9 +218,9 @@ namespace TotalMixVC.Communicator
                 }
 
                 // Only send an update via OSC if the value has changed.
-                if (newVolume != _volume)
+                if (newVolume != Volume)
                 {
-                    _volume = newVolume;
+                    Volume = newVolume;
                     await SendCurrentVolume().ConfigureAwait(false);
                     return true;
                 }
@@ -264,7 +248,7 @@ namespace TotalMixVC.Communicator
             {
                 // Calculate the new volume.
                 float increment = fine ? VolumeFineIncrement : VolumeRegularIncrement;
-                float newVolume = _volume - increment;
+                float newVolume = Volume - increment;
 
                 // Ensure it doesn't go below the minimum possible volume.
                 if (newVolume < 0.0f)
@@ -273,9 +257,9 @@ namespace TotalMixVC.Communicator
                 }
 
                 // Only send an update via OSC if the value has changed.
-                if (newVolume != _volume)
+                if (newVolume != Volume)
                 {
-                    _volume = newVolume;
+                    Volume = newVolume;
                     await SendCurrentVolume().ConfigureAwait(false);
                     return true;
                 }
@@ -291,7 +275,7 @@ namespace TotalMixVC.Communicator
         private async Task SendCurrentVolume()
         {
             await _sender
-                .Send(new OscMessage(VolumeAddress, _volume))
+                .Send(new OscMessage(VolumeAddress, Volume))
                 .ConfigureAwait(false);
         }
 
@@ -308,7 +292,7 @@ namespace TotalMixVC.Communicator
                 await _volumeMutex.WaitAsync().ConfigureAwait(false);
                 try
                 {
-                    _volumeDecibels = (string)messages[0][0];
+                    VolumeDecibels = (string)messages[0][0];
                     return true;
                 }
                 catch (InvalidCastException)
@@ -332,8 +316,8 @@ namespace TotalMixVC.Communicator
             {
                 try
                 {
-                    _volume = (float)messages[0][0];
-                    _volumeDecibels = (string)messages[1][0];
+                    Volume = (float)messages[0][0];
+                    VolumeDecibels = (string)messages[1][0];
                     return true;
                 }
                 catch (InvalidCastException)

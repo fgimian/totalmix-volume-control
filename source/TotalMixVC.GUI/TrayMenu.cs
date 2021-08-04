@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 
 namespace TotalMixVC.GUI
@@ -11,15 +11,9 @@ namespace TotalMixVC.GUI
         /// <summary>
         /// Gets the Exit tray icon command which shuts down the application.
         /// </summary>
-        public ICommand ExitAppCommand
+        public ICommand ExitAppCommand => new DelegateCommand
         {
-            get
-            {
-                return new DelegateCommand
-                {
-                    CommandAction = () => Application.Current.Shutdown()
-                };
-            }
-        }
+            CommandAction = () => Application.Current.Shutdown()
+        };
     }
 }

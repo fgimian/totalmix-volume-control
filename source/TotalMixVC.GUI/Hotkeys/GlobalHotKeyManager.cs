@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -45,6 +45,9 @@ namespace TotalMixVC.GUI.Hotkeys
         /// </summary>
         /// <param name="hotkey">The hotkey to bind globally.</param>
         /// <param name="action">The action to run when the hotkey is detected.</param>
+        /// <exception cref="Win32Exception">
+        /// An issue occurred during the registration of the hotkey.
+        /// </exception>
         public void Register(Hotkey hotkey, Action action)
         {
             _actions.Add(hotkey, action);
