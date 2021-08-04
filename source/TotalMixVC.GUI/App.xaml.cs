@@ -11,6 +11,11 @@ namespace TotalMixVC.GUI
     /// </summary>
     public partial class App : Application
     {
+        /// <summary>
+        /// A startup event which initialises the application.
+        /// </summary>
+        /// <param name="sender">The object initiating the event.</param>
+        /// <param name="e">The event data.</param>
         internal void App_Startup(object sender, StartupEventArgs e)
         {
             var volumeIndicator = new VolumeIndicator();
@@ -61,7 +66,7 @@ namespace TotalMixVC.GUI
 
             // Register all the hotkeys for changing the volume.  Note that doing this does not
             // work inside a task so this must be performed in the main method scope.
-            var hotKeyManager = new HotKeyManager();
+            var hotKeyManager = new GlobalHotKeyManager();
 
             hotKeyManager.Register(
                 new Hotkey(KeyModifier.None, Key.VolumeUp),

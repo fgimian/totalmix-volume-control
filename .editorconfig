@@ -28,9 +28,6 @@ dotnet_diagnostic.CS8019.severity = warning
 
 # StyleCop
 
-# Disable forced documentation generation.
-dotnet_diagnostic.SA0001.severity = none
-
 # Don't force trailing commas.
 dotnet_diagnostic.SA1413.severity = none
 
@@ -42,15 +39,6 @@ dotnet_diagnostic.SA1202.severity = none
 
 # Disable a requirement of having a file header at the top of all files.
 dotnet_diagnostic.SA1633.severity = none
-
-# Disable forced documentation of elements.
-dotnet_diagnostic.SA1600.severity = none
-
-# Disable forced documentation of partial classes.
-dotnet_diagnostic.SA1601.severity = none
-
-# Disable forced documentation of enums.
-dotnet_diagnostic.SA1602.severity = none
 
 # Don't force the terms get or set in front of property summaries.
 dotnet_diagnostic.SA1623.severity = none

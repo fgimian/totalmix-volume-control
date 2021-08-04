@@ -7,12 +7,24 @@ using OscCore;
 
 namespace TotalMixVC.Communicator
 {
+    /// <summary>
+    /// Tracks the volume of the device and provides a way to send volume updates.
+    /// </summary>
     public class VolumeManager
     {
+        /// <summary>
+        /// The address to be used to sending and receiving volume as a float.
+        /// </summary>
         public const string VolumeAddress = "/1/mastervolume";
 
+        /// <summary>
+        /// The address to be used for receiving volume as a string in decibels.
+        /// </summary>
         public const string VolumeDecibelsAddress = "/1/mastervolumeVal";
 
+        /// <summary>
+        /// The current device volume as a float (with a range of 0.0 to 1.0).
+        /// </summary>
         public float Volume
         {
             get
@@ -21,6 +33,9 @@ namespace TotalMixVC.Communicator
             }
         }
 
+        /// <summary>
+        /// The current device volume as a string in decibels.
+        /// </summary>
         public string VolumeDecibels
         {
             get
@@ -29,6 +44,9 @@ namespace TotalMixVC.Communicator
             }
         }
 
+        /// <summary>
+        /// The float increment to use when regularly increasing or decreasing the volume.
+        /// </summary>
         public float VolumeRegularIncrement
         {
             get
@@ -48,6 +66,9 @@ namespace TotalMixVC.Communicator
             }
         }
 
+        /// <summary>
+        /// The float increment to use when finely increasing or decreasing the volume.
+        /// </summary>
         public float VolumeFineIncrement
         {
             get
@@ -67,6 +88,9 @@ namespace TotalMixVC.Communicator
             }
         }
 
+        /// <summary>
+        /// The maximum volume that should be allowed when increasing the volume.
+        /// </summary>
         public float VolumeMax
         {
             get
@@ -101,6 +125,17 @@ namespace TotalMixVC.Communicator
 
         private float _volumeMax = 1.0f;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VolumeManager"/> class.
+        /// </summary>
+        /// <param name="outgoingEP">
+        /// The outgoing OSC endpoint to send volume changes to.  This should be set to the
+        /// incoming port in TotalMix settings.
+        /// </param>
+        /// <param name="incomingEP">
+        /// The incoming OSC endpoint to receive volume changes from.  This should be set to the
+        /// outgoing port in TotalMix settings.
+        /// </param>
         public VolumeManager(IPEndPoint outgoingEP, IPEndPoint incomingEP)
         {
             _volumeMutex = new SemaphoreSlim(1);
@@ -108,6 +143,12 @@ namespace TotalMixVC.Communicator
             _listener = new Listener(incomingEP);
         }
 
+        /// <summary>
+        /// Obtain the initial device volume by sending a dummy value and waiting for a response.
+        /// This method assumes you are running the <see cref="ReceiveVolume"/> method in an async
+        /// thread.
+        /// </summary>
+        /// <returns>The task object representing the asynchronous operation.</returns>
         public async Task GetDeviceVolume()
         {
             while (_volume == -1.0f)
@@ -125,14 +166,24 @@ namespace TotalMixVC.Communicator
             }
         }
 
-        public async Task<bool> ReceiveVolume()
+        /// <summary>
+        /// Attempts to receive the device volume for the given timeout.
+        /// </summary>
+        /// <param name="timeout">
+        /// The amount of time wo wait for a volume message before giving up.
+        /// </param>
+        /// <returns>
+        /// The task object representing the asynchronous operation which will contain a boolean
+        /// indicating whether or not the volume was obtained from the device.
+        /// </returns>
+        public async Task<bool> ReceiveVolume(int timeout = 5000)
         {
             // Ping events are sent from the device every around every 1 second, so we only
             // wait until a given timeout of 5 seconds before giving up and forcing a fresh
             // receive request.  This ensures that the receiver can detect a device which was
             // previous offline.
             var task = _listener.Receive();
-            if (await Task.WhenAny(task, Task.Delay(5000)).ConfigureAwait(false) != task)
+            if (await Task.WhenAny(task, Task.Delay(timeout)).ConfigureAwait(false) != task)
             {
                 return false;
             }
@@ -159,6 +210,14 @@ namespace TotalMixVC.Communicator
             return await UpdateVolumeFromMessages(messages).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Increase the volume of the device.
+        /// </summary>
+        /// <param name="fine">Whether or not to use a fine increment.</param>
+        /// <returns>
+        /// The task object representing the asynchronous operation which will contain a boolean
+        /// indicating whether or not the volume needed to be updated for the device.
+        /// </returns>
         public async Task<bool> IncreaseVolume(bool fine = false)
         {
             await _volumeMutex.WaitAsync().ConfigureAwait(false);
@@ -190,6 +249,14 @@ namespace TotalMixVC.Communicator
             }
         }
 
+        /// <summary>
+        /// Decreases the volume of the device.
+        /// </summary>
+        /// <param name="fine">Whether or not to use a fine increment.</param>
+        /// <returns>
+        /// The task object representing the asynchronous operation which will contain a boolean
+        /// indicating whether or not the volume needed to be updated for the device.
+        /// </returns>
         public async Task<bool> DecreaseVolume(bool fine = false)
         {
             await _volumeMutex.WaitAsync().ConfigureAwait(false);
