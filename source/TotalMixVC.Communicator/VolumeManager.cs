@@ -230,49 +230,56 @@ namespace TotalMixVC.Communicator
 
         private async Task<bool> UpdateVolumeFromMessages(List<OscMessage> messages)
         {
-            // The bundle of messages should contain two items for the volume as a decimal
-            // and also a string containing the decibel reading.
-            if (messages.Count != 2)
-            {
-                return false;
-            }
-
-            // Only process volume bundles.
+            // After a volume change, the volume in decibels is sent immediately.  This comes
+            // through much faster than the bundle containing both values, so it makes the
+            // indicator more responsive if we capture this explicitly.
             if (
-                messages[0].Address != VolumeAddress ||
-                messages[1].Address != VolumeDecibelsAddress ||
-                messages[0].Count != 1 ||
-                messages[1].Count != 1)
+                messages.Count == 1 &&
+                messages[0].Address == VolumeDecibelsAddress &&
+                messages[0].Count == 1)
             {
-                return false;
+                await _volumeMutex.WaitAsync().ConfigureAwait(false);
+                try
+                {
+                    _volumeDecibels = (string)messages[0][0];
+                    return true;
+                }
+                catch (InvalidCastException)
+                {
+                    return false;
+                }
+                finally
+                {
+                    _volumeMutex.Release();
+                }
             }
 
-            // Obtain the volume as a float and decibel reading as a string.
-            float newVolume;
-            string newVolumeDecibels;
-            try
+            // A bundle containing two messages will come through next which contains two items
+            // for the volume as a decimal and also a string containing the decibel reading.
+            if (
+                messages.Count == 2 &&
+                messages[0].Address == VolumeAddress &&
+                messages[1].Address == VolumeDecibelsAddress &&
+                messages[0].Count == 1 &&
+                messages[1].Count == 1)
             {
-                newVolume = (float)messages[0][0];
-                newVolumeDecibels = (string)messages[1][0];
-            }
-            catch (InvalidCastException)
-            {
-                return false;
+                try
+                {
+                    _volume = (float)messages[0][0];
+                    _volumeDecibels = (string)messages[1][0];
+                    return true;
+                }
+                catch (InvalidCastException)
+                {
+                    return false;
+                }
+                finally
+                {
+                    _volumeMutex.Release();
+                }
             }
 
-            // Update the volumes from the messages.
-            await _volumeMutex.WaitAsync().ConfigureAwait(false);
-            try
-            {
-                _volume = newVolume;
-                _volumeDecibels = newVolumeDecibels;
-            }
-            finally
-            {
-                _volumeMutex.Release();
-            }
-
-            return true;
+            return false;
         }
     }
 }
