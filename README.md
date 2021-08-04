@@ -12,6 +12,10 @@ The keyboard bindings are as follows:
 * **Shift + Volume Up / Down**: Increase or decrease the volume by 0.5% respectively
   (fine adjustment).
 
+When the volume is changed, a volume indicator will appear in the top left of your screen:
+
+![Volume Indicator](https://raw.githubusercontent.com/fgimian/totalmix-volume-control/main/images/VolumeIndicator.png)
+
 ## Configuring TotalMixFX
 
 1. Open TotalMixFX
@@ -46,7 +50,9 @@ and then follow the steps below:
 ## Running the Application
 
 You may simply execute the program which will run in the background and watch for your keystrokes.
-The application doesn't have an interface or tray icon yet.
+A volume indicator will appear anytime you change the volume via your keyboard or your RME
+hardware.  The application doesn't have a tray icon yet but that will be coming in the near
+future.
 
 ## License
 
