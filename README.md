@@ -12,6 +12,9 @@ The keyboard bindings are as follows:
 * **Shift + Volume Up / Down**: Increase or decrease the volume by 0.5% respectively
   (fine adjustment).
 
+**Note**: You can still access the regular volume indicator by using **Ctrl + Volume Up / Down**
+or **Alt + Volume Up / Down**.
+
 When the volume is changed, a volume indicator will appear in the top left of your screen:
 
 ![Volume Indicator](https://raw.githubusercontent.com/fgimian/totalmix-volume-control/main/images/VolumeIndicator.png)
