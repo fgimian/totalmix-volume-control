@@ -45,6 +45,21 @@ namespace TotalMixVC.Communicator
         }
 
         /// <summary>
+        /// Sends an OSC packet to the configured endpoint.
+        /// </summary>
+        /// <param name="message">
+        /// The <see cref="OscBundle"/> or <see cref="OscMessage"/> message to send.
+        /// </param>
+        /// <returns>The number of bytes sent to the endpoint.</returns>
+        public async Task<int> Send(OscPacket message)
+        {
+            byte[] datagram = message.ToByteArray();
+            return await _client
+                .SendAsync(datagram, datagram.Length, _localEP)
+                .ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Disposes the current sender.
         /// </summary>
         /// <param name="disposing">Whether managed resources should be disposed.</param>
@@ -61,21 +76,6 @@ namespace TotalMixVC.Communicator
             }
 
             _disposed = true;
-        }
-
-        /// <summary>
-        /// Sends an OSC packet to the configured endpoint.
-        /// </summary>
-        /// <param name="message">
-        /// The <see cref="OscBundle"/> or <see cref="OscMessage"/> message to send.
-        /// </param>
-        /// <returns>The number of bytes sent to the endpoint.</returns>
-        public async Task<int> Send(OscPacket message)
-        {
-            byte[] datagram = message.ToByteArray();
-            return await _client
-                .SendAsync(datagram, datagram.Length, _localEP)
-                .ConfigureAwait(false);
         }
     }
 }

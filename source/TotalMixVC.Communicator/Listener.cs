@@ -42,6 +42,18 @@ namespace TotalMixVC.Communicator
         }
 
         /// <summary>
+        /// Receives an OSC packet from the endpoint configured.
+        /// </summary>
+        /// <returns>
+        /// An OSC packet which may be either a <see cref="OscBundle"/> or <see cref="OscMessage"/>.
+        /// </returns>
+        public async Task<OscPacket> Receive()
+        {
+            var result = await _client.ReceiveAsync().ConfigureAwait(false);
+            return OscPacket.Read(result.Buffer, 0, result.Buffer.Length);
+        }
+
+        /// <summary>
         /// Disposes the current listener.
         /// </summary>
         /// <param name="disposing">Whether managed resources should be disposed.</param>
@@ -58,18 +70,6 @@ namespace TotalMixVC.Communicator
             }
 
             _disposed = true;
-        }
-
-        /// <summary>
-        /// Receives an OSC packet from the endpoint configured.
-        /// </summary>
-        /// <returns>
-        /// An OSC packet which may be either a <see cref="OscBundle"/> or <see cref="OscMessage"/>.
-        /// </returns>
-        public async Task<OscPacket> Receive()
-        {
-            var result = await _client.ReceiveAsync().ConfigureAwait(false);
-            return OscPacket.Read(result.Buffer, 0, result.Buffer.Length);
         }
     }
 }

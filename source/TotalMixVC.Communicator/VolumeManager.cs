@@ -22,93 +22,6 @@ namespace TotalMixVC.Communicator
         /// </summary>
         public const string VolumeDecibelsAddress = "/1/mastervolumeVal";
 
-        /// <summary>
-        /// The current device volume as a float (with a range of 0.0 to 1.0).
-        /// </summary>
-        public float Volume
-        {
-            get
-            {
-                return _volume;
-            }
-        }
-
-        /// <summary>
-        /// The current device volume as a string in decibels.
-        /// </summary>
-        public string VolumeDecibels
-        {
-            get
-            {
-                return _volumeDecibels;
-            }
-        }
-
-        /// <summary>
-        /// The float increment to use when regularly increasing or decreasing the volume.
-        /// </summary>
-        public float VolumeRegularIncrement
-        {
-            get
-            {
-                return _volumeRegularIncrement;
-            }
-
-            set
-            {
-                if (value <= 0.0f || value > 0.10f)
-                {
-                    throw new ArgumentException(
-                        "Regular volume increment must be greater than 0 and less than 0.1.");
-                }
-
-                _volumeRegularIncrement = value;
-            }
-        }
-
-        /// <summary>
-        /// The float increment to use when finely increasing or decreasing the volume.
-        /// </summary>
-        public float VolumeFineIncrement
-        {
-            get
-            {
-                return _volumeFineIncrement;
-            }
-
-            set
-            {
-                if (value <= 0.0f || value > 0.05f)
-                {
-                    throw new ArgumentException(
-                        "Fine volume increment must be greater than 0 and less than 0.05.");
-                }
-
-                _volumeFineIncrement = value;
-            }
-        }
-
-        /// <summary>
-        /// The maximum volume that should be allowed when increasing the volume.
-        /// </summary>
-        public float VolumeMax
-        {
-            get
-            {
-                return _volumeMax;
-            }
-
-            set
-            {
-                if (value > 1.0)
-                {
-                    throw new ArgumentException("Volume max can't be greater than 1.0.");
-                }
-
-                _volumeMax = value;
-            }
-        }
-
         private readonly SemaphoreSlim _volumeMutex;
 
         private readonly Sender _sender;
@@ -141,6 +54,93 @@ namespace TotalMixVC.Communicator
             _volumeMutex = new SemaphoreSlim(1);
             _sender = new Sender(outgoingEP);
             _listener = new Listener(incomingEP);
+        }
+
+        /// <summary>
+        /// Gets the current device volume as a float (with a range of 0.0 to 1.0).
+        /// </summary>
+        public float Volume
+        {
+            get
+            {
+                return _volume;
+            }
+        }
+
+        /// <summary>
+        /// Gets the current device volume as a string in decibels.
+        /// </summary>
+        public string VolumeDecibels
+        {
+            get
+            {
+                return _volumeDecibels;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the increment to use when regularly increasing or decreasing the volume.
+        /// </summary>
+        public float VolumeRegularIncrement
+        {
+            get
+            {
+                return _volumeRegularIncrement;
+            }
+
+            set
+            {
+                if (value <= 0.0f || value > 0.10f)
+                {
+                    throw new ArgumentException(
+                        "Regular volume increment must be greater than 0 and less than 0.1.");
+                }
+
+                _volumeRegularIncrement = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the increment to use when finely increasing or decreasing the volume.
+        /// </summary>
+        public float VolumeFineIncrement
+        {
+            get
+            {
+                return _volumeFineIncrement;
+            }
+
+            set
+            {
+                if (value <= 0.0f || value > 0.05f)
+                {
+                    throw new ArgumentException(
+                        "Fine volume increment must be greater than 0 and less than 0.05.");
+                }
+
+                _volumeFineIncrement = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the maximum volume that should be allowed when increasing the volume.
+        /// </summary>
+        public float VolumeMax
+        {
+            get
+            {
+                return _volumeMax;
+            }
+
+            set
+            {
+                if (value > 1.0)
+                {
+                    throw new ArgumentException("Volume max can't be greater than 1.0.");
+                }
+
+                _volumeMax = value;
+            }
         }
 
         /// <summary>
