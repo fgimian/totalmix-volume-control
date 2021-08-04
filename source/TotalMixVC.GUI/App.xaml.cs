@@ -44,7 +44,11 @@ namespace TotalMixVC.GUI
             {
                 while (true)
                 {
-                    await volumeManager.ReceiveVolume().ConfigureAwait(false);
+                    if (await volumeManager.ReceiveVolume().ConfigureAwait(false))
+                    {
+                        volumeIndicator.UpdateVolume(
+                            volumeManager.Volume, volumeManager.VolumeDecibels);
+                    }
                 }
             });
 
@@ -62,10 +66,7 @@ namespace TotalMixVC.GUI
                 async () =>
                 {
                     await volumeManager.IncreaseVolume().ConfigureAwait(false);
-                    volumeIndicator.Volume = volumeManager.Volume;
-                    volumeIndicator.VolumeDecibels = volumeManager.VolumeDecibels;
-                    volumeIndicator.DisplayCurrentVolume(
-                        volumeManager.Volume, volumeManager.VolumeDecibels);
+                    volumeIndicator.DisplayCurrentVolume();
                 });
 
             hotKeyManager.Register(
@@ -73,8 +74,7 @@ namespace TotalMixVC.GUI
                 async () =>
                 {
                     await volumeManager.DecreaseVolume().ConfigureAwait(false);
-                    volumeIndicator.DisplayCurrentVolume(
-                        volumeManager.Volume, volumeManager.VolumeDecibels);
+                    volumeIndicator.DisplayCurrentVolume();
                 });
 
             hotKeyManager.Register(
@@ -82,8 +82,7 @@ namespace TotalMixVC.GUI
                 async () =>
                 {
                     await volumeManager.IncreaseVolume(fine: true).ConfigureAwait(false);
-                    volumeIndicator.DisplayCurrentVolume(
-                        volumeManager.Volume, volumeManager.VolumeDecibels);
+                    volumeIndicator.DisplayCurrentVolume();
                 });
 
             hotKeyManager.Register(
@@ -91,8 +90,7 @@ namespace TotalMixVC.GUI
                 async () =>
                 {
                     await volumeManager.DecreaseVolume(fine: true).ConfigureAwait(false);
-                    volumeIndicator.DisplayCurrentVolume(
-                        volumeManager.Volume, volumeManager.VolumeDecibels);
+                    volumeIndicator.DisplayCurrentVolume();
                 });
         }
     }

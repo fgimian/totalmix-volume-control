@@ -11,17 +11,10 @@ namespace TotalMixVC.GUI
     /// </summary>
     public partial class VolumeIndicator : Window
     {
-        public float Volume { get; set; }
-
-        public string VolumeDecibels { get; set; }
-
         private readonly DispatcherTimer _closeWindowTimer;
 
-        public void DisplayCurrentVolume(float volume, string volumeDecibels)
+        public void DisplayCurrentVolume()
         {
-            Volume = volume;
-            VolumeDecibels = volumeDecibels;
-
             // Display the volume indicator with the current volume details.
             //
             // This method may be called from inside a task, so we must use the dispatcher to
@@ -46,7 +39,7 @@ namespace TotalMixVC.GUI
             InitializeComponent();
 
             // Create the timer that will close the window after not used for a little while.
-            _closeWindowTimer = new DispatcherTimer();
+            _closeWindowTimer = new();
             _closeWindowTimer.Interval = TimeSpan.FromSeconds(2.0);
 
             // When the timer elapses, close the window.
@@ -60,13 +53,17 @@ namespace TotalMixVC.GUI
             };
 
             var showStoryboard = FindResource("show") as Storyboard;
-            showStoryboard.Completed += (s, e) =>
+            showStoryboard.Completed += (s, e) => Show();
+        }
+
+        public void UpdateVolume(float volume, string volumeDecibels)
+        {
+            Dispatcher.BeginInvoke((Action)(() =>
             {
-                Show();
                 VolumeReadingCurrentRectangle.Width =
-                    (int)(VolumeReadingBackgroundRectangle.ActualWidth * Volume);
-                VolumeDecibelsTextBox.Text = VolumeDecibels;
-            };
+                    (int)(VolumeReadingBackgroundRectangle.ActualWidth * volume);
+                VolumeDecibelsTextBox.Text = volumeDecibels;
+            }));
         }
 
         protected override void OnClosing(CancelEventArgs e)

@@ -87,8 +87,6 @@ namespace TotalMixVC.Communicator
 
         private readonly SemaphoreSlim _volumeMutex;
 
-        private readonly SemaphoreSlim _volumeDecibelsMutex;
-
         private readonly Sender _sender;
 
         private readonly Listener _listener;
@@ -106,7 +104,6 @@ namespace TotalMixVC.Communicator
         public VolumeManager(IPEndPoint outgoingEP, IPEndPoint incomingEP)
         {
             _volumeMutex = new SemaphoreSlim(1);
-            _volumeDecibelsMutex = new SemaphoreSlim(1);
             _sender = new Sender(outgoingEP);
             _listener = new Listener(incomingEP);
         }
@@ -142,34 +139,24 @@ namespace TotalMixVC.Communicator
 
             OscPacket packet = task.Result;
 
-            // Volume changes are presented in bundles, but we'll also check message just in case
-            // this changes in the future.
-            if (packet is OscBundle)
+            // Volume changes are only presented in bundles.
+            if (packet is not OscBundle)
             {
-                OscBundle bundle = packet as OscBundle;
-                bool updated = false;
-
-                // Iterate through all messages in the bundle.
-                IEnumerator<OscMessage> messageEnumerator = bundle.Messages();
-                while (messageEnumerator.MoveNext())
-                {
-                    OscMessage message = messageEnumerator.Current;
-                    await UpdateVolumeDecibelsFromMessage(message).ConfigureAwait(false);
-
-                    if (await UpdateVolumeFromMessage(message).ConfigureAwait(false))
-                    {
-                        updated = true;
-                    }
-                }
-
-                return updated;
+                return false;
             }
-            else
+
+            OscBundle bundle = packet as OscBundle;
+
+            // Build a list of messages from the bundle.
+            List<OscMessage> messages = new();
+            IEnumerator<OscMessage> messageEnumerator = bundle.Messages();
+            while (messageEnumerator.MoveNext())
             {
-                OscMessage message = packet as OscMessage;
-                await UpdateVolumeDecibelsFromMessage(message).ConfigureAwait(false);
-                return await UpdateVolumeFromMessage(message).ConfigureAwait(false);
+                messages.Add(messageEnumerator.Current);
             }
+
+            // Attempt to update the volume reading from the bundle of messages.
+            return await UpdateVolumeFromMessages(messages).ConfigureAwait(false);
         }
 
         public async Task<bool> IncreaseVolume(bool fine = false)
@@ -241,77 +228,48 @@ namespace TotalMixVC.Communicator
                 .ConfigureAwait(false);
         }
 
-        private async Task<bool> UpdateVolumeFromMessage(OscMessage message)
+        private async Task<bool> UpdateVolumeFromMessages(List<OscMessage> messages)
         {
-            // Only process volume messages.
-            if (message.Address != VolumeAddress)
+            // The bundle of messages should contain two items for the volume as a decimal
+            // and also a string containing the decibel reading.
+            if (messages.Count != 2)
             {
                 return false;
             }
 
-            // Volume messages should only contain one value.
-            if (message.Count != 1)
+            // Only process volume bundles.
+            if (
+                messages[0].Address != VolumeAddress ||
+                messages[1].Address != VolumeDecibelsAddress ||
+                messages[0].Count != 1 ||
+                messages[1].Count != 1)
             {
                 return false;
             }
 
-            // Obtain the value as a float.
+            // Obtain the volume as a float and decibel reading as a string.
             float newVolume;
+            string newVolumeDecibels;
             try
             {
-                newVolume = (float)message[0];
+                newVolume = (float)messages[0][0];
+                newVolumeDecibels = (string)messages[1][0];
             }
             catch (InvalidCastException)
             {
                 return false;
             }
 
+            // Update the volumes from the messages.
             await _volumeMutex.WaitAsync().ConfigureAwait(false);
             try
             {
                 _volume = newVolume;
-            }
-            finally
-            {
-                _volumeMutex.Release();
-            }
-
-            return true;
-        }
-
-        private async Task<bool> UpdateVolumeDecibelsFromMessage(OscMessage message)
-        {
-            // Only process volume messages.
-            if (message.Address != VolumeDecibelsAddress)
-            {
-                return false;
-            }
-
-            // Volume messages should only contain one value.
-            if (message.Count != 1)
-            {
-                return false;
-            }
-
-            // Obtain the decibel value as a string.
-            string newVolumeDecibels;
-            try
-            {
-                newVolumeDecibels = (string)message[0];
-            }
-            catch (InvalidCastException)
-            {
-                return false;
-            }
-
-            await _volumeDecibelsMutex.WaitAsync().ConfigureAwait(false);
-            try
-            {
                 _volumeDecibels = newVolumeDecibels;
             }
             finally
             {
-                _volumeDecibelsMutex.Release();
+                _volumeMutex.Release();
             }
 
             return true;
