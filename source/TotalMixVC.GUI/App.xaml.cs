@@ -44,10 +44,12 @@ namespace TotalMixVC.GUI
             {
                 while (true)
                 {
-                    if (await volumeManager.ReceiveVolume().ConfigureAwait(false))
+                    bool initial = volumeManager.Volume == -1.0f;
+                    if (await volumeManager.ReceiveVolume().ConfigureAwait(false) && !initial)
                     {
                         volumeIndicator.UpdateVolume(
                             volumeManager.Volume, volumeManager.VolumeDecibels);
+                        volumeIndicator.DisplayCurrentVolume();
                     }
                 }
             });
