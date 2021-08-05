@@ -71,8 +71,8 @@ namespace TotalMixVC.GUI
         {
             Dispatcher.BeginInvoke((Action)(() =>
             {
-                VolumeReadingCurrentRectangle.Width =
-                    (int)(VolumeReadingBackgroundRectangle.ActualWidth * volume);
+                VolumeReadingCurrentRectangle.Width
+                    = (int)(VolumeReadingBackgroundRectangle.ActualWidth * volume);
                 VolumeDecibelsTextBox.Text = volumeDecibels;
             }));
         }

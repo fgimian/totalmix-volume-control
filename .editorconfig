@@ -42,12 +42,78 @@ dotnet_diagnostic.SA1309.severity = none
 
 # Roslynator
 
-# Don't force strings to be joined as the + operator is used to split long strings.
+# Don't force strings to be joined as Roslynator doesn't seem to understand verbatim strings.
+# See https://github.com/JosefPihrt/Roslynator/issues/835
 dotnet_diagnostic.RCS1190.severity = none
 
 # Ensure that long lines are flagged.
 dotnet_diagnostic.RCS0056.severity = warning
 roslynator.max_line_length = 100
+
+# Enable most formatting analyzers.
+dotnet_diagnostic.RCS0001.severity = warning
+dotnet_diagnostic.RCS0002.severity = warning
+dotnet_diagnostic.RCS0003.severity = warning
+dotnet_diagnostic.RCS0004.severity = warning
+dotnet_diagnostic.RCS0005.severity = warning
+dotnet_diagnostic.RCS0006.severity = warning
+dotnet_diagnostic.RCS0007.severity = warning
+dotnet_diagnostic.RCS0008.severity = warning
+dotnet_diagnostic.RCS0009.severity = warning
+dotnet_diagnostic.RCS0010.severity = warning
+dotnet_diagnostic.RCS0011.severity = warning
+dotnet_diagnostic.RCS0012.severity = warning
+dotnet_diagnostic.RCS0013.severity = warning
+dotnet_diagnostic.RCS0014.severity = warning
+dotnet_diagnostic.RCS0016.severity = warning
+dotnet_diagnostic.RCS0021.severity = warning
+dotnet_diagnostic.RCS0022.severity = warning
+dotnet_diagnostic.RCS0023.severity = warning
+dotnet_diagnostic.RCS0024.severity = warning
+dotnet_diagnostic.RCS0025.severity = warning
+dotnet_diagnostic.RCS0027.severity = warning
+dotnet_diagnostic.RCS0028.severity = warning
+dotnet_diagnostic.RCS0029.severity = warning
+dotnet_diagnostic.RCS0030.severity = warning
+dotnet_diagnostic.RCS0031.severity = warning
+dotnet_diagnostic.RCS0032.severity = warning
+dotnet_diagnostic.RCS0033.severity = warning
+dotnet_diagnostic.RCS0034.severity = warning
+dotnet_diagnostic.RCS0038.severity = warning
+dotnet_diagnostic.RCS0039.severity = warning
+dotnet_diagnostic.RCS0041.severity = warning
+dotnet_diagnostic.RCS0042.severity = warning
+dotnet_diagnostic.RCS0043.severity = warning
+dotnet_diagnostic.RCS0044.severity = warning
+dotnet_diagnostic.RCS0046.severity = warning
+dotnet_diagnostic.RCS0047.severity = warning
+dotnet_diagnostic.RCS0049.severity = warning
+dotnet_diagnostic.RCS0050.severity = warning
+dotnet_diagnostic.RCS0051.severity = warning
+dotnet_diagnostic.RCS0052.severity = warning
+dotnet_diagnostic.RCS0053.severity = warning
+dotnet_diagnostic.RCS0054.severity = warning
+dotnet_diagnostic.RCS0056.severity = warning
+
+# Don't force an empty line between using directives with a different root namespace.
+dotnet_diagnostic.RCS0015.severity = none
+
+# Don't force single line accessors to expanded into multiple lines.
+dotnet_diagnostic.RCS0020.severity = none
+
+# Allow empty lines between properties of the same type.
+dotnet_diagnostic.RCS0036.severity = none
+
+# Don't enforce Linux linefeeds as the newline character in favour of Windows line endings which
+# are enforced via RCS0044.
+dotnet_diagnostic.RCS0045.severity = none
+
+# Don't force a single line initializer to be compacted.
+dotnet_diagnostic.RCS0048.severity = none
+
+# Disable repair of binary expression chains as they are bugging when joining strings.
+# See TODO GitHub issue
+dotnet_diagnostic.RCS0055.severity = none
 
 [**/obj/**.cs]
 # Ignore unused using statements in generated code.
