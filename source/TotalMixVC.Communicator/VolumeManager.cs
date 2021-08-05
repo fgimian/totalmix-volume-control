@@ -285,9 +285,9 @@ namespace TotalMixVC.Communicator
             // through much faster than the bundle containing both values, so it makes the
             // indicator more responsive if we capture this explicitly.
             if (
-                messages.Count == 1 &&
-                messages[0].Address == VolumeDecibelsAddress &&
-                messages[0].Count == 1)
+                messages.Count == 1
+                && messages[0].Address == VolumeDecibelsAddress
+                && messages[0].Count == 1)
             {
                 await _volumeMutex.WaitAsync().ConfigureAwait(false);
                 try
@@ -308,11 +308,11 @@ namespace TotalMixVC.Communicator
             // A bundle containing two messages will come through next which contains two items
             // for the volume as a decimal and also a string containing the decibel reading.
             if (
-                messages.Count == 2 &&
-                messages[0].Address == VolumeAddress &&
-                messages[1].Address == VolumeDecibelsAddress &&
-                messages[0].Count == 1 &&
-                messages[1].Count == 1)
+                messages.Count == 2
+                && messages[0].Address == VolumeAddress
+                && messages[1].Address == VolumeDecibelsAddress
+                && messages[0].Count == 1
+                && messages[1].Count == 1)
             {
                 try
                 {
