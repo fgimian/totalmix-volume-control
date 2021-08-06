@@ -47,9 +47,9 @@ namespace TotalMixVC.Communicator
         /// <returns>
         /// An OSC packet which may be either a <see cref="OscBundle"/> or <see cref="OscMessage"/>.
         /// </returns>
-        public async Task<OscPacket> Receive()
+        public async Task<OscPacket> ReceiveAsync()
         {
-            var result = await _client.ReceiveAsync().ConfigureAwait(false);
+            UdpReceiveResult result = await _client.ReceiveAsync().ConfigureAwait(false);
             return OscPacket.Read(result.Buffer, 0, result.Buffer.Length);
         }
 

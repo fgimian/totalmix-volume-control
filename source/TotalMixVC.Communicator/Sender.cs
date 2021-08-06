@@ -51,12 +51,10 @@ namespace TotalMixVC.Communicator
         /// The <see cref="OscBundle"/> or <see cref="OscMessage"/> message to send.
         /// </param>
         /// <returns>The number of bytes sent to the endpoint.</returns>
-        public async Task<int> Send(OscPacket message)
+        public Task<int> SendAsync(OscPacket message)
         {
             byte[] datagram = message.ToByteArray();
-            return await _client
-                .SendAsync(datagram, datagram.Length, _localEP)
-                .ConfigureAwait(false);
+            return _client.SendAsync(datagram, datagram.Length, _localEP);
         }
 
         /// <summary>

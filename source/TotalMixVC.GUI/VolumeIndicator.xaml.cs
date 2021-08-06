@@ -27,14 +27,14 @@ namespace TotalMixVC.GUI
             // When the timer elapses, close the window.
             _closeWindowTimer.Tick += (object sender, EventArgs e) =>
             {
-                var timer = (DispatcherTimer)sender;
+                DispatcherTimer timer = (DispatcherTimer)sender;
                 timer.Stop();
 
-                var hideStoryboard = FindResource("hide") as Storyboard;
+                Storyboard hideStoryboard = FindResource("hide") as Storyboard;
                 hideStoryboard?.Begin(this);
             };
 
-            var showStoryboard = FindResource("show") as Storyboard;
+            Storyboard showStoryboard = FindResource("show") as Storyboard;
             showStoryboard.Completed += (s, e) => Show();
         }
 
@@ -48,7 +48,7 @@ namespace TotalMixVC.GUI
             // to ensure that this work occurs in the UI thread.
             Dispatcher.BeginInvoke((Action)(() =>
             {
-                var showStoryboard = FindResource("show") as Storyboard;
+                Storyboard showStoryboard = FindResource("show") as Storyboard;
                 showStoryboard?.Begin(this);
             }));
 
