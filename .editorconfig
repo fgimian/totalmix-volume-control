@@ -4,7 +4,7 @@
 # Set this to the top-most EditorConfig file.
 root = true
 
-# Don't use tabs for indentation.
+# Use spaces for indentation.
 [*]
 indent_style = space
 
@@ -23,97 +23,231 @@ max_line_length = 100
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-# Ensure that unused imports are treated as warnings.
+# Ensure that unused imports are reported.
 dotnet_diagnostic.CS8019.severity = warning
 
+# --------------------------------------------------------------------------------------------------
 # StyleCop
+# --------------------------------------------------------------------------------------------------
 
-# Don't force trailing commas.
+# Disable forced trailing commas.
 dotnet_diagnostic.SA1413.severity = none
 
 # Disable a requirement of having a file header at the top of all files.
 dotnet_diagnostic.SA1633.severity = none
 
-# Don't force usage of this to prefix local calls.
+# Disable forced usage of this to prefix local calls.
 dotnet_diagnostic.SA1101.severity = none
 
 # Allow fields to be prefixed with an underscore for private and protected members.
 dotnet_diagnostic.SA1309.severity = none
 
+# --------------------------------------------------------------------------------------------------
 # Roslynator
+# --------------------------------------------------------------------------------------------------
 
-# Don't force strings to be joined as Roslynator doesn't seem to understand verbatim strings.
+# Force braces around if stamement blocks.
+dotnet_diagnostic.RCS1007.severity = warning
+
+# Enable explicit types.
+dotnet_diagnostic.RCS1008.severity = warning
+dotnet_diagnostic.RCS1009.severity = warning
+dotnet_diagnostic.RCS1012.severity = warning
+dotnet_diagnostic.RCS1014.severity = warning
+
+# Use built in types for variables.
+dotnet_diagnostic.RCS1013.severity = warning
+
+# Ensure modifiers are ordered.
+dotnet_diagnostic.RCS1019.severity = warning
+
+# Remove trailing comma in initializer.
+dotnet_diagnostic.RCS1035.severity = warning
+
+# Ensure private fields use camel case and start with an underscore.
+dotnet_diagnostic.RCS1045.severity = warning
+
+# Ensure async methods end with the word Async as per Microsoft recommendations.
+dotnet_diagnostic.RCS1046.severity = warning
+
+# Omit empty argument lists when initializing objects.
+dotnet_diagnostic.RCS1050.severity = warning
+roslynator.RCS1050.invert = true
+
+# Declare each attribute on a separate line.
+dotnet_diagnostic.RCS1052.severity = warning
+
+# Declare each type in a separate file.
+dotnet_diagnostic.RCS1060.severity = warning
+
+# Prefer while loops when creating infinite loops.
+dotnet_diagnostic.RCS1064.severity = warning
+
+# Prefer string.Empty when creating empty strings.
+dotnet_diagnostic.RCS1078.severity = warning
+roslynator.RCS1078.invert = true
+
+# Ensure each variable is declared on a separate line.
+dotnet_diagnostic.RCS1081.severity = warning
+
+# Disable forced strings to be joined as Roslynator doesn't seem to understand verbatim strings.
 # See https://github.com/JosefPihrt/Roslynator/issues/835
 dotnet_diagnostic.RCS1190.severity = none
+
+# Ensure using directives are at the top level.
+dotnet_diagnostic.RCS1094.severity = warning
+
+# Format documentation summaries on multiple lines.
+dotnet_diagnostic.RCS1101.severity = warning
+
+# Force braces around if / else stamement blocks.
+dotnet_diagnostic.RCS1126.severity = warning
+
+# Avoid assigning multiple variables at the same time.
+dotnet_diagnostic.RCS1162.severity = warning
+
+# Remove redundant async / await.
+dotnet_diagnostic.RCS1174.severity = warning
+
+# Use pattern matching when checking for null.
+dotnet_diagnostic.RCS1248.severity = warning
+
+# --------------------------------------------------------------------------------------------------
+# Roslynator Formatting
+# --------------------------------------------------------------------------------------------------
+
+# Ensure an empty line after embedded statements (single line blocks).
+dotnet_diagnostic.RCS0001.severity = warning
+
+# Ensure an empty line after #region.
+dotnet_diagnostic.RCS0002.severity = warning
+
+# Ensure an empty line is present after using statements.
+dotnet_diagnostic.RCS0003.severity = warning
+
+# Ensure an empty line before #endregion.
+dotnet_diagnostic.RCS0005.severity = warning
+
+# Ensure an empty line is present before using statements when a header is present.
+dotnet_diagnostic.RCS0006.severity = warning
+
+# Ensure an empty line between property accessors.
+dotnet_diagnostic.RCS0007.severity = warning
+
+# Ensure an empty line after blocks.
+dotnet_diagnostic.RCS0008.severity = warning
+
+# Ensure an empty line between decleration and documentation comments.
+dotnet_diagnostic.RCS0009.severity = warning
+
+# Ensure an empty line between declarations (e.g. methods).
+dotnet_diagnostic.RCS0010.severity = warning
+
+# Ensure an empty line between single-line property accessors.
+dotnet_diagnostic.RCS0011.severity = warning
+
+# Ensure an empty line between single-line declarations.
+dotnet_diagnostic.RCS0012.severity = warning
+
+# Ensure an empty line between single-line declarations of a different kind.
+dotnet_diagnostic.RCS0013.severity = warning
+
+# Ensure a new line after attribute listings.
+dotnet_diagnostic.RCS0016.severity = warning
+
+# Disable forced single line accessors to expanded into multiple lines.
+dotnet_diagnostic.RCS0020.severity = none
+
+# Ensure a new line after the opening brace of a block.
+dotnet_diagnostic.RCS0021.severity = warning
+
+# Ensure a new line after the opening brace of an empty block.
+dotnet_diagnostic.RCS0022.severity = warning
+
+# Ensure a new line after the opening brace of a type declaration.
+dotnet_diagnostic.RCS0023.severity = warning
+
+# Ensure a new line after a switch label.
+dotnet_diagnostic.RCS0024.severity = warning
+
+# Ensure a new line before property accessors.
+dotnet_diagnostic.RCS0025.severity = warning
+
+# Ensure a new line before binary operators (e.g. &&, || etc.)
+dotnet_diagnostic.RCS0027.severity = warning
+
+# Ensure a new line before ternary conditional operators.
+dotnet_diagnostic.RCS0028.severity = warning
+
+# Ensure a new line before parent constructor initializers.
+dotnet_diagnostic.RCS0029.severity = warning
+
+# Ensure a new line before embeddable statements (single line blocks).
+dotnet_diagnostic.RCS0030.severity = warning
+
+# Ensure a new line before enum members.
+dotnet_diagnostic.RCS0031.severity = warning
+
+# Ensure a new line after an expression-body arrow (=>).
+dotnet_diagnostic.RCS0032.severity = warning
+roslynator.RCS0032.invert = true
+
+# Ensure a new line between statements.
+dotnet_diagnostic.RCS0033.severity = warning
+
+# Ensure a new line before type parameter constraints.
+dotnet_diagnostic.RCS0034.severity = warning
+
+# Ensure no empty lines between using directives with the same root namespace.
+dotnet_diagnostic.RCS0038.severity = warning
+
+# Ensure no new line before a parent class association.
+dotnet_diagnostic.RCS0039.severity = warning
+
+# Ensure no new line between else if.
+dotnet_diagnostic.RCS0041.severity = warning
+
+# Ensure no now line between automatic property accessors.
+dotnet_diagnostic.RCS0042.severity = warning
+
+# Ensure no new lines for single-line property accessors.
+dotnet_diagnostic.RCS0043.severity = warning
+
+# Ensure Windows line endings are used new line characters.
+dotnet_diagnostic.RCS0044.severity = warning
+
+# Ensure spaces are used instead of tabs.
+dotnet_diagnostic.RCS0046.severity = warning
+
+# Disable forced a single line initializer to be compacted.
+dotnet_diagnostic.RCS0048.severity = none
+
+# Ensure an empty line after the comment at the top of a file.
+dotnet_diagnostic.RCS0049.severity = warning
+
+# Ensure an empty line before the first declaration.
+dotnet_diagnostic.RCS0050.severity = warning
+
+# Ensure a new line after the closing brace of a do while loop.
+dotnet_diagnostic.RCS0051.severity = warning
+
+# Ensure a new line after an equals sign when the declaration follows on the next line.
+dotnet_diagnostic.RCS0052.severity = warning
+roslynator.RCS0052.invert = true
+
+# Ensure multi-line parameters are formatted and indented correctly.
+dotnet_diagnostic.RCS0053.severity = warning
+
+# Ensure chained calls are formatted and indented correctly.
+dotnet_diagnostic.RCS0054.severity = warning
+
+# Disable repair of binary expression chains as they are buggy when joining strings.
+# See https://github.com/JosefPihrt/Roslynator/issues/836
+dotnet_diagnostic.RCS0055.severity = none
 
 # Ensure that long lines are flagged.
 dotnet_diagnostic.RCS0056.severity = warning
 roslynator.max_line_length = 100
-
-# Enable most formatting analyzers.
-dotnet_diagnostic.RCS0001.severity = warning
-dotnet_diagnostic.RCS0002.severity = warning
-dotnet_diagnostic.RCS0003.severity = warning
-dotnet_diagnostic.RCS0004.severity = warning
-dotnet_diagnostic.RCS0005.severity = warning
-dotnet_diagnostic.RCS0006.severity = warning
-dotnet_diagnostic.RCS0007.severity = warning
-dotnet_diagnostic.RCS0008.severity = warning
-dotnet_diagnostic.RCS0009.severity = warning
-dotnet_diagnostic.RCS0010.severity = warning
-dotnet_diagnostic.RCS0011.severity = warning
-dotnet_diagnostic.RCS0012.severity = warning
-dotnet_diagnostic.RCS0013.severity = warning
-dotnet_diagnostic.RCS0014.severity = warning
-dotnet_diagnostic.RCS0016.severity = warning
-dotnet_diagnostic.RCS0021.severity = warning
-dotnet_diagnostic.RCS0022.severity = warning
-dotnet_diagnostic.RCS0023.severity = warning
-dotnet_diagnostic.RCS0024.severity = warning
-dotnet_diagnostic.RCS0025.severity = warning
-dotnet_diagnostic.RCS0027.severity = warning
-dotnet_diagnostic.RCS0028.severity = warning
-dotnet_diagnostic.RCS0029.severity = warning
-dotnet_diagnostic.RCS0030.severity = warning
-dotnet_diagnostic.RCS0031.severity = warning
-dotnet_diagnostic.RCS0032.severity = warning
-dotnet_diagnostic.RCS0033.severity = warning
-dotnet_diagnostic.RCS0034.severity = warning
-dotnet_diagnostic.RCS0038.severity = warning
-dotnet_diagnostic.RCS0039.severity = warning
-dotnet_diagnostic.RCS0041.severity = warning
-dotnet_diagnostic.RCS0042.severity = warning
-dotnet_diagnostic.RCS0043.severity = warning
-dotnet_diagnostic.RCS0044.severity = warning
-dotnet_diagnostic.RCS0046.severity = warning
-dotnet_diagnostic.RCS0047.severity = warning
-dotnet_diagnostic.RCS0049.severity = warning
-dotnet_diagnostic.RCS0050.severity = warning
-dotnet_diagnostic.RCS0051.severity = warning
-dotnet_diagnostic.RCS0052.severity = warning
-dotnet_diagnostic.RCS0053.severity = warning
-dotnet_diagnostic.RCS0054.severity = warning
-dotnet_diagnostic.RCS0056.severity = warning
-
-# Don't force an empty line between using directives with a different root namespace.
-dotnet_diagnostic.RCS0015.severity = none
-
-# Don't force single line accessors to expanded into multiple lines.
-dotnet_diagnostic.RCS0020.severity = none
-
-# Allow empty lines between properties of the same type.
-dotnet_diagnostic.RCS0036.severity = none
-
-# Don't enforce Linux linefeeds as the newline character in favour of Windows line endings which
-# are enforced via RCS0044.
-dotnet_diagnostic.RCS0045.severity = none
-
-# Don't force a single line initializer to be compacted.
-dotnet_diagnostic.RCS0048.severity = none
-
-# Disable repair of binary expression chains as they are bugging when joining strings.
-# See TODO GitHub issue
-dotnet_diagnostic.RCS0055.severity = none
 
 [**/obj/**.cs]
 # Ignore unused using statements in generated code.

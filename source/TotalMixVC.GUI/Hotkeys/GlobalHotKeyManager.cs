@@ -52,8 +52,8 @@ namespace TotalMixVC.GUI.Hotkeys
         {
             _actions.Add(hotkey, action);
 
-            var keyModifier = hotkey.KeyModifier;
-            var key = KeyInterop.VirtualKeyFromKey(hotkey.Key);
+            KeyModifier keyModifier = hotkey.KeyModifier;
+            int key = KeyInterop.VirtualKeyFromKey(hotkey.Key);
 
             if (!RegisterHotKey(IntPtr.Zero, hotkey.GetHashCode(), (uint)keyModifier, (uint)key))
             {
@@ -74,9 +74,9 @@ namespace TotalMixVC.GUI.Hotkeys
                 return;
             }
 
-            var key = KeyInterop.KeyFromVirtualKey(((int)msg.lParam >> 16) & 0xFFFF);
-            var keyModifier = (KeyModifier)((int)msg.lParam & 0xFFFF);
-            var hotkey = new Hotkey { KeyModifier = keyModifier, Key = key };
+            Key key = KeyInterop.KeyFromVirtualKey(((int)msg.lParam >> 16) & 0xFFFF);
+            KeyModifier keyModifier = (KeyModifier)((int)msg.lParam & 0xFFFF);
+            Hotkey hotkey = new() { KeyModifier = keyModifier, Key = key };
 
             _actions[hotkey]();
         }

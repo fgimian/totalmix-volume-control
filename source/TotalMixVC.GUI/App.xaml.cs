@@ -20,10 +20,10 @@ namespace TotalMixVC.GUI
         {
             _running = true;
 
-            var volumeIndicator = new VolumeIndicator();
+            VolumeIndicator volumeIndicator = new();
 
             // Create a parent window which is not visible in the taskbar or Alt+Tab.
-            var hiddenParentWindow = new Window
+            Window hiddenParentWindow = new()
             {
                 Top = -100,
                 Left = -100,
@@ -38,7 +38,7 @@ namespace TotalMixVC.GUI
             volumeIndicator.Owner = hiddenParentWindow;
             hiddenParentWindow.Hide();
 
-            var volumeManager = new VolumeManager(
+            VolumeManager volumeManager = new(
                 outgoingEP: new IPEndPoint(IPAddress.Loopback, 7001),
                 incomingEP: new IPEndPoint(IPAddress.Loopback, 9001))
             {
@@ -52,7 +52,7 @@ namespace TotalMixVC.GUI
                 while (_running)
                 {
                     bool initial = volumeManager.Volume == -1.0f;
-                    if (await volumeManager.ReceiveVolume().ConfigureAwait(false) && !initial)
+                    if (await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false) && !initial)
                     {
                         volumeIndicator.UpdateVolume(
                             volumeManager.Volume, volumeManager.VolumeDecibels);
@@ -63,18 +63,18 @@ namespace TotalMixVC.GUI
 
             // Ensure we obtain the current device volume before registering hotkeys.
             Task
-                .Run(async () => await volumeManager.GetDeviceVolume().ConfigureAwait(false))
+                .Run(async () => await volumeManager.GetDeviceVolumeAsync().ConfigureAwait(false))
                 .Wait();
 
             // Register all the hotkeys for changing the volume.  Note that doing this does not
             // work inside a task so this must be performed in the main method scope.
-            var hotKeyManager = new GlobalHotKeyManager();
+            GlobalHotKeyManager hotKeyManager = new();
 
             hotKeyManager.Register(
                 new Hotkey { KeyModifier = KeyModifier.None, Key = Key.VolumeUp },
                 async () =>
                 {
-                    await volumeManager.IncreaseVolume().ConfigureAwait(false);
+                    await volumeManager.IncreaseVolumeAsync().ConfigureAwait(false);
                     volumeIndicator.DisplayCurrentVolume();
                 });
 
@@ -82,7 +82,7 @@ namespace TotalMixVC.GUI
                 new Hotkey { KeyModifier = KeyModifier.None, Key = Key.VolumeDown },
                 async () =>
                 {
-                    await volumeManager.DecreaseVolume().ConfigureAwait(false);
+                    await volumeManager.DecreaseVolumeAsync().ConfigureAwait(false);
                     volumeIndicator.DisplayCurrentVolume();
                 });
 
@@ -90,7 +90,7 @@ namespace TotalMixVC.GUI
                 new Hotkey { KeyModifier = KeyModifier.Shift, Key = Key.VolumeUp },
                 async () =>
                 {
-                    await volumeManager.IncreaseVolume(fine: true).ConfigureAwait(false);
+                    await volumeManager.IncreaseVolumeAsync(fine: true).ConfigureAwait(false);
                     volumeIndicator.DisplayCurrentVolume();
                 });
 
@@ -98,7 +98,7 @@ namespace TotalMixVC.GUI
                 new Hotkey { KeyModifier = KeyModifier.Shift, Key = Key.VolumeDown },
                 async () =>
                 {
-                    await volumeManager.DecreaseVolume(fine: true).ConfigureAwait(false);
+                    await volumeManager.DecreaseVolumeAsync(fine: true).ConfigureAwait(false);
                     volumeIndicator.DisplayCurrentVolume();
                 });
         }

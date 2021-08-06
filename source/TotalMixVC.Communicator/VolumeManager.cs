@@ -129,17 +129,17 @@ namespace TotalMixVC.Communicator
 
         /// <summary>
         /// Obtain the initial device volume by sending a dummy value and waiting for a response.
-        /// This method assumes you are running the <see cref="ReceiveVolume"/> method in an async
+        /// This method assumes you are running the <see cref="ReceiveVolumeAsync"/> method in an async
         /// thread.
         /// </summary>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        public async Task GetDeviceVolume()
+        public async Task GetDeviceVolumeAsync()
         {
             while (Volume == -1.0f)
             {
                 // Send an initial invalid value (-1.0) so that TotalMix can send us the current
                 // volume.
-                await SendCurrentVolume().ConfigureAwait(false);
+                await SendCurrentVolumeAsync().ConfigureAwait(false);
 
                 // Wait up until one second for the current volume to updated by the listener.
                 // If no update is received, the initial value will be resent.
@@ -160,13 +160,13 @@ namespace TotalMixVC.Communicator
         /// The task object representing the asynchronous operation which will contain a boolean
         /// indicating whether or not the volume was obtained from the device.
         /// </returns>
-        public async Task<bool> ReceiveVolume(int timeout = 5000)
+        public async Task<bool> ReceiveVolumeAsync(int timeout = 5000)
         {
             // Ping events are sent from the device every around every 1 second, so we only
             // wait until a given timeout of 5 seconds before giving up and forcing a fresh
             // receive request.  This ensures that the receiver can detect a device which was
             // previous offline.
-            var task = _listener.Receive();
+            Task<OscPacket> task = _listener.ReceiveAsync();
             if (await Task.WhenAny(task, Task.Delay(timeout)).ConfigureAwait(false) != task)
             {
                 return false;
@@ -191,7 +191,7 @@ namespace TotalMixVC.Communicator
             }
 
             // Attempt to update the volume reading from the bundle of messages.
-            return await UpdateVolumeFromMessages(messages).ConfigureAwait(false);
+            return await UpdateVolumeFromMessagesAsync(messages).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -202,7 +202,7 @@ namespace TotalMixVC.Communicator
         /// The task object representing the asynchronous operation which will contain a boolean
         /// indicating whether or not the volume needed to be updated for the device.
         /// </returns>
-        public async Task<bool> IncreaseVolume(bool fine = false)
+        public async Task<bool> IncreaseVolumeAsync(bool fine = false)
         {
             await _volumeMutex.WaitAsync().ConfigureAwait(false);
             try
@@ -221,7 +221,7 @@ namespace TotalMixVC.Communicator
                 if (newVolume != Volume)
                 {
                     Volume = newVolume;
-                    await SendCurrentVolume().ConfigureAwait(false);
+                    await SendCurrentVolumeAsync().ConfigureAwait(false);
                     return true;
                 }
 
@@ -241,7 +241,7 @@ namespace TotalMixVC.Communicator
         /// The task object representing the asynchronous operation which will contain a boolean
         /// indicating whether or not the volume needed to be updated for the device.
         /// </returns>
-        public async Task<bool> DecreaseVolume(bool fine = false)
+        public async Task<bool> DecreaseVolumeAsync(bool fine = false)
         {
             await _volumeMutex.WaitAsync().ConfigureAwait(false);
             try
@@ -260,7 +260,7 @@ namespace TotalMixVC.Communicator
                 if (newVolume != Volume)
                 {
                     Volume = newVolume;
-                    await SendCurrentVolume().ConfigureAwait(false);
+                    await SendCurrentVolumeAsync().ConfigureAwait(false);
                     return true;
                 }
 
@@ -272,14 +272,14 @@ namespace TotalMixVC.Communicator
             }
         }
 
-        private async Task SendCurrentVolume()
+        private async Task SendCurrentVolumeAsync()
         {
             await _sender
-                .Send(new OscMessage(VolumeAddress, Volume))
+                .SendAsync(new OscMessage(VolumeAddress, Volume))
                 .ConfigureAwait(false);
         }
 
-        private async Task<bool> UpdateVolumeFromMessages(List<OscMessage> messages)
+        private async Task<bool> UpdateVolumeFromMessagesAsync(List<OscMessage> messages)
         {
             // After a volume change, the volume in decibels is sent immediately.  This comes
             // through much faster than the bundle containing both values, so it makes the

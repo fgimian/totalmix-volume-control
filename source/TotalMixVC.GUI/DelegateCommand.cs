@@ -44,7 +44,7 @@ namespace TotalMixVC.GUI
         /// <returns>Whether or not the command can be executed.</returns>
         public bool CanExecute(object parameter)
         {
-            return CanExecuteFunc == null || CanExecuteFunc();
+            return CanExecuteFunc is null || CanExecuteFunc();
         }
     }
 }
