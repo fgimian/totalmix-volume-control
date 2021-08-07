@@ -7,6 +7,7 @@ using Cake.Common.Tools.DotNetCore;
 using Cake.Common.Tools.DotNetCore.Build;
 using Cake.Common.Tools.DotNetCore.Publish;
 using Cake.Common.Tools.DotNetCore.Test;
+using Cake.Common.Tools.GitVersion;
 using Cake.Common.Tools.InnoSetup;
 using Cake.Common.Tools.ReportGenerator;
 using Cake.Core;
@@ -30,6 +31,7 @@ public static class Program
         return new CakeHost()
             .UseContext<BuildContext>()
             .SetToolPath(new DirectoryPath("../").Combine("tools"))
+            .InstallTool(new Uri("nuget:?package=GitVersion.CommandLine&version=5.6.11"))
             .InstallTool(new Uri("nuget:?package=ReportGenerator&version=4.8.11"))
             .InstallTool(new Uri("nuget:?package=Tools.InnoSetup&version=6.2.0"))
             .Run(args);
@@ -188,7 +190,10 @@ public class DistributeTask : FrostingTask<BuildContext>
                 Configuration = context.BuildConfiguration
             });
 
-        context.Log.Information("Building the Inno Setup installer");
+        context.Log.Information("Obtaining the application version using GitVersion");
+        GitVersion version = context.GitVersion();
+
+        context.Log.Information($"Building the Inno Setup installer for v{version.FullSemVer}");
         context.Log.Information(context.InnoSetupScriptPath);
         context.InnoSetup(
             scriptFile: context.InnoSetupScriptPath,
@@ -197,7 +202,8 @@ public class DistributeTask : FrostingTask<BuildContext>
                 OutputDirectory = context.ProjectRoot + context.Directory("artifacts"),
                 Defines = new Dictionary<string, string>
                 {
-                    { "AppBuildConfiguration", context.BuildConfiguration }
+                    { "AppVersion", version.FullSemVer },
+                    { "AppBuildConfiguration", context.BuildConfiguration },
                 }
             });
     }

@@ -1,9 +1,12 @@
+; The version needs to be passed explicitly via /DAppVersion=0.1.0 as GitVersion is used to
+; determine the release version.  Alternatively, the option below may be uncommented if required.
+; #define AppVersion "1.0"
+
 ; The build configuration needs to be passed explicitly via /DAppBuildConfiguration=Release or
 ; the option below may be uncommented if required.
 ; #define AppBuildConfiguration "Release"
 
 #define AppName "TotalMix Volume Control"
-#define AppVersion "1.0"
 #define AppPublisher "Fotis Gimian"
 #define AppRepoURL "https://github.com/fgimian/totalmix-volume-control"
 #define AppRepoIssuesURL AppRepoURL + "/issues"
