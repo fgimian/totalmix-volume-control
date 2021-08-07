@@ -11,6 +11,7 @@
 #define AppRepoURL "https://github.com/fgimian/totalmix-volume-control"
 #define AppRepoIssuesURL AppRepoURL + "/issues"
 #define AppRepoReleasesURL AppRepoURL + "/releases"
+#define AppIconPath "source\TotalMixVC.GUI\Icons\TotalMixVC.ico"
 #define AppPublishPath "source\TotalMixVC.GUI\bin\" + AppBuildConfiguration + "\net5.0-windows\publish"
 #define AppExeName "TotalMixVC.GUI.exe"
 
@@ -26,6 +27,7 @@ AppUpdatesURL={#AppRepoReleasesURL}
 DefaultDirName={autopf64}\{#AppName}
 DisableProgramGroupPage=yes
 LicenseFile=.\LICENSE
+SetupIconFile=.\{#AppIconPath}
 OutputDir=.\artifacts
 OutputBaseFilename=TotalMixVCSetup-v{#AppVersion}-{#AppBuildConfiguration}-Installer
 Compression=lzma
