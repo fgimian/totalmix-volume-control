@@ -4,6 +4,7 @@ This project uses the OSC protocol to communicate with RME TotalMixFX software a
 the volume keys on your keyboard to control the master volume in Windows.
 
 You may see the [related thread on the RME forums](https://forum.rme-audio.de/viewtopic.php?pid=174137)
+and the [thread on the Gearspace forums](https://gearspace.com/board/music-computers/1358200-my-new-little-open-source-project-rme-totalmix-volume-control-windows.html)
 for a discussion about the tool.
 
 The keyboard bindings are as follows:
@@ -44,18 +45,16 @@ and then follow the steps below:
 
     ```powershell
     cd ~/Downloads/totalmix-volume-control
-    dotnet build -c Release
+    .\build.ps1 --target Distribute --configuration Release
     ```
 
-3. You'll now find an executable named **TotalMixVC.GUI.exe** under the sub-directory
-   **source\TotalMixVC.GUI\bin\Release\net5.0-windows** 
+3. You'll now find an installer under the **artifacts** sub-directory
 
 ## Running the Application
 
-You may simply execute the program which will run in the background and watch for your keystrokes.
+You may simply execute the program which will run in the system tray and watch for your keystrokes.
 A volume indicator will appear anytime you change the volume via your keyboard or your RME
-hardware.  The application doesn't have a tray icon yet but that will be coming in the near
-future.
+hardware.
 
 ## License
 
