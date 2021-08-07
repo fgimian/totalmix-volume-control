@@ -43,11 +43,24 @@ public class BuildContext : FrostingContext
     {
         // Arguments
         BuildConfiguration = context.Argument<string>("configuration", "Debug");
+        CoverageFormat = context.Argument<string>("coverage-format", "lcov");
 
         // Variables
         ProjectRoot = context.Directory("../");
         SolutionPath = ProjectRoot + context.File($"{ProjectName}.sln");
         GUIProjectName = context.Directory($"{ProjectName}.GUI");
+
+        if (string.Compare(CoverageFormat, "cobertura", ignoreCase: true) == 0)
+        {
+            CoverletOutputFormat = CoverletOutputFormat.cobertura;
+            CoverageReportFileName = "cobertura.xml";
+        }
+        else
+        {
+            CoverletOutputFormat = CoverletOutputFormat.lcov;
+            CoverageReportFileName = "lcov.info";
+        }
+
         InnoSetupScriptPath = ProjectRoot + context.File($"{ProjectName}.iss");
     }
 
@@ -55,15 +68,19 @@ public class BuildContext : FrostingContext
 
     public string CoverageDirectoryName { get; } = ".coverage";
 
-    public string LcovReportFileName { get; } = "lcov.info";
-
     public string BuildConfiguration { get; }
+
+    public string CoverageFormat { get; }
 
     public ConvertableDirectoryPath ProjectRoot { get; }
 
     public ConvertableFilePath SolutionPath { get; }
 
     public ConvertableDirectoryPath GUIProjectName { get; }
+
+    public CoverletOutputFormat CoverletOutputFormat { get; }
+
+    public string CoverageReportFileName { get; }
 
     public ConvertableFilePath InnoSetupScriptPath { get; }
 }
@@ -125,8 +142,8 @@ public class TestTask : FrostingTask<BuildContext>
     {
         ConvertableDirectoryPath coveragePath =
             context.ProjectRoot + context.Directory(context.CoverageDirectoryName);
-        ConvertableFilePath lcovReportPath =
-            coveragePath + context.File(context.LcovReportFileName);
+        ConvertableFilePath coverageReportPath =
+            coveragePath + context.File(context.CoverageReportFileName);
 
         context.Log.Information("Running unit tests and collecting test coverage with Coverlet");
         context.DotNetCoreTest(
@@ -141,14 +158,14 @@ public class TestTask : FrostingTask<BuildContext>
             coverletSettings: new CoverletSettings
             {
                 CollectCoverage = true,
-                CoverletOutputFormat = CoverletOutputFormat.lcov,
+                CoverletOutputFormat = context.CoverletOutputFormat,
                 CoverletOutputDirectory = coveragePath,
-                CoverletOutputName = context.LcovReportFileName
+                CoverletOutputName = context.CoverageReportFileName
             });
 
         context.Log.Information("Generating coverage report using ReportGenerator");
         context.ReportGenerator(
-            report: lcovReportPath,
+            report: coverageReportPath,
             targetDir: coveragePath,
             settings: new ReportGeneratorSettings
             {
