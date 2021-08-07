@@ -12,6 +12,7 @@
 
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <ApplicationIcon>Icons\TotalMixVC.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>

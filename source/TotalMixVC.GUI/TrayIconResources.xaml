@@ -1,0 +1,19 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:tb="http://www.hardcodet.net/taskbar"
+                    xmlns:local="clr-namespace:TotalMixVC.GUI">
+    <!-- Notify Tray Context Menu -->
+    <ContextMenu x:Shared="false" x:Key="SysTrayMenu">
+        <MenuItem Header="Exit" Command="{Binding ExitAppCommand}" />
+    </ContextMenu>
+
+    <!-- Notify Tray Icon -->
+    <tb:TaskbarIcon x:Key="NotifyIcon"
+                    ToolTipText="TotalMix Volume Control"
+                    MenuActivation="LeftOrRightClick"
+                    ContextMenu="{StaticResource SysTrayMenu}">
+        <tb:TaskbarIcon.DataContext>
+            <local:TrayMenu />
+        </tb:TaskbarIcon.DataContext>
+    </tb:TaskbarIcon>
+</ResourceDictionary>

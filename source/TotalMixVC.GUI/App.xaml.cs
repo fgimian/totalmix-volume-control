@@ -1,7 +1,10 @@
-﻿using System.Net;
+﻿using System.Drawing;
+using System.Net;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Hardcodet.Wpf.TaskbarNotification;
 using TotalMixVC.Communicator;
 using TotalMixVC.GUI.Hotkeys;
 
@@ -16,9 +19,15 @@ namespace TotalMixVC.GUI
 
         private Task _volumeReceiveTask;
 
+        private TaskbarIcon _trayIcon;
+
         private void App_Startup(object sender, StartupEventArgs e)
         {
             _running = true;
+
+            _trayIcon = (TaskbarIcon)FindResource("NotifyIcon");
+            _trayIcon.Icon = Icon.ExtractAssociatedIcon(
+                Assembly.GetEntryAssembly().ManifestModule.Name);
 
             VolumeIndicator volumeIndicator = new();
 
