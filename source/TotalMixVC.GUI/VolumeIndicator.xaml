@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:tb="http://www.hardcodet.net/taskbar"
         xmlns:local="clr-namespace:TotalMixVC.GUI"
         mc:Ignorable="d"
         Title="VolumeIndicator" Height="165" Width="165"
@@ -36,20 +35,6 @@
             BorderBrush="#e21e2328"
             CornerRadius="1">
         <StackPanel Background="#e21e2328">
-            <!-- Notify Tray Icon -->
-            <tb:TaskbarIcon ToolTipText="TotalMix Volume Control"
-                            MenuActivation="LeftOrRightClick">
-                <tb:TaskbarIcon.DataContext>
-                    <local:TrayMenu />
-                </tb:TaskbarIcon.DataContext>
-
-                <tb:TaskbarIcon.ContextMenu>
-                    <ContextMenu Background="#1e2328">
-                        <MenuItem Header="Exit" Foreground="White" Command="{Binding ExitAppCommand}" />
-                    </ContextMenu>
-                </tb:TaskbarIcon.ContextMenu>
-            </tb:TaskbarIcon>
-
             <!-- Title -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <TextBlock VerticalAlignment="Center"
