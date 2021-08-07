@@ -318,7 +318,7 @@ paket-files/
 __pycache__/
 *.pyc
 
-# Cake - Uncomment if you are using it
+# Cake
 tools/**
 !tools/packages.config
 
@@ -368,7 +368,6 @@ FodyWeavers.xsd
 ## Visual studio for Mac
 ##
 
-
 # globs
 Makefile.in
 *.userprefs
@@ -394,7 +393,6 @@ test-results/
 
 # Icon must end with two \r
 Icon
-
 
 # Thumbnails
 ._*
@@ -447,6 +445,7 @@ $RECYCLE.BIN/
 ##
 ## Visual Studio Code
 ##
+
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
