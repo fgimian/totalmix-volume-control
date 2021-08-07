@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using Cake.Common;
 using Cake.Common.IO;
 using Cake.Common.IO.Paths;
 using Cake.Common.Tools.DotNetCore;
 using Cake.Common.Tools.DotNetCore.Build;
+using Cake.Common.Tools.DotNetCore.Publish;
 using Cake.Common.Tools.DotNetCore.Test;
+using Cake.Common.Tools.InnoSetup;
 using Cake.Common.Tools.ReportGenerator;
 using Cake.Core;
 using Cake.Core.Diagnostics;
@@ -18,6 +21,7 @@ using Cake.Frosting;
 #pragma warning disable RCS1060 // Declare each type in a separate file.
 #pragma warning disable S3903 // Types should be defined in named namespaces.
 #pragma warning disable SA1402 // File may only contain a single type.
+#pragma warning disable SA1600 // Elements should be documented.
 
 public static class Program
 {
@@ -27,6 +31,7 @@ public static class Program
             .UseContext<BuildContext>()
             .SetToolPath(new DirectoryPath("../").Combine("tools"))
             .InstallTool(new Uri("nuget:?package=ReportGenerator&version=4.8.11"))
+            .InstallTool(new Uri("nuget:?package=Tools.InnoSetup&version=6.2.0"))
             .Run(args);
     }
 }
@@ -42,6 +47,8 @@ public class BuildContext : FrostingContext
         // Variables
         ProjectRoot = context.Directory("../");
         SolutionPath = ProjectRoot + context.File($"{ProjectName}.sln");
+        GUIProjectName = context.Directory($"{ProjectName}.GUI");
+        InnoSetupScriptPath = ProjectRoot + context.File($"{ProjectName}.iss");
     }
 
     public string ProjectName { get; } = "TotalMixVC";
@@ -55,6 +62,10 @@ public class BuildContext : FrostingContext
     public ConvertableDirectoryPath ProjectRoot { get; }
 
     public ConvertableFilePath SolutionPath { get; }
+
+    public ConvertableDirectoryPath GUIProjectName { get; }
+
+    public ConvertableFilePath InnoSetupScriptPath { get; }
 }
 
 [TaskName("Clean")]
@@ -141,13 +152,42 @@ public class TestTask : FrostingTask<BuildContext>
             targetDir: coveragePath,
             settings: new ReportGeneratorSettings
             {
-                ReportTypes = new[] { ReportGeneratorReportType.Html }
+                ReportTypes = new ReportGeneratorReportType[] { ReportGeneratorReportType.Html }
+            });
+    }
+}
+
+[TaskName("Distribute")]
+[IsDependentOn(typeof(TestTask))]
+public class DistributeTask : FrostingTask<BuildContext>
+{
+    public override void Run(BuildContext context)
+    {
+        context.Log.Information("Publishing a distrutable version of the application");
+        context.DotNetCorePublish(
+            project: context.ProjectRoot + context.Directory("source") + context.GUIProjectName,
+            settings: new DotNetCorePublishSettings
+            {
+                Configuration = context.BuildConfiguration
+            });
+
+        context.Log.Information("Building the Inno Setup installer");
+        context.Log.Information(context.InnoSetupScriptPath);
+        context.InnoSetup(
+            scriptFile: context.InnoSetupScriptPath,
+            settings: new InnoSetupSettings
+            {
+                OutputDirectory = context.ProjectRoot + context.Directory("artifacts"),
+                Defines = new Dictionary<string, string>
+                {
+                    { "AppBuildConfiguration", context.BuildConfiguration }
+                }
             });
     }
 }
 
 [TaskName("Default")]
-[IsDependentOn(typeof(TestTask))]
+[IsDependentOn(typeof(DistributeTask))]
 public class DefaultTask : FrostingTask
 {
 }
