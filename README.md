@@ -20,6 +20,11 @@ When the volume is changed, a volume indicator will appear in the top left of yo
 
 ![Volume Indicator](https://raw.githubusercontent.com/fgimian/totalmix-volume-control/main/images/VolumeIndicator.png)
 
+If you hover over the tray icon, a tooltip will appear that indicates the health of the connection
+with your device.
+
+![Tray Tooltip](https://raw.githubusercontent.com/fgimian/totalmix-volume-control/main/images/TrayTooltip.png)
+
 ## Configuring TotalMixFX
 
 1. Open TotalMixFX
