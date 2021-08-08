@@ -203,7 +203,7 @@ public class DistributeTask : FrostingTask<BuildContext>
                 Defines = new Dictionary<string, string>
                 {
                     { "AppVersion", version.FullSemVer },
-                    { "AppBuildConfiguration", context.BuildConfiguration },
+                    { "AppBuildConfiguration", context.BuildConfiguration }
                 }
             });
     }
