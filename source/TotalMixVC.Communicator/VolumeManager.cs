@@ -135,18 +135,15 @@ namespace TotalMixVC.Communicator
         /// <returns>The task object representing the asynchronous operation.</returns>
         public async Task GetDeviceVolumeAsync()
         {
-            while (Volume == -1.0f)
-            {
-                // Send an initial invalid value (-1.0) so that TotalMix can send us the current
-                // volume.
-                await SendCurrentVolumeAsync().ConfigureAwait(false);
+            // Send an initial invalid value (-1.0) so that TotalMix can send us the current
+            // volume.
+            await SendCurrentVolumeAsync().ConfigureAwait(false);
 
-                // Wait up until one second for the current volume to updated by the listener.
-                // If no update is received, the initial value will be resent.
-                for (uint iterations = 0; Volume == -1.0f && iterations < 40; iterations++)
-                {
-                    await Task.Delay(25).ConfigureAwait(false);
-                }
+            // Wait up until one second for the current volume to updated by the listener.
+            // If no update is received, the initial value will be resent.
+            for (uint iterations = 0; Volume == -1.0f && iterations < 40; iterations++)
+            {
+                await Task.Delay(25).ConfigureAwait(false);
             }
         }
 
@@ -204,6 +201,11 @@ namespace TotalMixVC.Communicator
         /// </returns>
         public async Task<bool> IncreaseVolumeAsync(bool fine = false)
         {
+            if (Volume == -1.0f)
+            {
+                return false;
+            }
+
             await _volumeMutex.WaitAsync().ConfigureAwait(false);
             try
             {
@@ -243,6 +245,11 @@ namespace TotalMixVC.Communicator
         /// </returns>
         public async Task<bool> DecreaseVolumeAsync(bool fine = false)
         {
+            if (Volume == -1.0f)
+            {
+                return false;
+            }
+
             await _volumeMutex.WaitAsync().ConfigureAwait(false);
             try
             {

@@ -22,6 +22,8 @@ namespace TotalMixVC.GUI
 
         private Task _volumeReceiveTask;
 
+        private Task _volumeInitializeTask;
+
         private TaskbarIcon _trayIcon;
 
         private TextBlock _trayToolTipStatusTextBlock;
@@ -118,10 +120,14 @@ namespace TotalMixVC.GUI
                 }
             });
 
-            // Ensure we obtain the current device volume before registering hotkeys.
-            Task
-                .Run(async () => await volumeManager.GetDeviceVolumeAsync().ConfigureAwait(false))
-                .Wait();
+            // Obtain the current device volume.
+            _volumeInitializeTask = Task.Run(async () =>
+            {
+                while (_running && volumeManager.Volume == -1.0f)
+                {
+                    await volumeManager.GetDeviceVolumeAsync().ConfigureAwait(false);
+                }
+            });
 
             // Register all the hotkeys for changing the volume.  Note that doing this does not
             // work inside a task so this must be performed in the main method scope.
@@ -164,6 +170,7 @@ namespace TotalMixVC.GUI
         {
             _running = false;
             _volumeReceiveTask.Wait();
+            _volumeInitializeTask.Wait();
             _trayIcon.Dispose();
         }
     }
