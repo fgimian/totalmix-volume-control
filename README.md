@@ -32,14 +32,15 @@ And now verify the following settings (these should be set by default);
 3. Ensure that **In Use** is ticked
 4. Ensure that **Port incoming** is set to **7001**
 5. Ensure that **Port outgoing** is set to **9001**
+6. Ensure that **IP or Host Name** is set to **127.0.0.1**
 
 ## Building the Application
 
 You'll need to download and extract the source code from GitHub or clone the Git repository
 and then follow the steps below:
 
-1. Install the **.NET 5.0 SDK** from
-   [Microsoft's Download .NET SDKs](https://dotnet.microsoft.com/download/visual-studio-sdks)
+1. Install the **.NET 5.0 desktop app Runtime** from
+   [Microsoft's Download .NET 5.0 Runtime](https://dotnet.microsoft.com/download/dotnet/5.0/runtime)
    page.
 2. Open a PowerShell prompt and build the project
 

@@ -96,7 +96,8 @@ namespace TotalMixVC.GUI
                                     "2. Enable OSC under Options / Enable OSC Control",
                                     "3. Open Options / Settings and select the OSC tab",
                                     "4. Ensure that Remote Controller Select 1 is In Use",
-                                    "5. Ensure the incoming port is 7001 and outgoing port is 9001"
+                                    "5. Ensure the incoming port is 7001 and outgoing port is 9001",
+                                    "6. Ensure the IP or Host Name is set to 127.0.0.1"
                                 });
                         }));
                         continue;
