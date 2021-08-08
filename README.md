@@ -1,5 +1,9 @@
 # TotalMix Volume Control
 
+[![Build Status](https://dev.azure.com/fgimian/TotalMixVC/_apis/build/status/fgimian.totalmix-volume-control?branchName=main)](https://dev.azure.com/fgimian/TotalMixVC/_build/latest?definitionId=1&branchName=main)
+
+![Logo](https://raw.githubusercontent.com/fgimian/totalmix-volume-control/main/images/Logo.png)
+
 This project uses the OSC protocol to communicate with RME TotalMixFX software and binds
 the volume keys on your keyboard to control the master volume in Windows.
 
