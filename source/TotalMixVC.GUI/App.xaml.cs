@@ -1,8 +1,11 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Hardcodet.Wpf.TaskbarNotification;
 using TotalMixVC.Communicator;
@@ -21,6 +24,8 @@ namespace TotalMixVC.GUI
 
         private TaskbarIcon _trayIcon;
 
+        private TextBlock _trayToolTipStatusTextBlock;
+
         private void App_Startup(object sender, StartupEventArgs e)
         {
             _running = true;
@@ -28,6 +33,16 @@ namespace TotalMixVC.GUI
             _trayIcon = (TaskbarIcon)FindResource("NotifyIcon");
             _trayIcon.Icon = Icon.ExtractAssociatedIcon(
                 Assembly.GetEntryAssembly().ManifestModule.Name);
+
+            // Obtain the tooltip text area so the text may be updated as required while the app
+            // is running.
+            Border trayToolTipBorder = _trayIcon.TrayToolTip as Border;
+            StackPanel trayToolTipStackPanel = trayToolTipBorder.Child as StackPanel;
+            _trayToolTipStatusTextBlock =
+                trayToolTipStackPanel
+                    .Children
+                    .OfType<TextBlock>()
+                    .First(b => b.Name == "Status");
 
             VolumeIndicator volumeIndicator = new();
 
@@ -61,7 +76,39 @@ namespace TotalMixVC.GUI
                 while (_running)
                 {
                     bool initial = volumeManager.Volume == -1.0f;
-                    if (await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false) && !initial)
+                    bool received;
+
+                    try
+                    {
+                        received = await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
+                    }
+                    catch (TimeoutException)
+                    {
+                        Dispatcher.BeginInvoke((Action)(() =>
+                        {
+                            _trayToolTipStatusTextBlock.Text = string.Join(
+                                '\n',
+                                new string[]
+                                {
+                                    "Unable to communicate with your RME device.",
+                                    string.Empty,
+                                    "1. Open TotalMix",
+                                    "2. Enable OSC under Options / Enable OSC Control",
+                                    "3. Open Options / Settings and select the OSC tab",
+                                    "4. Ensure that Remote Controller Select 1 is In Use",
+                                    "5. Ensure the incoming port is 7001 and outgoing port is 9001"
+                                });
+                        }));
+                        continue;
+                    }
+
+                    Dispatcher.BeginInvoke((Action)(() =>
+                    {
+                        _trayToolTipStatusTextBlock.Text =
+                            "Successfully communicating with your RME device.";
+                    }));
+
+                    if (received && !initial)
                     {
                         volumeIndicator.UpdateVolume(
                             volumeManager.Volume, volumeManager.VolumeDecibels);

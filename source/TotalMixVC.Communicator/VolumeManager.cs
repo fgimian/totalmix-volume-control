@@ -169,7 +169,7 @@ namespace TotalMixVC.Communicator
             Task<OscPacket> task = _listener.ReceiveAsync();
             if (await Task.WhenAny(task, Task.Delay(timeout)).ConfigureAwait(false) != task)
             {
-                return false;
+                throw new TimeoutException("No messages received from the device.");
             }
 
             OscPacket packet = task.Result;

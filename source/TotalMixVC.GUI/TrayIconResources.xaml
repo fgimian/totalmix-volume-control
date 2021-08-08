@@ -15,5 +15,35 @@
         <tb:TaskbarIcon.DataContext>
             <local:TrayMenu />
         </tb:TaskbarIcon.DataContext>
+        <tb:TaskbarIcon.TrayToolTip>
+            <Border BorderThickness="15"
+                    BorderBrush="#e21e2328"
+                    CornerRadius="1">
+                <StackPanel Background="#e21e2328">
+                    <!-- Title -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock VerticalAlignment="Center"
+                                   Foreground="White"
+                                   FontWeight="Bold"
+                                   FontSize="15"
+                                   Text="TotalMix ">
+                        </TextBlock>
+                        <TextBlock VerticalAlignment="Center"
+                                   Foreground="#e06464"
+                                   FontSize="15"
+                                   Text="Volume">
+                        </TextBlock>
+                    </StackPanel>
+                    <!-- Status -->
+                    <TextBlock x:Name="Status"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Margin="0 15 0 0"
+                               Foreground="White"
+                               FontSize="14"
+                               Text="TotalMix Volume Manager is initializing." />
+                </StackPanel>
+            </Border>
+        </tb:TaskbarIcon.TrayToolTip>
     </tb:TaskbarIcon>
 </ResourceDictionary>
