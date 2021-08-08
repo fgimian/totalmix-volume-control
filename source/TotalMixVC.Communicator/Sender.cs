@@ -9,7 +9,7 @@ namespace TotalMixVC.Communicator
     /// <summary>
     /// Provides a UDP packet sender for Open Source Control (OSC).
     /// </summary>
-    public class Sender : IDisposable
+    public class Sender : ISender, IDisposable
     {
         private readonly UdpClient _client;
 

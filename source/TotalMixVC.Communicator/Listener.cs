@@ -9,7 +9,7 @@ namespace TotalMixVC.Communicator
     /// <summary>
     /// Provides a UDP receiver for Open Source Control (OSC) traffic.
     /// </summary>
-    public class Listener : IDisposable
+    public class Listener : IListener, IDisposable
     {
         private readonly UdpClient _client;
 
