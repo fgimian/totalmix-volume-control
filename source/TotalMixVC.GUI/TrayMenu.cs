@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using WindowsShortcutFactory;
@@ -14,7 +13,8 @@ namespace TotalMixVC.GUI
     public class TrayMenu
     {
         /// <summary>
-        /// Indicates whether the application will start automatically when Windows starts.
+        /// Gets or sets a value indicating whether the application will start automatically when
+        /// Windows starts.
         /// </summary>
         public bool RunOnStartup
         {
@@ -34,11 +34,7 @@ namespace TotalMixVC.GUI
                     "TotalMix Volume Control.lnk");
                 string appExecutablePath = Process.GetCurrentProcess().MainModule.FileName;
 
-                if (File.Exists(shortcutPath))
-                {
-                    File.Delete(shortcutPath);
-                }
-                else
+                if (value)
                 {
                     using WindowsShortcut shortcut = new()
                     {
@@ -49,6 +45,10 @@ namespace TotalMixVC.GUI
                     };
 
                     shortcut.Save(shortcutPath);
+                }
+                else
+                {
+                    File.Delete(shortcutPath);
                 }
             }
         }
