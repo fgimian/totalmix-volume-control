@@ -163,6 +163,7 @@ namespace TotalMixVC.GUI
         {
             _running = false;
             _volumeReceiveTask.Wait();
+            _trayIcon.Dispose();
         }
     }
 }
