@@ -4,6 +4,10 @@
                     xmlns:local="clr-namespace:TotalMixVC.GUI">
     <!-- Notify Tray Context Menu -->
     <ContextMenu x:Shared="false" x:Key="SysTrayMenu">
+        <MenuItem Header="Run when Windows starts"
+                  IsCheckable="True"
+                  IsChecked="{Binding RunOnStartup, Mode=TwoWay}" />
+        <Separator />
         <MenuItem Header="Exit" Command="{Binding ExitAppCommand}" />
     </ContextMenu>
 

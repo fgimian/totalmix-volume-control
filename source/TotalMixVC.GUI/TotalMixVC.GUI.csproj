@@ -39,6 +39,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <AdditionalFiles Include="..\..\stylecop.json" />
+    <PackageReference Include="WindowsShortcutFactory" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
