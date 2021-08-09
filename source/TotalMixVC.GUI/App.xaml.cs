@@ -125,7 +125,17 @@ namespace TotalMixVC.GUI
             {
                 while (_running && !volumeManager.IsVolumeInitialized)
                 {
-                    await volumeManager.GetDeviceVolumeAsync().ConfigureAwait(false);
+                    await volumeManager.RequestDeviceVolumeAsync().ConfigureAwait(false);
+
+                    // Wait up until one second for the current volume to updated by the listener.
+                    // If no update is received, the initial value will be resent.
+                    for (
+                        uint iterations = 0;
+                        !volumeManager.IsVolumeInitialized && iterations < 40;
+                        iterations++)
+                    {
+                        await Task.Delay(25).ConfigureAwait(false);
+                    }
                 }
             });
 
