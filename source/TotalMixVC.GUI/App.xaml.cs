@@ -77,7 +77,7 @@ namespace TotalMixVC.GUI
             {
                 while (_running)
                 {
-                    bool initial = volumeManager.Volume == -1.0f;
+                    bool initialized = volumeManager.IsVolumeInitialized;
                     bool received;
 
                     try
@@ -111,7 +111,7 @@ namespace TotalMixVC.GUI
                             "Successfully communicating with your RME device.";
                     }));
 
-                    if (received && !initial)
+                    if (received && initialized)
                     {
                         volumeIndicator.UpdateVolume(
                             volumeManager.Volume, volumeManager.VolumeDecibels);
@@ -123,7 +123,7 @@ namespace TotalMixVC.GUI
             // Obtain the current device volume.
             _volumeInitializeTask = Task.Run(async () =>
             {
-                while (_running && volumeManager.Volume == -1.0f)
+                while (_running && !volumeManager.IsVolumeInitialized)
                 {
                     await volumeManager.GetDeviceVolumeAsync().ConfigureAwait(false);
                 }

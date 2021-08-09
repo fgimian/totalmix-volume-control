@@ -128,6 +128,15 @@ namespace TotalMixVC.Communicator
         }
 
         /// <summary>
+        /// Gets a value indicating whether the volume has been obtained from the device at least
+        /// once.
+        /// </summary>
+        public bool IsVolumeInitialized
+        {
+            get => Volume != -1.0f;
+        }
+
+        /// <summary>
         /// Obtain the initial device volume by sending a dummy value and waiting for a response.
         /// This method assumes you are running the <see cref="ReceiveVolumeAsync"/> method in an async
         /// thread.
@@ -141,7 +150,7 @@ namespace TotalMixVC.Communicator
 
             // Wait up until one second for the current volume to updated by the listener.
             // If no update is received, the initial value will be resent.
-            for (uint iterations = 0; Volume == -1.0f && iterations < 40; iterations++)
+            for (uint iterations = 0; !IsVolumeInitialized && iterations < 40; iterations++)
             {
                 await Task.Delay(25).ConfigureAwait(false);
             }
@@ -201,7 +210,7 @@ namespace TotalMixVC.Communicator
         /// </returns>
         public async Task<bool> IncreaseVolumeAsync(bool fine = false)
         {
-            if (Volume == -1.0f)
+            if (!IsVolumeInitialized)
             {
                 return false;
             }
@@ -245,7 +254,7 @@ namespace TotalMixVC.Communicator
         /// </returns>
         public async Task<bool> DecreaseVolumeAsync(bool fine = false)
         {
-            if (Volume == -1.0f)
+            if (!IsVolumeInitialized)
             {
                 return false;
             }
