@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using OscCore;
+using TotalMixVC.Helpers;
 
 namespace TotalMixVC.Communicator
 {
@@ -153,23 +154,33 @@ namespace TotalMixVC.Communicator
         /// <param name="timeout">
         /// The amount of time wo wait for a volume message before giving up.
         /// </param>
+        /// <param name="cancellationTokenSource">
+        /// An optional cancellation token source so the task may be cancelled by the caller while
+        /// attempting to receive data.
+        /// </param>
         /// <returns>
         /// The task object representing the asynchronous operation which will contain a boolean
         /// indicating whether or not the volume was obtained from the device.
         /// </returns>
-        public async Task<bool> ReceiveVolumeAsync(int timeout = 5000)
+        public async Task<bool> ReceiveVolumeAsync(
+            int timeout = 5000, CancellationTokenSource cancellationTokenSource = null)
         {
             // Ping events are sent from the device every around every 1 second, so we only
             // wait until a given timeout of 5 seconds before giving up and forcing a fresh
             // receive request.  This ensures that the receiver can detect a device which was
             // previous offline.
-            Task<OscPacket> task = _listener.ReceiveAsync();
-            if (await Task.WhenAny(task, Task.Delay(timeout)).ConfigureAwait(false) != task)
+            OscPacket packet;
+            try
+            {
+                packet = await _listener
+                    .ReceiveAsync()
+                    .TimeoutAfter<OscPacket>(timeout, cancellationTokenSource)
+                    .ConfigureAwait(false);
+            }
+            catch (TimeoutException)
             {
                 throw new TimeoutException("No messages received from the device.");
             }
-
-            OscPacket packet = task.Result;
 
             // Volume changes are only presented in bundles.
             if (packet is not OscBundle)

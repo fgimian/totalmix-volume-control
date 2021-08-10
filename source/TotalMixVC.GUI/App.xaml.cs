@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,6 +11,7 @@ using System.Windows.Input;
 using Hardcodet.Wpf.TaskbarNotification;
 using TotalMixVC.Communicator;
 using TotalMixVC.GUI.Hotkeys;
+using TotalMixVC.Helpers;
 
 namespace TotalMixVC.GUI
 {
@@ -18,7 +20,7 @@ namespace TotalMixVC.GUI
     /// </summary>
     public partial class App : Application
     {
-        private bool _running = false;
+        private CancellationTokenSource _taskCancellationTokenSource;
 
         private Task _volumeReceiveTask;
 
@@ -30,7 +32,7 @@ namespace TotalMixVC.GUI
 
         private void App_Startup(object sender, StartupEventArgs e)
         {
-            _running = true;
+            _taskCancellationTokenSource = new();
 
             _trayIcon = (TaskbarIcon)FindResource("NotifyIcon");
             _trayIcon.Icon = Icon.ExtractAssociatedIcon(
@@ -75,14 +77,16 @@ namespace TotalMixVC.GUI
             // Start a task that will receive and record volume changes.
             _volumeReceiveTask = Task.Run(async () =>
             {
-                while (_running)
+                while (true)
                 {
                     bool initialized = volumeManager.IsVolumeInitialized;
                     bool received;
 
                     try
                     {
-                        received = await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
+                        received = await volumeManager
+                            .ReceiveVolumeAsync(5000, _taskCancellationTokenSource)
+                            .ConfigureAwait(false);
                     }
                     catch (TimeoutException)
                     {
@@ -104,6 +108,11 @@ namespace TotalMixVC.GUI
                         }));
                         continue;
                     }
+                    catch (OperationCanceledException)
+                    {
+                        // This exception is raised when the app is exited so we exit the loop.
+                        break;
+                    }
 
                     Dispatcher.BeginInvoke((Action)(() =>
                     {
@@ -123,18 +132,37 @@ namespace TotalMixVC.GUI
             // Obtain the current device volume.
             _volumeInitializeTask = Task.Run(async () =>
             {
-                while (_running && !volumeManager.IsVolumeInitialized)
+                while (true)
                 {
+                    // Wait up until one second for the current volume to updated by the listener.
+                    // If no update is received, the volume will be requested again.
                     await volumeManager.RequestDeviceVolumeAsync().ConfigureAwait(false);
 
-                    // Wait up until one second for the current volume to updated by the listener.
-                    // If no update is received, the initial value will be resent.
-                    for (
-                        uint iterations = 0;
-                        !volumeManager.IsVolumeInitialized && iterations < 40;
-                        iterations++)
+                    try
                     {
-                        await Task.Delay(25).ConfigureAwait(false);
+                        await Task
+                            .Run(
+                                async () =>
+                                {
+                                    while (!volumeManager.IsVolumeInitialized)
+                                    {
+                                        await Task.Delay(25).ConfigureAwait(false);
+                                    }
+                                })
+                            .TimeoutAfter(1000, _taskCancellationTokenSource)
+                            .ConfigureAwait(false);
+
+                        break;
+                    }
+                    catch (TimeoutException)
+                    {
+                        // If the volume isn't updated within the given timeout, we continue to
+                        // request the volume.
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        // This exception is raised when the app is exited so we exit the loop.
+                        break;
                     }
                 }
             });
@@ -178,9 +206,10 @@ namespace TotalMixVC.GUI
 
         private void App_Exit(object sender, ExitEventArgs e)
         {
-            _running = false;
+            _taskCancellationTokenSource.Cancel();
             _volumeReceiveTask.Wait();
             _volumeInitializeTask.Wait();
+            _taskCancellationTokenSource.Dispose();
             _trayIcon.Dispose();
         }
     }

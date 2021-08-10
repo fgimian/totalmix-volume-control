@@ -35,4 +35,8 @@
     <AdditionalFiles Include="..\..\stylecop.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TotalMixVC.Helpers\TotalMixVC.Helpers.csproj" />
+  </ItemGroup>
+
 </Project>
