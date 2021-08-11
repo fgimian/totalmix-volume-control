@@ -179,6 +179,12 @@ namespace TotalMixVC.Communicator
             }
             catch (TimeoutException)
             {
+                // Reset the volume back to an initial state so that the caller is forced to
+                // request device volume before continuing as this may have changed while the
+                // device was offline.
+                Volume = -1.0f;
+                VolumeDecibels = null;
+
                 throw new TimeoutException("No messages received from the device.");
             }
 

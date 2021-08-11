@@ -11,7 +11,6 @@ using System.Windows.Input;
 using Hardcodet.Wpf.TaskbarNotification;
 using TotalMixVC.Communicator;
 using TotalMixVC.GUI.Hotkeys;
-using TotalMixVC.Helpers;
 
 namespace TotalMixVC.GUI
 {
@@ -77,19 +76,37 @@ namespace TotalMixVC.GUI
             // Start a task that will receive and record volume changes.
             _volumeReceiveTask = Task.Run(async () =>
             {
+                bool initial = true;
+
                 while (true)
                 {
-                    bool initialized = volumeManager.IsVolumeInitialized;
-                    bool received;
-
                     try
                     {
-                        received = await volumeManager
+                        bool received = await volumeManager
                             .ReceiveVolumeAsync(5000, _taskCancellationTokenSource)
                             .ConfigureAwait(false);
+
+                        if (received)
+                        {
+                            volumeIndicator.UpdateVolume(
+                                volumeManager.Volume, volumeManager.VolumeDecibels);
+
+                            if (!initial)
+                            {
+                                volumeIndicator.DisplayCurrentVolume();
+                            }
+                        }
+
+                        Dispatcher.BeginInvoke((Action)(() =>
+                        {
+                            _trayToolTipStatusTextBlock.Text =
+                                "Successfully communicating with your RME device.";
+                        }));
                     }
                     catch (TimeoutException)
                     {
+                        volumeIndicator.UpdateVolume(volume: 0.0f, volumeDecibels: "-");
+
                         Dispatcher.BeginInvoke((Action)(() =>
                         {
                             _trayToolTipStatusTextBlock.Text = string.Join(
@@ -106,7 +123,6 @@ namespace TotalMixVC.GUI
                                     "6. Ensure the IP or Host Name is set to 127.0.0.1"
                                 });
                         }));
-                        continue;
                     }
                     catch (OperationCanceledException)
                     {
@@ -114,18 +130,7 @@ namespace TotalMixVC.GUI
                         break;
                     }
 
-                    Dispatcher.BeginInvoke((Action)(() =>
-                    {
-                        _trayToolTipStatusTextBlock.Text =
-                            "Successfully communicating with your RME device.";
-                    }));
-
-                    if (received && initialized)
-                    {
-                        volumeIndicator.UpdateVolume(
-                            volumeManager.Volume, volumeManager.VolumeDecibels);
-                        volumeIndicator.DisplayCurrentVolume();
-                    }
+                    initial = false;
                 }
             });
 
@@ -134,30 +139,19 @@ namespace TotalMixVC.GUI
             {
                 while (true)
                 {
-                    // Wait up until one second for the current volume to updated by the listener.
-                    // If no update is received, the volume will be requested again.
-                    await volumeManager.RequestDeviceVolumeAsync().ConfigureAwait(false);
+                    // The volume is uninitialized so it is requested from the device.
+                    if (!volumeManager.IsVolumeInitialized)
+                    {
+                        await volumeManager.RequestDeviceVolumeAsync().ConfigureAwait(false);
+                    }
 
+                    // A volume request was just sent or the volume is already known, so we sleep
+                    // for a second before checking again.
                     try
                     {
                         await Task
-                            .Run(
-                                async () =>
-                                {
-                                    while (!volumeManager.IsVolumeInitialized)
-                                    {
-                                        await Task.Delay(25).ConfigureAwait(false);
-                                    }
-                                })
-                            .TimeoutAfter(1000, _taskCancellationTokenSource)
+                            .Delay(1000, _taskCancellationTokenSource.Token)
                             .ConfigureAwait(false);
-
-                        break;
-                    }
-                    catch (TimeoutException)
-                    {
-                        // If the volume isn't updated within the given timeout, we continue to
-                        // request the volume.
                     }
                     catch (OperationCanceledException)
                     {
