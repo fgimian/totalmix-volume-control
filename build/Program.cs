@@ -140,7 +140,7 @@ public class TestTask : FrostingTask<BuildContext>
             coverletSettings: new CoverletSettings
             {
                 CollectCoverage = true,
-                CoverletOutputFormat = CoverletOutputFormat.json
+                CoverletOutputFormat = CoverletOutputFormat.opencover
             });
 
         context.Log.Information("Generating coverage report using ReportGenerator");
@@ -148,7 +148,7 @@ public class TestTask : FrostingTask<BuildContext>
             pattern: new GlobPattern(
                 context.ProjectRoot
                 + context.Directory("source/**")
-                + context.File("coverage.json")),
+                + context.File("coverage.opencover.xml")),
             targetDir: coveragePath,
             settings: new ReportGeneratorSettings
             {
