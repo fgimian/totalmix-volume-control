@@ -182,8 +182,16 @@ namespace TotalMixVC.Communicator
                 // Reset the volume back to an initial state so that the caller is forced to
                 // request device volume before continuing as this may have changed while the
                 // device was offline.
-                Volume = -1.0f;
-                VolumeDecibels = null;
+                await _volumeMutex.WaitAsync().ConfigureAwait(false);
+                try
+                {
+                    Volume = -1.0f;
+                    VolumeDecibels = null;
+                }
+                finally
+                {
+                    _volumeMutex.Release();
+                }
 
                 throw new TimeoutException("No messages received from the device.");
             }
@@ -338,6 +346,7 @@ namespace TotalMixVC.Communicator
                 && messages[0].Count == 1
                 && messages[1].Count == 1)
             {
+                await _volumeMutex.WaitAsync().ConfigureAwait(false);
                 try
                 {
                     Volume = (float)messages[0][0];
