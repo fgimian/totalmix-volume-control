@@ -147,7 +147,7 @@ namespace TotalMixVC.Communicator.Tests
                     .Returns(Task.FromResult<OscPacket>(new OscBundle(
                         OscTimeTag.Now,
                         new OscMessage("/1/mastervolume", 0.20f),
-                        new OscMessage("/1/mastervolumeVal", "-20 dB"))));
+                        new OscMessage("/1/mastervolumeVal", "-38.2 dB"))));
 
                 VolumeManager volumeManager = new(sender, listener);
 
@@ -157,7 +157,7 @@ namespace TotalMixVC.Communicator.Tests
                 // Assert
                 Assert.True(received);
                 Assert.Equal(0.20f, volumeManager.Volume);
-                Assert.Equal("-20 dB", volumeManager.VolumeDecibels);
+                Assert.Equal("-38.2 dB", volumeManager.VolumeDecibels);
                 Assert.True(volumeManager.IsVolumeInitialized);
             }
 
@@ -171,8 +171,8 @@ namespace TotalMixVC.Communicator.Tests
                     .ReceiveAsync()
                     .Returns(Task.FromResult<OscPacket>(new OscBundle(
                         OscTimeTag.Now,
-                        new OscMessage("/1/mastervolume", "meow"),
-                        new OscMessage("/1/mastervolumeVal", -1.0f))));
+                        new OscMessage("/1/mastervolume", "-38.2 dB"),
+                        new OscMessage("/1/mastervolumeVal", 0.20f))));
 
                 VolumeManager volumeManager = new(sender, listener);
 
@@ -196,10 +196,10 @@ namespace TotalMixVC.Communicator.Tests
                         Task.FromResult<OscPacket>(new OscBundle(
                             OscTimeTag.Now,
                             new OscMessage("/1/mastervolume", 0.20f),
-                            new OscMessage("/1/mastervolumeVal", "-20 dB"))),
+                            new OscMessage("/1/mastervolumeVal", "-38.2 dB"))),
                         Task.FromResult<OscPacket>(new OscBundle(
                             OscTimeTag.Now,
-                            new OscMessage("/1/mastervolumeVal", "-21 dB"))));
+                            new OscMessage("/1/mastervolumeVal", "-40.5 dB"))));
 
                 VolumeManager volumeManager = new(sender, listener);
 
@@ -211,7 +211,7 @@ namespace TotalMixVC.Communicator.Tests
                 Assert.True(received1);
                 Assert.True(received2);
                 Assert.Equal(0.20f, volumeManager.Volume);
-                Assert.Equal("-21 dB", volumeManager.VolumeDecibels);
+                Assert.Equal("-40.5 dB", volumeManager.VolumeDecibels);
                 Assert.True(volumeManager.IsVolumeInitialized);
             }
 
@@ -248,8 +248,8 @@ namespace TotalMixVC.Communicator.Tests
                     .ReceiveAsync()
                     .Returns(Task.FromResult<OscPacket>(new OscBundle(
                         OscTimeTag.Now,
-                        new OscMessage("/1/channel1", 0.20f),
-                        new OscMessage("/1/channel1Val", "-20 dB"))));
+                        new OscMessage("/1/volume1", 0.20f),
+                        new OscMessage("/1/volume1Val", "-38.2 dB"))));
 
                 VolumeManager volumeManager = new(sender, listener);
 
@@ -269,7 +269,8 @@ namespace TotalMixVC.Communicator.Tests
                 IListener listener = Substitute.For<IListener>();
                 listener
                     .ReceiveAsync()
-                    .Returns(Task.FromResult<OscPacket>(new OscMessage("/1/mastervolume", 0.20f)));
+                    .Returns(Task.FromResult<OscPacket>(
+                        new OscMessage("/1/mastervolume", 0.20f)));
 
                 VolumeManager volumeManager = new(sender, listener);
 
@@ -314,7 +315,7 @@ namespace TotalMixVC.Communicator.Tests
                         Task.FromResult<OscPacket>(new OscBundle(
                             OscTimeTag.Now,
                             new OscMessage("/1/mastervolume", 0.20f),
-                            new OscMessage("/1/mastervolumeVal", "-20 dB"))),
+                            new OscMessage("/1/mastervolumeVal", "-38.2 dB"))),
                         Task.FromException<OscPacket>(new TimeoutException("weov")));
 
                 VolumeManager volumeManager = new(sender, listener);
@@ -322,7 +323,7 @@ namespace TotalMixVC.Communicator.Tests
                 // Act & Assert
                 Assert.True(await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false));
                 Assert.Equal(0.20f, volumeManager.Volume);
-                Assert.Equal("-20 dB", volumeManager.VolumeDecibels);
+                Assert.Equal("-38.2 dB", volumeManager.VolumeDecibels);
                 Assert.True(volumeManager.IsVolumeInitialized);
 
                 await Assert
@@ -365,7 +366,7 @@ namespace TotalMixVC.Communicator.Tests
                     .Returns(Task.FromResult<OscPacket>(new OscBundle(
                         OscTimeTag.Now,
                         new OscMessage("/1/mastervolume", 0.20f),
-                        new OscMessage("/1/mastervolumeVal", "-20 dB"))));
+                        new OscMessage("/1/mastervolumeVal", "-38.2 dB"))));
 
                 VolumeManager volumeManager = new(sender, listener)
                 {
@@ -400,7 +401,7 @@ namespace TotalMixVC.Communicator.Tests
                     .Returns(Task.FromResult<OscPacket>(new OscBundle(
                         OscTimeTag.Now,
                         new OscMessage("/1/mastervolume", 0.48f),
-                        new OscMessage("/1/mastervolumeVal", "-20 dB"))));
+                        new OscMessage("/1/mastervolumeVal", "-13.3 dB"))));
 
                 VolumeManager volumeManager = new(sender, listener)
                 {
@@ -436,7 +437,7 @@ namespace TotalMixVC.Communicator.Tests
                     .Returns(Task.FromResult<OscPacket>(new OscBundle(
                         OscTimeTag.Now,
                         new OscMessage("/1/mastervolume", 0.50f),
-                        new OscMessage("/1/mastervolumeVal", "-20 dB"))));
+                        new OscMessage("/1/mastervolumeVal", "-12.1 dB"))));
 
                 VolumeManager volumeManager = new(sender, listener)
                 {
@@ -484,7 +485,7 @@ namespace TotalMixVC.Communicator.Tests
                     .Returns(Task.FromResult<OscPacket>(new OscBundle(
                         OscTimeTag.Now,
                         new OscMessage("/1/mastervolume", 0.20f),
-                        new OscMessage("/1/mastervolumeVal", "-20 dB"))));
+                        new OscMessage("/1/mastervolumeVal", "-38.2 dB"))));
 
                 VolumeManager volumeManager = new(sender, listener)
                 {
@@ -507,7 +508,7 @@ namespace TotalMixVC.Communicator.Tests
                     .ConfigureAwait(false);
 
                 Assert.True(updated);
-                Assert.Equal(0.21f, volumeManager.Volume, precision: 2);
+                Assert.Equal(0.21000001f, volumeManager.Volume);
             }
         }
 
@@ -543,7 +544,7 @@ namespace TotalMixVC.Communicator.Tests
                     .Returns(Task.FromResult<OscPacket>(new OscBundle(
                         OscTimeTag.Now,
                         new OscMessage("/1/mastervolume", 0.20f),
-                        new OscMessage("/1/mastervolumeVal", "-20 dB"))));
+                        new OscMessage("/1/mastervolumeVal", "-38.2 dB"))));
 
                 VolumeManager volumeManager = new(sender, listener)
                 {
@@ -578,7 +579,7 @@ namespace TotalMixVC.Communicator.Tests
                     .Returns(Task.FromResult<OscPacket>(new OscBundle(
                         OscTimeTag.Now,
                         new OscMessage("/1/mastervolume", 0.02f),
-                        new OscMessage("/1/mastervolumeVal", "-20 dB"))));
+                        new OscMessage("/1/mastervolumeVal", "-62.0 dB"))));
 
                 VolumeManager volumeManager = new(sender, listener)
                 {
@@ -613,7 +614,7 @@ namespace TotalMixVC.Communicator.Tests
                     .Returns(Task.FromResult<OscPacket>(new OscBundle(
                         OscTimeTag.Now,
                         new OscMessage("/1/mastervolume", 0.00f),
-                        new OscMessage("/1/mastervolumeVal", "-20 dB"))));
+                        new OscMessage("/1/mastervolumeVal", "-oo"))));
 
                 VolumeManager volumeManager = new(sender, listener)
                 {
@@ -661,7 +662,7 @@ namespace TotalMixVC.Communicator.Tests
                     .Returns(Task.FromResult<OscPacket>(new OscBundle(
                         OscTimeTag.Now,
                         new OscMessage("/1/mastervolume", 0.20f),
-                        new OscMessage("/1/mastervolumeVal", "-20 dB"))));
+                        new OscMessage("/1/mastervolumeVal", "-38.2 dB"))));
 
                 VolumeManager volumeManager = new(sender, listener)
                 {
@@ -684,7 +685,7 @@ namespace TotalMixVC.Communicator.Tests
                     .ConfigureAwait(false);
 
                 Assert.True(updated);
-                Assert.Equal(0.19f, volumeManager.Volume, precision: 2);
+                Assert.Equal(0.19f, volumeManager.Volume);
             }
         }
     }
