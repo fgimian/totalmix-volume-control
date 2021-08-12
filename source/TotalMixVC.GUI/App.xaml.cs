@@ -82,8 +82,10 @@ namespace TotalMixVC.GUI
                 {
                     try
                     {
+                        // The device sends a ping roughly every 2 seconds (usually a pinch over
+                        // 2 seconds), so we'll timeout at 3 seconds to be on the safe side.
                         bool received = await volumeManager
-                            .ReceiveVolumeAsync(5000, _taskCancellationTokenSource)
+                            .ReceiveVolumeAsync(3000, _taskCancellationTokenSource)
                             .ConfigureAwait(false);
 
                         if (received)
