@@ -13,7 +13,17 @@ You may see the [related thread on the RME forums](https://forum.rme-audio.de/vi
 and the [thread on the Gearspace forums](https://gearspace.com/board/music-computers/1358200-my-new-little-open-source-project-rme-totalmix-volume-control-windows.html)
 for a discussion about the tool.
 
-The keyboard bindings are as follows:
+## Getting Started
+
+### Downloading the Installer
+
+You may download the latest release from the
+[releases page](https://github.com/fgimian/totalmix-volume-control/releases).  Simply expand the
+**Assets** item under the latest release and download the release installer.
+
+### Usage
+
+After starting the application, the keyboard shortcut bindings are enabled:
 
 * **Volume Up / Down**: Increase or decrease the volume by 1% respectively.
 * **Shift + Volume Up / Down**: Increase or decrease the volume by 0.5% respectively
@@ -31,21 +41,22 @@ with your device.
 
 ![Tray Tooltip](https://raw.githubusercontent.com/fgimian/totalmix-volume-control/main/images/TrayTooltip.png)
 
-## Configuring TotalMixFX
+### Configuring TotalMixFX
+
+The following instructions will be provided when you hover over the tray icon in the case that
+there is a communication issue with your device.  However, I provide them here for your convenience
+also:
 
 1. Open TotalMixFX
 2. Tick **Options** / **Enable OSC Control**
+3. Open **Options** / **Settings** and select the **OSC** tab
+4. Ensure **Remote Controller Select** is set to **1**
+5. Ensure that **In Use** is ticked
+6. Ensure that **Port incoming** is set to **7001**
+7. Ensure that **Port outgoing** is set to **9001**
+8. Ensure that **IP or Host Name** is set to **127.0.0.1**
 
-And now verify the following settings (these should be set by default);
-
-1. Open **Options** / **Settings**
-2. Click the **OSC** tab and ensure **Remote Controller Select** is set to **1**
-3. Ensure that **In Use** is ticked
-4. Ensure that **Port incoming** is set to **7001**
-5. Ensure that **Port outgoing** is set to **9001**
-6. Ensure that **IP or Host Name** is set to **127.0.0.1**
-
-## Building the Application
+## Building from Source
 
 You'll need to download and extract the source code from GitHub or clone the Git repository
 and then follow the steps below:
@@ -56,17 +67,11 @@ and then follow the steps below:
 2. Open a PowerShell prompt and build the project
 
     ```powershell
-    cd ~/Downloads/totalmix-volume-control
+    cd ~\Downloads\totalmix-volume-control
     .\build.ps1 --target Distribute --configuration Release
     ```
 
 3. You'll now find an installer under the **artifacts** sub-directory
-
-## Running the Application
-
-You may simply execute the program which will run in the system tray and watch for your keystrokes.
-A volume indicator will appear anytime you change the volume via your keyboard or your RME
-hardware.
 
 ## License
 
