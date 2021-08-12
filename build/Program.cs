@@ -45,23 +45,11 @@ public class BuildContext : FrostingContext
     {
         // Arguments
         BuildConfiguration = context.Argument<string>("configuration", "Debug");
-        CoverageFormat = context.Argument<string>("coverage-format", "lcov");
 
         // Variables
         ProjectRoot = context.Directory("../");
         SolutionPath = ProjectRoot + context.File($"{ProjectName}.sln");
         GUIProjectName = context.Directory($"{ProjectName}.GUI");
-
-        if (string.Compare(CoverageFormat, "cobertura", ignoreCase: true) == 0)
-        {
-            CoverletOutputFormat = CoverletOutputFormat.cobertura;
-            CoverletReportFilename = "coverage.cobertura.xml";
-        }
-        else
-        {
-            CoverletOutputFormat = CoverletOutputFormat.lcov;
-            CoverletReportFilename = "coverage.info";
-        }
 
         InnoSetupScriptPath = ProjectRoot + context.File($"{ProjectName}.iss");
     }
@@ -72,17 +60,11 @@ public class BuildContext : FrostingContext
 
     public string BuildConfiguration { get; }
 
-    public string CoverageFormat { get; }
-
     public ConvertableDirectoryPath ProjectRoot { get; }
 
     public ConvertableFilePath SolutionPath { get; }
 
     public ConvertableDirectoryPath GUIProjectName { get; }
-
-    public CoverletOutputFormat CoverletOutputFormat { get; }
-
-    public string CoverletReportFilename { get; }
 
     public ConvertableFilePath InnoSetupScriptPath { get; }
 }
@@ -158,7 +140,7 @@ public class TestTask : FrostingTask<BuildContext>
             coverletSettings: new CoverletSettings
             {
                 CollectCoverage = true,
-                CoverletOutputFormat = context.CoverletOutputFormat
+                CoverletOutputFormat = CoverletOutputFormat.json
             });
 
         context.Log.Information("Generating coverage report using ReportGenerator");
@@ -166,11 +148,16 @@ public class TestTask : FrostingTask<BuildContext>
             pattern: new GlobPattern(
                 context.ProjectRoot
                 + context.Directory("source/**")
-                + context.File(context.CoverletReportFilename)),
+                + context.File("coverage.json")),
             targetDir: coveragePath,
             settings: new ReportGeneratorSettings
             {
-                ReportTypes = new ReportGeneratorReportType[] { ReportGeneratorReportType.Html }
+                ReportTypes = new ReportGeneratorReportType[]
+                {
+                    ReportGeneratorReportType.Cobertura,
+                    ReportGeneratorReportType.lcov,
+                    ReportGeneratorReportType.Html
+                }
             });
     }
 }

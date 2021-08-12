@@ -21,7 +21,7 @@ steps:
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: 'Cobertura'
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/source/**/coverage.cobertura.xml'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/.coverage/Cobertura.xml'
     pathToSources: '$(System.DefaultWorkingDirectory)/source'
 
 - task: CopyFiles@2
