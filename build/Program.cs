@@ -55,12 +55,10 @@ public class BuildContext : FrostingContext
         if (string.Compare(CoverageFormat, "cobertura", ignoreCase: true) == 0)
         {
             CoverletOutputFormat = CoverletOutputFormat.cobertura;
-            CoverageReportFileName = "cobertura.xml";
         }
         else
         {
             CoverletOutputFormat = CoverletOutputFormat.lcov;
-            CoverageReportFileName = "lcov.info";
         }
 
         InnoSetupScriptPath = ProjectRoot + context.File($"{ProjectName}.iss");
@@ -81,8 +79,6 @@ public class BuildContext : FrostingContext
     public ConvertableDirectoryPath GUIProjectName { get; }
 
     public CoverletOutputFormat CoverletOutputFormat { get; }
-
-    public string CoverageReportFileName { get; }
 
     public ConvertableFilePath InnoSetupScriptPath { get; }
 }
@@ -144,8 +140,6 @@ public class TestTask : FrostingTask<BuildContext>
     {
         ConvertableDirectoryPath coveragePath =
             context.ProjectRoot + context.Directory(context.CoverageDirectoryName);
-        ConvertableFilePath coverageReportPath =
-            coveragePath + context.File(context.CoverageReportFileName);
 
         context.Log.Information("Running unit tests and collecting test coverage with Coverlet");
         context.DotNetCoreTest(
@@ -160,14 +154,13 @@ public class TestTask : FrostingTask<BuildContext>
             coverletSettings: new CoverletSettings
             {
                 CollectCoverage = true,
-                CoverletOutputFormat = context.CoverletOutputFormat,
-                CoverletOutputDirectory = coveragePath,
-                CoverletOutputName = context.CoverageReportFileName
+                CoverletOutputFormat = context.CoverletOutputFormat
             });
 
         context.Log.Information("Generating coverage report using ReportGenerator");
         context.ReportGenerator(
-            report: coverageReportPath,
+            pattern: new GlobPattern(
+                context.ProjectRoot + context.Directory("source/**/coverage.info")),
             targetDir: coveragePath,
             settings: new ReportGeneratorSettings
             {
