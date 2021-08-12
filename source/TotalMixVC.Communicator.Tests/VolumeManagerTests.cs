@@ -112,7 +112,7 @@ namespace TotalMixVC.Communicator.Tests
         public class RequestDeviceVolumeAsync
         {
             [Fact]
-            public async Task RegularRequest_RequestsVolumeAsync()
+            public async Task RegularRequest_RequestsVolume_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -137,7 +137,7 @@ namespace TotalMixVC.Communicator.Tests
         public class ReceiveVolumeAsync
         {
             [Fact]
-            public async Task ReceivedBoth_UpdatesVolumeAsync()
+            public async Task ReceivesBoth_UpdatesVolume_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -162,7 +162,7 @@ namespace TotalMixVC.Communicator.Tests
             }
 
             [Fact]
-            public async Task ReceivedBothInvalid_DoesNotReceiveResultAsync()
+            public async Task ReceivesBothInvalid_DoesNotReceiveResult_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -185,7 +185,7 @@ namespace TotalMixVC.Communicator.Tests
             }
 
             [Fact]
-            public async Task ReceivedDecibelsOnly_UpdatesVolumeAsync()
+            public async Task ReceivesDecibelsOnly_UpdatesVolume_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -216,7 +216,7 @@ namespace TotalMixVC.Communicator.Tests
             }
 
             [Fact]
-            public async Task ReceivedDecibelsOnlyInvalid_DoesNotReceiveResultAsync()
+            public async Task ReceivesDecibelsOnlyInvalid_DoesNotReceiveResult_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -239,7 +239,7 @@ namespace TotalMixVC.Communicator.Tests
             }
 
             [Fact]
-            public async Task ReceivedOtherVolume_DoesNotReceiveResultAsync()
+            public async Task ReceivesOtherVolume_DoesNotReceiveResult_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -262,7 +262,7 @@ namespace TotalMixVC.Communicator.Tests
             }
 
             [Fact]
-            public async Task IncorrectPacketType_DoesNotReceiveResultAsync()
+            public async Task IncorrectPacketType_DoesNotReceiveResult_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -283,7 +283,7 @@ namespace TotalMixVC.Communicator.Tests
             }
 
             [Fact]
-            public async Task PacketMalformed_DoesNotReceiveResultAsync()
+            public async Task PacketMalformed_DoesNotReceiveResult_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -304,7 +304,7 @@ namespace TotalMixVC.Communicator.Tests
             }
 
             [Fact]
-            public async Task Timeout_ThrowsExceptionAndResetsVolumeAsync()
+            public async Task Timeout_ThrowsExceptionAndResetsVolume_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -337,7 +337,7 @@ namespace TotalMixVC.Communicator.Tests
         public class IncreaseVolumeAsync
         {
             [Fact]
-            public async Task RegularVolumeNotInitialized_DoesNotUpdateVolumeAsync()
+            public async Task RegularVolumeNotInitialized_DoesNotUpdateVolume_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -356,7 +356,7 @@ namespace TotalMixVC.Communicator.Tests
             }
 
             [Fact]
-            public async Task RegularAfterVolumeInitialized_UpdatesVolumeAsync()
+            public async Task RegularAfterVolumeInitialized_UpdatesVolume_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -391,7 +391,7 @@ namespace TotalMixVC.Communicator.Tests
             }
 
             [Fact]
-            public async Task RegularExceedsMax_IsCappedAndUpdatesVolumeAsync()
+            public async Task RegularExceedsMax_IsCappedAndUpdatesVolume_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -427,7 +427,7 @@ namespace TotalMixVC.Communicator.Tests
             }
 
             [Fact]
-            public async Task RegularAlreadyMax_DoesNotUpdateVolumeAsync()
+            public async Task RegularAlreadyMax_DoesNotUpdateVolume_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -454,7 +454,7 @@ namespace TotalMixVC.Communicator.Tests
             }
 
             [Fact]
-            public async Task FineVolumeNotInitialized_DoesNotUpdateVolumeAsync()
+            public async Task FineVolumeNotInitialized_DoesNotUpdateVolume_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -475,7 +475,7 @@ namespace TotalMixVC.Communicator.Tests
             }
 
             [Fact]
-            public async Task FineAfterVolumeInitialized_UpdatesVolumeAsync()
+            public async Task FineAfterVolumeInitialized_UpdatesVolume_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -515,7 +515,7 @@ namespace TotalMixVC.Communicator.Tests
         public class DecreaseVolumeAsync
         {
             [Fact]
-            public async Task RegularVolumeNotInitialized_DoesNotUpdateVolumeAsync()
+            public async Task RegularVolumeNotInitialized_DoesNotUpdateVolume_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -534,7 +534,7 @@ namespace TotalMixVC.Communicator.Tests
             }
 
             [Fact]
-            public async Task RegularAfterVolumeInitialized_UpdatesVolumeAsync()
+            public async Task RegularAfterVolumeInitialized_UpdatesVolume_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -569,7 +569,7 @@ namespace TotalMixVC.Communicator.Tests
             }
 
             [Fact]
-            public async Task RegularBelowSilent_IsSetToSilentAndUpdatesVolumeAsync()
+            public async Task RegularBelowSilent_IsSetToSilentAndUpdatesVolume_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -604,7 +604,7 @@ namespace TotalMixVC.Communicator.Tests
             }
 
             [Fact]
-            public async Task RegularAlreadySilent_DoesNotUpdateVolumeAsync()
+            public async Task RegularAlreadySilent_DoesNotUpdateVolume_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -631,7 +631,7 @@ namespace TotalMixVC.Communicator.Tests
             }
 
             [Fact]
-            public async Task FineVolumeNotInitialized_DoesNotUpdateVolumeAsync()
+            public async Task FineVolumeNotInitialized_DoesNotUpdateVolume_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();
@@ -652,7 +652,7 @@ namespace TotalMixVC.Communicator.Tests
             }
 
             [Fact]
-            public async Task FineAfterVolumeInitialized_UpdatesVolumeAsync()
+            public async Task FineAfterVolumeInitialized_UpdatesVolume_Async()
             {
                 // Arrange
                 ISender sender = Substitute.For<ISender>();

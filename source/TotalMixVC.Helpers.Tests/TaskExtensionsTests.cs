@@ -9,7 +9,7 @@ namespace TotalMixVC.Helpers.Tests
     public class TaskExtensionsTests
     {
         [Fact]
-        public async Task TimeoutAfter_TaskCompletes_NoExceptionIsRaisedAsync()
+        public async Task TimeoutAfter_Completes_DoesNotThrowException_Async()
         {
             // Arrange
             bool completed = false;
@@ -27,7 +27,7 @@ namespace TotalMixVC.Helpers.Tests
         }
 
         [Fact]
-        public async Task TimeoutAfter_OnTimeout_ThrowsExceptionAsync()
+        public async Task TimeoutAfter_TimesOut_ThrowsException_Async()
         {
             // Arrange
             bool completed = false;
@@ -48,7 +48,7 @@ namespace TotalMixVC.Helpers.Tests
         }
 
         [Fact]
-        public async Task TimeoutAfter_OnCancellation_ThrowsExceptionAsync()
+        public async Task TimeoutAfter_Cancellation_ThrowsException_Async()
         {
             // Arrange
             using CancellationTokenSource cancellationTokenSource = new();
@@ -82,7 +82,7 @@ namespace TotalMixVC.Helpers.Tests
 
 
         [Fact]
-        public async Task TimeoutAfter_OnTaskWithReturn_ReturnsValueAsync()
+        public async Task TimeoutAfter_CompletesWithReturn_ReturnsValue_Async()
         {
             // Arrange
             bool completed = false;
@@ -102,7 +102,7 @@ namespace TotalMixVC.Helpers.Tests
         }
 
         [Fact]
-        public async Task TimeoutAfter_OnTimeoutWithReturn_ThrowsExceptionAsync()
+        public async Task TimeoutAfter_TimesOutWithReturn_ThrowsException_Async()
         {
             // Arrange
             bool completed = false;
@@ -124,7 +124,7 @@ namespace TotalMixVC.Helpers.Tests
         }
 
         [Fact]
-        public async Task TimeoutAfter_OnCancellationWithReturn_ThrowsExceptionAsync()
+        public async Task TimeoutAfter_CancellationWithReturn_ThrowsException_Async()
         {
             // Arrange
             using CancellationTokenSource cancellationTokenSource = new();
