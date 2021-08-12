@@ -16,7 +16,6 @@ using Cake.Core.IO;
 using Cake.Coverlet;
 using Cake.Frosting;
 
-// Ignore all warnings relating to namespaces as the build program doesn't need one.
 #pragma warning disable CA1050 // Declare types in namespaces.
 #pragma warning disable RCS1110 // Declare type inside namespace.
 #pragma warning disable RCS1060 // Declare each type in a separate file.
@@ -50,7 +49,6 @@ public class BuildContext : FrostingContext
         ProjectRoot = context.Directory("../");
         SolutionPath = ProjectRoot + context.File($"{ProjectName}.sln");
         GUIProjectName = context.Directory($"{ProjectName}.GUI");
-
         InnoSetupScriptPath = ProjectRoot + context.File($"{ProjectName}.iss");
     }
 
@@ -180,7 +178,6 @@ public class DistributeTask : FrostingTask<BuildContext>
         GitVersion version = context.GitVersion();
 
         context.Log.Information($"Building the Inno Setup installer for v{version.FullSemVer}");
-        context.Log.Information(context.InnoSetupScriptPath);
         context.InnoSetup(
             scriptFile: context.InnoSetupScriptPath,
             settings: new InnoSetupSettings
