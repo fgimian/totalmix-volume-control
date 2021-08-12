@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using TotalMixVC.Helpers;
 using Xunit;
 
 namespace TotalMixVC.Helpers.Tests
@@ -78,8 +77,6 @@ namespace TotalMixVC.Helpers.Tests
             Assert.False(completed);
             await cancelTask.ConfigureAwait(false);
         }
-
-
 
         [Fact]
         public async Task TimeoutAfter_CompletesWithReturn_ReturnsValue_Async()
