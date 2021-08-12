@@ -177,6 +177,12 @@ namespace TotalMixVC.Communicator
                     .TimeoutAfter<OscPacket>(timeout, cancellationTokenSource)
                     .ConfigureAwait(false);
             }
+            catch (OscException)
+            {
+                // An incomplete packet may be received if the device goes offline during
+                // transmission of the message.
+                return false;
+            }
             catch (TimeoutException)
             {
                 // Reset the volume back to an initial state so that the caller is forced to
