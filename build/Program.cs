@@ -55,10 +55,12 @@ public class BuildContext : FrostingContext
         if (string.Compare(CoverageFormat, "cobertura", ignoreCase: true) == 0)
         {
             CoverletOutputFormat = CoverletOutputFormat.cobertura;
+            CoverletReportFilename = "coverage.cobertura.xml";
         }
         else
         {
             CoverletOutputFormat = CoverletOutputFormat.lcov;
+            CoverletReportFilename = "coverage.info";
         }
 
         InnoSetupScriptPath = ProjectRoot + context.File($"{ProjectName}.iss");
@@ -79,6 +81,8 @@ public class BuildContext : FrostingContext
     public ConvertableDirectoryPath GUIProjectName { get; }
 
     public CoverletOutputFormat CoverletOutputFormat { get; }
+
+    public string CoverletReportFilename { get; }
 
     public ConvertableFilePath InnoSetupScriptPath { get; }
 }
@@ -160,7 +164,9 @@ public class TestTask : FrostingTask<BuildContext>
         context.Log.Information("Generating coverage report using ReportGenerator");
         context.ReportGenerator(
             pattern: new GlobPattern(
-                context.ProjectRoot + context.Directory("source/**/coverage.info")),
+                context.ProjectRoot
+                + context.Directory("source/**")
+                + context.File(context.CoverletReportFilename)),
             targetDir: coveragePath,
             settings: new ReportGeneratorSettings
             {
