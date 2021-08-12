@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,9 +26,9 @@ namespace TotalMixVC.Communicator
 
         private readonly SemaphoreSlim _volumeMutex;
 
-        private readonly Sender _sender;
+        private readonly ISender _sender;
 
-        private readonly Listener _listener;
+        private readonly IListener _listener;
 
         private float _volumeRegularIncrement;
 
@@ -46,11 +47,24 @@ namespace TotalMixVC.Communicator
         /// The incoming OSC endpoint to receive volume changes from.  This should be set to the
         /// outgoing port in TotalMix settings.
         /// </param>
+        [ExcludeFromCodeCoverage]
         public VolumeManager(IPEndPoint outgoingEP, IPEndPoint incomingEP)
         {
             _volumeMutex = new SemaphoreSlim(1);
             _sender = new Sender(outgoingEP);
             _listener = new Listener(incomingEP);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VolumeManager"/> class.
+        /// </summary>
+        /// <param name="sender">A custom sender that implements the ISender interface.</param>
+        /// <param name="listener">A custom listener that implements the ISender interface.</param>
+        public VolumeManager(ISender sender, IListener listener)
+        {
+            _volumeMutex = new SemaphoreSlim(1);
+            _sender = sender;
+            _listener = listener;
         }
 
         /// <summary>

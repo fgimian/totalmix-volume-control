@@ -253,3 +253,6 @@ roslynator.max_line_length = 100
 [**/obj/**.cs]
 # Ignore unused using statements in generated code.
 dotnet_diagnostic.CS8019.severity = none
+
+[**/*Tests.cs]
+dotnet_diagnostic.SA1600.severity = none

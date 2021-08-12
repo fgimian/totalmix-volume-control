@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace TotalMixVC.Communicator
     /// <summary>
     /// Provides a UDP receiver for Open Source Control (OSC) traffic.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class Listener : IListener, IDisposable
     {
         private readonly UdpClient _client;

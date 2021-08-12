@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace TotalMixVC.Communicator
     /// <summary>
     /// Provides a UDP packet sender for Open Source Control (OSC).
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class Sender : ISender, IDisposable
     {
         private readonly UdpClient _client;
