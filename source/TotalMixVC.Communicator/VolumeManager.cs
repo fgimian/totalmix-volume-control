@@ -157,9 +157,9 @@ namespace TotalMixVC.Communicator
         /// <see cref="ReceiveVolumeAsync"/> method in an async thread.
         /// </summary>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        public async Task RequestDeviceVolumeAsync()
+        public Task RequestDeviceVolumeAsync()
         {
-            await SendVolumeAsync(-1.0f).ConfigureAwait(false);
+            return SendVolumeAsync(-1.0f);
         }
 
         /// <summary>
@@ -324,11 +324,9 @@ namespace TotalMixVC.Communicator
             }
         }
 
-        private async Task SendVolumeAsync(float volume)
+        private Task SendVolumeAsync(float volume)
         {
-            await _sender
-                .SendAsync(new OscMessage(VolumeAddress, volume))
-                .ConfigureAwait(false);
+            return _sender.SendAsync(new OscMessage(VolumeAddress, volume));
         }
 
         private async Task<bool> UpdateVolumeFromMessagesAsync(List<OscMessage> messages)
