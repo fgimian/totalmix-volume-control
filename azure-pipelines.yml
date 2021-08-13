@@ -18,6 +18,11 @@ steps:
       --configuration $(buildConfiguration)
       --coverage-format cobertura
 
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: xUnit
+    testResultsFiles: '$(System.DefaultWorkingDirectory)/source/**/TestResults.xml'
+
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: 'Cobertura'

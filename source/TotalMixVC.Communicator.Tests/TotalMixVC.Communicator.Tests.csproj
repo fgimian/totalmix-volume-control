@@ -49,6 +49,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <AdditionalFiles Include="..\..\stylecop.json" />
+    <PackageReference Include="XunitXml.TestLogger" Version="3.0.66" />
   </ItemGroup>
 
   <ItemGroup>

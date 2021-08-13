@@ -131,6 +131,7 @@ public class TestTask : FrostingTask<BuildContext>
             settings: new DotNetCoreTestSettings
             {
                 Configuration = context.BuildConfiguration,
+                Loggers = new string[] { "xunit" },
                 Verbosity = DotNetCoreVerbosity.Normal,
                 NoBuild = true,
                 NoRestore = true
