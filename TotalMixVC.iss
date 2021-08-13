@@ -28,6 +28,7 @@ DefaultDirName={autopf64}\{#AppName}
 DisableProgramGroupPage=yes
 LicenseFile=.\LICENSE
 SetupIconFile=.\{#AppIconPath}
+UninstallDisplayIcon={app}\TotalMixVC.GUI.exe
 OutputDir=.\artifacts
 OutputBaseFilename=TotalMixVCSetup-v{#AppVersion}-{#AppBuildConfiguration}-Installer
 Compression=lzma
