@@ -97,12 +97,16 @@ namespace TotalMixVC.GUI
 
                         if (received)
                         {
-                            volumeIndicator.UpdateVolume(
-                                volumeManager.Volume, volumeManager.VolumeDecibels);
+                            await volumeIndicator
+                                .UpdateVolumeAsync(
+                                    volumeManager.Volume, volumeManager.VolumeDecibels)
+                                .ConfigureAwait(false);
 
                             if (!initial)
                             {
-                                volumeIndicator.DisplayCurrentVolume();
+                                await volumeIndicator
+                                    .DisplayCurrentVolumeAsync()
+                                    .ConfigureAwait(false);
                             }
                         }
 
@@ -113,7 +117,9 @@ namespace TotalMixVC.GUI
                     }
                     catch (TimeoutException)
                     {
-                        volumeIndicator.UpdateVolume(volume: 0.0f, volumeDecibels: "-");
+                        await volumeIndicator
+                            .UpdateVolumeAsync(volume: 0.0f, volumeDecibels: "-")
+                            .ConfigureAwait(false);
 
                         // Switch to the UI thread and update the tray tooltip text.
                         await joinableTaskFactory.SwitchToMainThreadAsync();
@@ -177,7 +183,9 @@ namespace TotalMixVC.GUI
                 async () =>
                 {
                     await volumeManager.IncreaseVolumeAsync().ConfigureAwait(false);
-                    volumeIndicator.DisplayCurrentVolume();
+                    await volumeIndicator
+                        .DisplayCurrentVolumeAsync()
+                        .ConfigureAwait(false);
                 });
 
             hotKeyManager.Register(
@@ -185,7 +193,9 @@ namespace TotalMixVC.GUI
                 async () =>
                 {
                     await volumeManager.DecreaseVolumeAsync().ConfigureAwait(false);
-                    volumeIndicator.DisplayCurrentVolume();
+                    await volumeIndicator
+                        .DisplayCurrentVolumeAsync()
+                        .ConfigureAwait(false);
                 });
 
             hotKeyManager.Register(
@@ -193,7 +203,9 @@ namespace TotalMixVC.GUI
                 async () =>
                 {
                     await volumeManager.IncreaseVolumeAsync(fine: true).ConfigureAwait(false);
-                    volumeIndicator.DisplayCurrentVolume();
+                    await volumeIndicator
+                        .DisplayCurrentVolumeAsync()
+                        .ConfigureAwait(false);
                 });
 
             hotKeyManager.Register(
@@ -201,7 +213,9 @@ namespace TotalMixVC.GUI
                 async () =>
                 {
                     await volumeManager.DecreaseVolumeAsync(fine: true).ConfigureAwait(false);
-                    volumeIndicator.DisplayCurrentVolume();
+                    await volumeIndicator
+                        .DisplayCurrentVolumeAsync()
+                        .ConfigureAwait(false);
                 });
         }
 

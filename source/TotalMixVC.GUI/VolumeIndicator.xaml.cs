@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using Microsoft.VisualStudio.Threading;
 
 namespace TotalMixVC.GUI
 {
@@ -13,12 +15,17 @@ namespace TotalMixVC.GUI
     {
         private readonly DispatcherTimer _closeWindowTimer;
 
+        private readonly JoinableTaskFactory _joinableTaskFactory;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="VolumeIndicator"/> class.
         /// </summary>
         public VolumeIndicator()
         {
             InitializeComponent();
+
+            // Create a task factory for the current thread (which is the UI thread).
+            _joinableTaskFactory = new(new JoinableTaskContext());
 
             // Create the timer that will close the window after not used for a little while.
             _closeWindowTimer = new();
@@ -42,15 +49,19 @@ namespace TotalMixVC.GUI
         /// Displays the volume indicator with the current volume details.  This method may be
         /// safely called from inside an async task.
         /// </summary>
-        public void DisplayCurrentVolume()
+        /// <returns>The task object representing the asynchronous operation.</returns>
+        public async Task DisplayCurrentVolumeAsync()
         {
+            // Switch to the UI thread.
+            await _joinableTaskFactory.SwitchToMainThreadAsync();
+
             // Display the volume indicator with the current volume details.  We use a dispatcher
             // to ensure that this work occurs in the UI thread.
-            Dispatcher.BeginInvoke((Action)(() =>
-            {
-                Storyboard showStoryboard = FindResource("show") as Storyboard;
-                showStoryboard?.Begin(this);
-            }));
+            Storyboard showStoryboard = FindResource("show") as Storyboard;
+            showStoryboard?.Begin(this);
+
+            // Switch to the background thread to avoid UI interruptions.
+            await TaskScheduler.Default;
 
             // Restart the timer to close the window.
             if (_closeWindowTimer.IsEnabled)
@@ -67,14 +78,15 @@ namespace TotalMixVC.GUI
         /// </summary>
         /// <param name="volume">The current volume as a float.</param>
         /// <param name="volumeDecibels">The current volume in decibels as a string.</param>
-        public void UpdateVolume(float volume, string volumeDecibels)
+        /// <returns>The task object representing the asynchronous operation.</returns>
+        public async Task UpdateVolumeAsync(float volume, string volumeDecibels)
         {
-            Dispatcher.BeginInvoke((Action)(() =>
-            {
-                VolumeReadingCurrentRectangle.Width
-                    = (int)(VolumeReadingBackgroundRectangle.ActualWidth * volume);
-                VolumeDecibelsTextBox.Text = volumeDecibels;
-            }));
+            // Switch to the UI thread.
+            await _joinableTaskFactory.SwitchToMainThreadAsync();
+
+            VolumeReadingCurrentRectangle.Width
+                = (int)(VolumeReadingBackgroundRectangle.ActualWidth * volume);
+            VolumeDecibelsTextBox.Text = volumeDecibels;
         }
 
         /// <summary>
