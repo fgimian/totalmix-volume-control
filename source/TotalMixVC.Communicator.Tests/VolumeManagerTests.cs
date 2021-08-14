@@ -39,9 +39,11 @@ namespace TotalMixVC.Communicator.Tests
 
                 VolumeManager volumeManager = new(sender, listener);
 
-                // Act & Assert
-                Assert.Throws<ArgumentException>(
-                    () => volumeManager.VolumeRegularIncrement = volumeRegularIncrement);
+                // Act
+                Action action = () => volumeManager.VolumeRegularIncrement = volumeRegularIncrement;
+
+                // Assert
+                Assert.Throws<ArgumentException>(action);
             }
 
             [Fact]
@@ -72,9 +74,11 @@ namespace TotalMixVC.Communicator.Tests
 
                 VolumeManager volumeManager = new(sender, listener);
 
-                // Act & Assert
-                Assert.Throws<ArgumentException>(
-                    () => volumeManager.VolumeFineIncrement = volumeFineIncrement);
+                // Act
+                Action action = () => volumeManager.VolumeFineIncrement = volumeFineIncrement;
+
+                // Assert
+                Assert.Throws<ArgumentException>(action);
             }
 
             [Fact]
@@ -104,8 +108,11 @@ namespace TotalMixVC.Communicator.Tests
 
                 VolumeManager volumeManager = new(sender, listener);
 
-                // Act & Assert
-                Assert.Throws<ArgumentException>(() => volumeManager.VolumeMax = volumeMax);
+                // Act
+                Action action = () => volumeManager.VolumeMax = volumeMax;
+
+                // Assert
+                Assert.Throws<ArgumentException>(action);
             }
         }
 
@@ -204,12 +211,13 @@ namespace TotalMixVC.Communicator.Tests
                 VolumeManager volumeManager = new(sender, listener);
 
                 // Act
-                bool received1 = await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
-                bool received2 = await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
+                bool receivedBoth = await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
+                bool receivedDecibelsOnly =
+                    await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
 
                 // Assert
-                Assert.True(received1);
-                Assert.True(received2);
+                Assert.True(receivedBoth);
+                Assert.True(receivedDecibelsOnly);
                 Assert.Equal(0.20f, volumeManager.Volume);
                 Assert.Equal("-40.5 dB", volumeManager.VolumeDecibels);
                 Assert.True(volumeManager.IsVolumeInitialized);
@@ -320,16 +328,18 @@ namespace TotalMixVC.Communicator.Tests
 
                 VolumeManager volumeManager = new(sender, listener);
 
-                // Act & Assert
-                Assert.True(await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false));
-                Assert.Equal(0.20f, volumeManager.Volume);
-                Assert.Equal("-38.2 dB", volumeManager.VolumeDecibels);
-                Assert.True(volumeManager.IsVolumeInitialized);
+                // Act
+                bool received = await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
+                bool initializedAfterVolumeReceived = volumeManager.IsVolumeInitialized;
 
-                await Assert
-                    .ThrowsAsync<TimeoutException>(async () =>
-                        await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false))
-                    .ConfigureAwait(false);
+                Func<Task> task = async () =>
+                    await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
+
+                // Assert
+                Assert.True(received);
+                Assert.True(initializedAfterVolumeReceived);
+
+                await Assert.ThrowsAsync<TimeoutException>(task).ConfigureAwait(false);
                 Assert.False(volumeManager.IsVolumeInitialized);
             }
         }

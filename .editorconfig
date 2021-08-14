@@ -256,3 +256,4 @@ dotnet_diagnostic.CS8019.severity = none
 
 [**/*Tests.cs]
 dotnet_diagnostic.SA1600.severity = none
+csharp_style_pattern_local_over_anonymous_function = false
