@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Hardcodet.Wpf.TaskbarNotification;
+using Microsoft.VisualStudio.Threading;
 using TotalMixVC.Communicator;
 using TotalMixVC.GUI.Hotkeys;
 
@@ -73,6 +74,9 @@ namespace TotalMixVC.GUI
                 VolumeFineIncrement = 0.01f
             };
 
+            // Create a task factory for the current thread (which is the UI thread).
+            JoinableTaskFactory joinableTaskFactory = new(new JoinableTaskContext());
+
             // Start a task that will receive and record volume changes.
             _volumeReceiveTask = Task.Run(async () =>
             {
@@ -82,6 +86,9 @@ namespace TotalMixVC.GUI
                 {
                     try
                     {
+                        // Switch to the background thread to avoid UI interruptions.
+                        await TaskScheduler.Default;
+
                         // The device sends a ping roughly every 2 seconds (usually a pinch over
                         // 2 seconds), so we'll timeout at 3 seconds to be on the safe side.
                         bool received = await volumeManager
@@ -99,32 +106,30 @@ namespace TotalMixVC.GUI
                             }
                         }
 
-                        Dispatcher.BeginInvoke((Action)(() =>
-                        {
-                            _trayToolTipStatusTextBlock.Text =
-                                "Successfully communicating with your RME device.";
-                        }));
+                        // Switch to the UI thread and update the tray tooltip text.
+                        await joinableTaskFactory.SwitchToMainThreadAsync();
+                        _trayToolTipStatusTextBlock.Text =
+                            "Successfully communicating with your RME device.";
                     }
                     catch (TimeoutException)
                     {
                         volumeIndicator.UpdateVolume(volume: 0.0f, volumeDecibels: "-");
 
-                        Dispatcher.BeginInvoke((Action)(() =>
-                        {
-                            _trayToolTipStatusTextBlock.Text = string.Join(
-                                '\n',
-                                new string[]
-                                {
-                                    "Unable to communicate with your RME device.",
-                                    string.Empty,
-                                    "1. Open TotalMix",
-                                    "2. Enable OSC under Options / Enable OSC Control",
-                                    "3. Open Options / Settings and select the OSC tab",
-                                    "4. Ensure that Remote Controller Select 1 is In Use",
-                                    "5. Ensure the incoming port is 7001 and outgoing port is 9001",
-                                    "6. Ensure the IP or Host Name is set to 127.0.0.1"
-                                });
-                        }));
+                        // Switch to the UI thread and update the tray tooltip text.
+                        await joinableTaskFactory.SwitchToMainThreadAsync();
+                        _trayToolTipStatusTextBlock.Text = string.Join(
+                            '\n',
+                            new string[]
+                            {
+                                "Unable to communicate with your RME device.",
+                                string.Empty,
+                                "1. Open TotalMix",
+                                "2. Enable OSC under Options / Enable OSC Control",
+                                "3. Open Options / Settings and select the OSC tab",
+                                "4. Ensure that Remote Controller Select 1 is In Use",
+                                "5. Ensure the incoming port is 7001 and outgoing port is 9001",
+                                "6. Ensure the IP or Host Name is set to 127.0.0.1"
+                            });
                     }
                     catch (OperationCanceledException)
                     {
