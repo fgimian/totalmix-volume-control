@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Net;
@@ -22,16 +23,24 @@ namespace TotalMixVC.GUI
     {
         private CancellationTokenSource _taskCancellationTokenSource;
 
-        private Task _volumeReceiveTask;
+        private JoinableTask _volumeReceiveTask;
 
-        private Task _volumeInitializeTask;
+        private JoinableTask _volumeInitializeTask;
 
         private TaskbarIcon _trayIcon;
 
         private TextBlock _trayToolTipStatusTextBlock;
 
-        private void App_Startup(object sender, StartupEventArgs e)
+        private JoinableTaskFactory _joinableTaskFactory;
+
+        /// <summary>
+        /// Starts the various required components after the application startup event is fired.
+        /// </summary>
+        /// <param name="e">The event data.</param>
+        protected override void OnStartup(StartupEventArgs e)
         {
+            base.OnStartup(e);
+
             _taskCancellationTokenSource = new();
 
             _trayIcon = (TaskbarIcon)FindResource("NotifyIcon");
@@ -75,10 +84,10 @@ namespace TotalMixVC.GUI
             };
 
             // Create a task factory for the current thread (which is the UI thread).
-            JoinableTaskFactory joinableTaskFactory = new(new JoinableTaskContext());
+            _joinableTaskFactory = new(new JoinableTaskContext());
 
             // Start a task that will receive and record volume changes.
-            _volumeReceiveTask = Task.Run(async () =>
+            _volumeReceiveTask = _joinableTaskFactory.RunAsync(async () =>
             {
                 bool initial = true;
 
@@ -111,7 +120,7 @@ namespace TotalMixVC.GUI
                         }
 
                         // Switch to the UI thread and update the tray tooltip text.
-                        await joinableTaskFactory.SwitchToMainThreadAsync();
+                        await _joinableTaskFactory.SwitchToMainThreadAsync();
                         _trayToolTipStatusTextBlock.Text =
                             "Successfully communicating with your RME device.";
                     }
@@ -122,7 +131,7 @@ namespace TotalMixVC.GUI
                             .ConfigureAwait(false);
 
                         // Switch to the UI thread and update the tray tooltip text.
-                        await joinableTaskFactory.SwitchToMainThreadAsync();
+                        await _joinableTaskFactory.SwitchToMainThreadAsync();
                         _trayToolTipStatusTextBlock.Text = string.Join(
                             '\n',
                             new string[]
@@ -148,8 +157,11 @@ namespace TotalMixVC.GUI
             });
 
             // Obtain the current device volume.
-            _volumeInitializeTask = Task.Run(async () =>
+            _volumeInitializeTask = _joinableTaskFactory.RunAsync(async () =>
             {
+                // Switch to the background thread to avoid UI interruptions.
+                await TaskScheduler.Default;
+
                 while (true)
                 {
                     // The volume is uninitialized so it is requested from the device.
@@ -180,50 +192,68 @@ namespace TotalMixVC.GUI
 
             hotKeyManager.Register(
                 new Hotkey { KeyModifier = KeyModifier.None, Key = Key.VolumeUp },
-                async () =>
-                {
-                    await volumeManager.IncreaseVolumeAsync().ConfigureAwait(false);
-                    await volumeIndicator
-                        .DisplayCurrentVolumeAsync()
-                        .ConfigureAwait(false);
-                });
+                () => _joinableTaskFactory
+                    .RunAsync(async () =>
+                    {
+                        await volumeManager.IncreaseVolumeAsync().ConfigureAwait(false);
+                        await volumeIndicator
+                            .DisplayCurrentVolumeAsync()
+                            .ConfigureAwait(false);
+                    })
+                    .Join());
 
             hotKeyManager.Register(
                 new Hotkey { KeyModifier = KeyModifier.None, Key = Key.VolumeDown },
-                async () =>
-                {
-                    await volumeManager.DecreaseVolumeAsync().ConfigureAwait(false);
-                    await volumeIndicator
-                        .DisplayCurrentVolumeAsync()
-                        .ConfigureAwait(false);
-                });
+                () => _joinableTaskFactory
+                    .RunAsync(async () =>
+                    {
+                        await volumeManager.DecreaseVolumeAsync().ConfigureAwait(false);
+                        await volumeIndicator
+                            .DisplayCurrentVolumeAsync()
+                            .ConfigureAwait(false);
+                    })
+                    .Join());
 
             hotKeyManager.Register(
                 new Hotkey { KeyModifier = KeyModifier.Shift, Key = Key.VolumeUp },
-                async () =>
-                {
-                    await volumeManager.IncreaseVolumeAsync(fine: true).ConfigureAwait(false);
-                    await volumeIndicator
-                        .DisplayCurrentVolumeAsync()
-                        .ConfigureAwait(false);
-                });
+                () => _joinableTaskFactory
+                    .RunAsync(async () =>
+                    {
+                        await volumeManager.IncreaseVolumeAsync(fine: true).ConfigureAwait(false);
+                        await volumeIndicator
+                            .DisplayCurrentVolumeAsync()
+                            .ConfigureAwait(false);
+                    })
+                    .Join());
 
             hotKeyManager.Register(
                 new Hotkey { KeyModifier = KeyModifier.Shift, Key = Key.VolumeDown },
-                async () =>
-                {
-                    await volumeManager.DecreaseVolumeAsync(fine: true).ConfigureAwait(false);
-                    await volumeIndicator
-                        .DisplayCurrentVolumeAsync()
-                        .ConfigureAwait(false);
-                });
+                () => _joinableTaskFactory
+                    .RunAsync(async () =>
+                    {
+                        await volumeManager.DecreaseVolumeAsync(fine: true).ConfigureAwait(false);
+                        await volumeIndicator
+                            .DisplayCurrentVolumeAsync()
+                            .ConfigureAwait(false);
+                    })
+                    .Join());
         }
 
-        private void App_Exit(object sender, ExitEventArgs e)
+        /// <summary>
+        /// Cleans up the various components after the application exit event is fired.
+        /// </summary>
+        /// <param name="e">The event data.</param>
+        [SuppressMessage(
+            "Usage",
+            "VSTHRD100:Avoid async void methods",
+            Justification = "Event handlers must be async void based on their definition.")]
+        protected override async void OnExit(ExitEventArgs e)
         {
+            base.OnExit(e);
+
             _taskCancellationTokenSource.Cancel();
-            _volumeReceiveTask.Wait();
-            _volumeInitializeTask.Wait();
+            await _volumeReceiveTask;
+            await _volumeInitializeTask;
             _taskCancellationTokenSource.Dispose();
             _trayIcon.Dispose();
         }
