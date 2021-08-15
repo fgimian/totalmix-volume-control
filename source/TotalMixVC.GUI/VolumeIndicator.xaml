@@ -17,13 +17,13 @@
         Topmost="True">
 
     <Window.Resources>
-        <Storyboard x:Key="hide">
+        <Storyboard x:Key="Hide">
             <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="0:0:1" To="0.0"/>
             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility">
                 <DiscreteObjectKeyFrame KeyTime="0:0:1" Value="{x:Static Visibility.Hidden}"/>
             </ObjectAnimationUsingKeyFrames>
         </Storyboard>
-        <Storyboard x:Key="show">
+        <Storyboard x:Key="Show">
             <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="0:0:0" To="1.0"/>
             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility">
                 <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}"/>

@@ -13,9 +13,9 @@ namespace TotalMixVC.GUI
     /// </summary>
     public partial class VolumeIndicator : Window
     {
-        private readonly DispatcherTimer _closeWindowTimer;
-
         private readonly JoinableTaskFactory _joinableTaskFactory;
+
+        private readonly DispatcherTimer _hideWindowTimer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VolumeIndicator"/> class.
@@ -27,22 +27,11 @@ namespace TotalMixVC.GUI
             // Create a task factory for the current thread (which is the UI thread).
             _joinableTaskFactory = new(new JoinableTaskContext());
 
-            // Create the timer that will close the window after not used for a little while.
-            _closeWindowTimer = new();
-            _closeWindowTimer.Interval = TimeSpan.FromSeconds(2.0);
+            // Create the timer that will hide the window after not used for a little while.
+            _hideWindowTimer = new() { Interval = TimeSpan.FromSeconds(2.0) };
 
-            // When the timer elapses, close the window.
-            _closeWindowTimer.Tick += (object sender, EventArgs e) =>
-            {
-                DispatcherTimer timer = (DispatcherTimer)sender;
-                timer.Stop();
-
-                Storyboard hideStoryboard = FindResource("hide") as Storyboard;
-                hideStoryboard?.Begin(this);
-            };
-
-            Storyboard showStoryboard = FindResource("show") as Storyboard;
-            showStoryboard.Completed += (s, e) => Show();
+            // When the timer elapses, hide the window.
+            _hideWindowTimer.Tick += Hide;
         }
 
         /// <summary>
@@ -57,19 +46,19 @@ namespace TotalMixVC.GUI
 
             // Display the volume indicator with the current volume details.  We use a dispatcher
             // to ensure that this work occurs in the UI thread.
-            Storyboard showStoryboard = FindResource("show") as Storyboard;
-            showStoryboard?.Begin(this);
+            Storyboard showStoryboard = FindResource("Show") as Storyboard;
+            showStoryboard.Begin(this);
 
             // Switch to the background thread to avoid UI interruptions.
             await TaskScheduler.Default;
 
-            // Restart the timer to close the window.
-            if (_closeWindowTimer.IsEnabled)
+            // Restart the timer to hide the window after some time.
+            if (_hideWindowTimer.IsEnabled)
             {
-                _closeWindowTimer.Stop();
+                _hideWindowTimer.Stop();
             }
 
-            _closeWindowTimer.Start();
+            _hideWindowTimer.Start();
         }
 
         /// <summary>
@@ -84,6 +73,7 @@ namespace TotalMixVC.GUI
             // Switch to the UI thread.
             await _joinableTaskFactory.SwitchToMainThreadAsync();
 
+            // Update the volume rectangle with the percentage and text box decibel reading.
             VolumeReadingCurrentRectangle.Width
                 = (int)(VolumeReadingBackgroundRectangle.ActualWidth * volume);
             VolumeDecibelsTextBox.Text = volumeDecibels;
@@ -95,7 +85,17 @@ namespace TotalMixVC.GUI
         /// <param name="e">The event data.</param>
         protected override void OnClosing(CancelEventArgs e)
         {
+            // Cancel the close window operation.
             e.Cancel = true;
+        }
+
+        private void Hide(object sender, EventArgs e)
+        {
+            DispatcherTimer timer = (DispatcherTimer)sender;
+            timer.Stop();
+
+            Storyboard hideStoryboard = FindResource("Hide") as Storyboard;
+            hideStoryboard.Begin(this);
         }
     }
 }
