@@ -157,7 +157,7 @@ namespace TotalMixVC.Communicator
         /// <see cref="ReceiveVolumeAsync"/> method in an async thread.
         /// </summary>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        public Task RequestDeviceVolumeAsync()
+        public Task RequestVolumeAsync()
         {
             return SendVolumeAsync(-1.0f);
         }

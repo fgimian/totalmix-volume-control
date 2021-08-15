@@ -116,7 +116,7 @@ namespace TotalMixVC.Communicator.Tests
             }
         }
 
-        public class RequestDeviceVolumeAsync
+        public class RequestVolumeAsync
         {
             [Fact]
             public async Task RegularRequest_RequestsVolume_Async()
@@ -128,7 +128,7 @@ namespace TotalMixVC.Communicator.Tests
                 VolumeManager volumeManager = new(sender, listener);
 
                 // Act
-                await volumeManager.RequestDeviceVolumeAsync().ConfigureAwait(false);
+                await volumeManager.RequestVolumeAsync().ConfigureAwait(false);
 
                 // Assert
                 await sender
