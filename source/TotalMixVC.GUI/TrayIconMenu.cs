@@ -10,7 +10,7 @@ namespace TotalMixVC.GUI
     /// <summary>
     /// Implements the system tray menu functionality.
     /// </summary>
-    public class TrayMenu
+    public class TrayIconMenu
     {
         /// <summary>
         /// Gets or sets a value indicating whether the application will start automatically when

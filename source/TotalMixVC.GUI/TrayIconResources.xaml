@@ -2,8 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:tb="http://www.hardcodet.net/taskbar"
                     xmlns:local="clr-namespace:TotalMixVC.GUI">
-    <!-- Notify Tray Context Menu -->
-    <ContextMenu x:Shared="false" x:Key="SysTrayMenu">
+    <!-- Tray Icon Context Menu -->
+    <ContextMenu x:Key="TrayIconMenu" x:Shared="false">
         <MenuItem Header="Run when Windows starts"
                   IsCheckable="True"
                   IsChecked="{Binding RunOnStartup, Mode=TwoWay}" />
@@ -11,13 +11,13 @@
         <MenuItem Header="Exit" Command="{Binding ExitAppCommand}" />
     </ContextMenu>
 
-    <!-- Notify Tray Icon -->
-    <tb:TaskbarIcon x:Key="NotifyIcon"
+    <!-- Tray Icon -->
+    <tb:TaskbarIcon x:Key="TrayIcon"
                     ToolTipText="TotalMix Volume Control"
                     MenuActivation="LeftOrRightClick"
-                    ContextMenu="{StaticResource SysTrayMenu}">
+                    ContextMenu="{StaticResource TrayIconMenu}">
         <tb:TaskbarIcon.DataContext>
-            <local:TrayMenu />
+            <local:TrayIconMenu />
         </tb:TaskbarIcon.DataContext>
         <tb:TaskbarIcon.TrayToolTip>
             <Border BorderThickness="15"

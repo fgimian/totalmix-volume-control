@@ -74,7 +74,7 @@ namespace TotalMixVC.GUI
             hiddenParentWindow.Hide();
 
             // Create the system tray icon and set the icon to match the application.
-            _trayIcon = (TaskbarIcon)FindResource("NotifyIcon");
+            _trayIcon = (TaskbarIcon)FindResource("TrayIcon");
             _trayIcon.Icon = Icon.ExtractAssociatedIcon(
                 Assembly.GetEntryAssembly().ManifestModule.Name);
 
@@ -210,7 +210,7 @@ namespace TotalMixVC.GUI
                 // The volume is uninitialized so it is requested from the device.
                 if (!_volumeManager.IsVolumeInitialized)
                 {
-                    await _volumeManager.RequestDeviceVolumeAsync().ConfigureAwait(false);
+                    await _volumeManager.RequestVolumeAsync().ConfigureAwait(false);
                 }
 
                 // A volume request was just sent or the volume is already known, so we sleep
