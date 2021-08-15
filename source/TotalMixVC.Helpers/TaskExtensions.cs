@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,7 +9,7 @@ namespace TotalMixVC.Helpers
     /// <summary>
     /// Provides various useful extensions to async tasks.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+    [SuppressMessage(
         "Naming",
         "RCS1046:Asynchronous method name should end with 'Async'.",
         Justification = "The Async suffix is not added to conform to similar Task methods.")]
