@@ -7,11 +7,6 @@
         <radialGradient id="VolumeCircle" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(807.71,0,0,760.396,111.782,506.931)"><stop offset="0" style="stop-color:rgb(50,50,50);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(80,80,80);stop-opacity:1"/></radialGradient>
     </defs>
 
-    <!-- Background -->
-    <g transform="matrix(9.02056e-17,1.38356,-1.38041,9.02056e-17,1240.93,-110.237)">
-        <path d="M819.795,342.601C819.795,240.247 736.886,157.149 634.765,157.149L264.706,157.149C162.585,157.149 79.676,240.247 79.676,342.601L79.676,713.505C79.676,815.859 162.585,898.957 264.706,898.957L634.765,898.957C736.886,898.957 819.795,815.859 819.795,713.505L819.795,342.601Z" style="fill:url(#OuterBox);"/>
-    </g>
-
     <g transform="matrix(1.51376,0,0,1.51376,-265.602,-105.094)">
         <!-- Circle Background -->
         <g transform="matrix(0.77772,1.19358e-20,1.2138e-20,0.822222,112.669,-9.15291)">
