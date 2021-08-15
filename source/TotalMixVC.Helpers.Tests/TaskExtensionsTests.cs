@@ -12,11 +12,11 @@ namespace TotalMixVC.Helpers.Tests
         {
             // Arrange
             bool completed = false;
-            Func<Task> task = new(async () =>
+            Func<Task> task = async () =>
             {
                 await Task.Delay(1).ConfigureAwait(false);
                 completed = true;
-            });
+            };
 
             // Act
             await Task.Run(task).TimeoutAfter(1000).ConfigureAwait(false);
@@ -30,19 +30,19 @@ namespace TotalMixVC.Helpers.Tests
         {
             // Arrange
             bool completed = false;
-            Func<Task> task = new(async () =>
+            Func<Task> task = async () =>
             {
                 await Task.Delay(1000).ConfigureAwait(false);
                 completed = true;
-            });
+            };
 
-            // Act & Assert
-            await Assert
-                .ThrowsAsync<TimeoutException>(async () =>
-                    await Task.Run(task).TimeoutAfter(1).ConfigureAwait(false))
-                .ConfigureAwait(false);
+            // Act
+            Func<Task> timeoutTask = () => Task.Run(task).TimeoutAfter(1);
 
             // Assert
+            await Assert
+                .ThrowsAsync<TimeoutException>(timeoutTask)
+                .ConfigureAwait(false);
             Assert.False(completed);
         }
 
@@ -53,11 +53,11 @@ namespace TotalMixVC.Helpers.Tests
             using CancellationTokenSource cancellationTokenSource = new();
 
             bool completed = false;
-            Func<Task> task = new(async () =>
+            Func<Task> task = async () =>
             {
                 await Task.Delay(1000).ConfigureAwait(false);
                 completed = true;
-            });
+            };
 
             // Act
             Task cancelTask = Task.Run(async () =>
@@ -83,12 +83,12 @@ namespace TotalMixVC.Helpers.Tests
         {
             // Arrange
             bool completed = false;
-            Func<Task<string>> task = new(async () =>
+            Func<Task<string>> task = async () =>
             {
                 await Task.Delay(1).ConfigureAwait(false);
                 completed = true;
                 return "Hello";
-            });
+            };
 
             // Act
             string result = await Task.Run(task).TimeoutAfter(1000).ConfigureAwait(false);
@@ -103,20 +103,20 @@ namespace TotalMixVC.Helpers.Tests
         {
             // Arrange
             bool completed = false;
-            Func<Task<string>> task = new(async () =>
+            Func<Task<string>> task = async () =>
             {
                 await Task.Delay(1000).ConfigureAwait(false);
                 completed = true;
                 return "Hello";
-            });
+            };
 
-            // Act & Assert
-            await Assert
-                .ThrowsAsync<TimeoutException>(async () =>
-                    await Task.Run(task).TimeoutAfter(1).ConfigureAwait(false))
-                .ConfigureAwait(false);
+            // Act
+            Func<Task<string>> timeoutTask = () => Task.Run(task).TimeoutAfter(1);
 
             // Assert
+            await Assert
+                .ThrowsAsync<TimeoutException>(timeoutTask)
+                .ConfigureAwait(false);
             Assert.False(completed);
         }
 
@@ -127,12 +127,12 @@ namespace TotalMixVC.Helpers.Tests
             using CancellationTokenSource cancellationTokenSource = new();
 
             bool completed = false;
-            Func<Task<string>> task = new(async () =>
+            Func<Task<string>> task = async () =>
             {
                 await Task.Delay(1000).ConfigureAwait(false);
                 completed = true;
                 return "Hello";
-            });
+            };
 
             // Act
             Task cancelTask = Task.Run(async () =>

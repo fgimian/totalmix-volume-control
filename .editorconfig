@@ -255,5 +255,9 @@ roslynator.max_line_length = 100
 dotnet_diagnostic.CS8019.severity = none
 
 [**/*Tests.cs]
-dotnet_diagnostic.SA1600.severity = none
+# Prefer anonymous functions in tests to allow for mocked functions to be defined within tests.
 csharp_style_pattern_local_over_anonymous_function = false
+
+# Disable documentation requirements for unit tests.
+dotnet_diagnostic.SA0001.severity = none
+dotnet_diagnostic.SA1600.severity = none
