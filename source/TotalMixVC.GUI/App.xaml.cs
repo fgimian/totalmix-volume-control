@@ -73,6 +73,13 @@ namespace TotalMixVC.GUI
             _volumeIndicator.Owner = hiddenParentWindow;
             hiddenParentWindow.Hide();
 
+            // Silently display the volume indicator so the volume reading background rectangle
+            // width is initialized.
+            _volumeIndicator.Opacity = 0.0;
+            _volumeIndicator.Show();
+            _volumeIndicator.Hide();
+            _volumeIndicator.Opacity = 1.0;
+
             // Create the system tray icon and set the icon to match the application.
             _trayIcon = (TaskbarIcon)FindResource("TrayIcon");
             _trayIcon.Icon = Icon.ExtractAssociatedIcon(
@@ -130,14 +137,15 @@ namespace TotalMixVC.GUI
 
         private async Task ReceiveVolumeAsync()
         {
-            bool initial = true;
-
             while (true)
             {
                 try
                 {
                     // Switch to the background thread to avoid UI interruptions.
                     await TaskScheduler.Default;
+
+                    // Obtain the initialized state before setting the volume.
+                    bool initializedBeforeReceive = _volumeManager.IsVolumeInitialized;
 
                     // The device sends a ping roughly every 2 seconds (usually a pinch over
                     // 2 seconds), so we'll timeout at 3 seconds to be on the safe side.
@@ -154,7 +162,7 @@ namespace TotalMixVC.GUI
                                 _volumeManager.Volume, _volumeManager.VolumeDecibels)
                             .ConfigureAwait(false);
 
-                        if (!initial)
+                        if (initializedBeforeReceive)
                         {
                             await _volumeIndicator
                                 .DisplayCurrentVolumeAsync()
@@ -195,8 +203,6 @@ namespace TotalMixVC.GUI
                     // This exception is raised when the app is exited so we exit the loop.
                     break;
                 }
-
-                initial = false;
             }
         }
 

@@ -148,7 +148,7 @@ namespace TotalMixVC.Communicator
         /// </summary>
         public bool IsVolumeInitialized
         {
-            get => Volume != -1.0f;
+            get => Volume != -1.0f && VolumeDecibels is not null;
         }
 
         /// <summary>
