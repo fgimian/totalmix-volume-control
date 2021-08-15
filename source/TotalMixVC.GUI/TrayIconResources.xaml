@@ -6,9 +6,9 @@
     <ContextMenu x:Key="TrayIconMenu" x:Shared="false">
         <MenuItem Header="Run when Windows starts"
                   IsCheckable="True"
-                  IsChecked="{Binding RunOnStartup, Mode=TwoWay}" />
+                  IsChecked="{Binding Path=(local:TrayIconMenu.RunOnStartup), Mode=TwoWay}" />
         <Separator />
-        <MenuItem Header="Exit" Command="{Binding ExitAppCommand}" />
+        <MenuItem Header="Exit" Command="{Binding Source={x:Static local:TrayIconMenu.ExitCommand}}" />
     </ContextMenu>
 
     <!-- Tray Icon -->
@@ -16,9 +16,6 @@
                     ToolTipText="TotalMix Volume Control"
                     MenuActivation="LeftOrRightClick"
                     ContextMenu="{StaticResource TrayIconMenu}">
-        <tb:TaskbarIcon.DataContext>
-            <local:TrayIconMenu />
-        </tb:TaskbarIcon.DataContext>
         <tb:TaskbarIcon.TrayToolTip>
             <Border BorderThickness="15"
                     BorderBrush="#e21e2328"

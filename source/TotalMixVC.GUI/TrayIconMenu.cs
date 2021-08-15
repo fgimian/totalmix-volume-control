@@ -10,13 +10,13 @@ namespace TotalMixVC.GUI
     /// <summary>
     /// Implements the system tray menu functionality.
     /// </summary>
-    public class TrayIconMenu
+    public static class TrayIconMenu
     {
         /// <summary>
         /// Gets or sets a value indicating whether the application will start automatically when
         /// Windows starts.
         /// </summary>
-        public bool RunOnStartup
+        public static bool RunOnStartup
         {
             get
             {
@@ -56,7 +56,7 @@ namespace TotalMixVC.GUI
         /// <summary>
         /// Gets the Exit tray icon command which shuts down the application.
         /// </summary>
-        public ICommand ExitAppCommand => new DelegateCommand
+        public static ICommand ExitCommand => new DelegateCommand
         {
             CommandAction = () => Application.Current.Shutdown()
         };
