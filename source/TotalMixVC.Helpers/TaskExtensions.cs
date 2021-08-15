@@ -34,6 +34,9 @@ namespace TotalMixVC.Helpers
         /// timeout is exceeded.
         /// </param>
         /// <returns>The task object representing the asynchronous operation.</returns>
+        /// <exception cref="OperationCanceledException">
+        /// Thrown if the task is cancelled using the provided cancellation token source.
+        /// </exception>
         /// <exception cref="TimeoutException">Thrown if the task times out.</exception>
         public static async Task TimeoutAfter(
             this Task task,
@@ -97,6 +100,9 @@ namespace TotalMixVC.Helpers
         /// The task object representing the asynchronous operation which contains the result of
         /// the task.
         /// </returns>
+        /// <exception cref="OperationCanceledException">
+        /// Thrown if the task is cancelled using the provided cancellation token source.
+        /// </exception>
         /// <exception cref="TimeoutException">Thrown if the task times out.</exception>
         public static async Task<TResult> TimeoutAfter<TResult>(
             this Task<TResult> task,

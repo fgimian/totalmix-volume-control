@@ -176,6 +176,10 @@ namespace TotalMixVC.Communicator
         /// The task object representing the asynchronous operation which will contain a boolean
         /// indicating whether or not the volume was obtained from the device.
         /// </returns>
+        /// <exception cref="OperationCanceledException">
+        /// Thrown if the task is cancelled using the provided cancellation token source.
+        /// </exception>
+        /// <exception cref="TimeoutException">Thrown if the task times out.</exception>
         public async Task<bool> ReceiveVolumeAsync(
             int timeout = 5000, CancellationTokenSource cancellationTokenSource = null)
         {
@@ -213,7 +217,7 @@ namespace TotalMixVC.Communicator
                     _volumeMutex.Release();
                 }
 
-                throw new TimeoutException("No messages received from the device.");
+                throw;
             }
 
             // Volume changes are only presented in bundles.
