@@ -14,6 +14,10 @@ namespace TotalMixVC.Helpers
         "RCS1046:Asynchronous method name should end with 'Async'.",
         Justification = "The Async suffix is not added to conform to similar Task methods.")]
     [SuppressMessage(
+        "Usage",
+        "VSTHRD003:Avoid awaiting foreign Tasks",
+        Justification = "This conflicts with the accepted pattern for such task extensions.")]
+    [SuppressMessage(
         "Style",
         "VSTHRD200:Use \"Async\" suffix for async methods",
         Justification = "The Async suffix is not added to conform to similar Task methods.")]
