@@ -38,35 +38,44 @@ namespace TotalMixVC.Helpers
         {
             using CancellationTokenSource timeoutCancellationTokenSource = new();
 
-            List<Task> tasks = new()
+            // Create a list of cancellation tokens containing the timout token and optionally
+            // a cancellation token provided by the caller.
+            List<CancellationToken> cancellationTokens = new()
             {
-                task,
-                Task.Delay(millisecondsTimeout, timeoutCancellationTokenSource.Token)
+                timeoutCancellationTokenSource.Token
             };
 
-            Task cancellationTask = null;
             if (cancellationTokenSource is not null)
             {
-                cancellationTask = Task.Delay(-1, cancellationTokenSource.Token);
-                tasks.Add(cancellationTask);
+                cancellationTokens.Add(cancellationTokenSource.Token);
             }
 
-            Task completedTask = await Task.WhenAny(tasks).ConfigureAwait(false);
+            // Create a combined cancellation token source with all cancellation tokens and
+            // build a task that will be cancelled when any of the tokens are.
+            CancellationTokenSource combinedCancellationTokenSource =
+                CancellationTokenSource.CreateLinkedTokenSource(cancellationTokens.ToArray());
 
-            if (completedTask == task)
-            {
-                timeoutCancellationTokenSource.Cancel();
-                await task.ConfigureAwait(false);
-                return;
-            }
+            Task cancellationTask = Task.Delay(
+                millisecondsTimeout, combinedCancellationTokenSource.Token);
+
+            // Wait until either the given task or the cancellation task completes and return
+            // or throw exceptions appropriately.
+            Task completedTask = await Task.WhenAny(task, cancellationTask).ConfigureAwait(false);
 
             if (completedTask == cancellationTask)
             {
-                timeoutCancellationTokenSource.Cancel();
-                throw new OperationCanceledException();
+                if (cancellationTokenSource?.IsCancellationRequested == true)
+                {
+                    throw new OperationCanceledException();
+                }
+                else
+                {
+                    throw new TimeoutException();
+                }
             }
 
-            throw new TimeoutException();
+            combinedCancellationTokenSource.Cancel();
+            await task.ConfigureAwait(false);
         }
 
         /// <summary>
@@ -92,34 +101,44 @@ namespace TotalMixVC.Helpers
         {
             using CancellationTokenSource timeoutCancellationTokenSource = new();
 
-            List<Task> tasks = new()
+            // Create a list of cancellation tokens containing the timout token and optionally
+            // a cancellation token provided by the caller.
+            List<CancellationToken> cancellationTokens = new()
             {
-                task,
-                Task.Delay(millisecondsTimeout, timeoutCancellationTokenSource.Token)
+                timeoutCancellationTokenSource.Token
             };
 
-            Task cancellationTask = null;
             if (cancellationTokenSource is not null)
             {
-                cancellationTask = Task.Delay(-1, cancellationTokenSource.Token);
-                tasks.Add(cancellationTask);
+                cancellationTokens.Add(cancellationTokenSource.Token);
             }
 
-            Task completedTask = await Task.WhenAny(tasks).ConfigureAwait(false);
+            // Create a combined cancellation token source with all cancellation tokens and
+            // build a task that will be cancelled when any of the tokens are.
+            CancellationTokenSource combinedCancellationTokenSource =
+                CancellationTokenSource.CreateLinkedTokenSource(cancellationTokens.ToArray());
 
-            if (completedTask == task)
-            {
-                timeoutCancellationTokenSource.Cancel();
-                return await task.ConfigureAwait(false);
-            }
+            Task cancellationTask = Task.Delay(
+                millisecondsTimeout, combinedCancellationTokenSource.Token);
+
+            // Wait until either the given task or the cancellation task completes and return
+            // or throw exceptions appropriately.
+            Task completedTask = await Task.WhenAny(task, cancellationTask).ConfigureAwait(false);
 
             if (completedTask == cancellationTask)
             {
-                timeoutCancellationTokenSource.Cancel();
-                throw new OperationCanceledException();
+                if (cancellationTokenSource?.IsCancellationRequested == true)
+                {
+                    throw new OperationCanceledException();
+                }
+                else
+                {
+                    throw new TimeoutException();
+                }
             }
 
-            throw new TimeoutException();
+            combinedCancellationTokenSource.Cancel();
+            return await task.ConfigureAwait(false);
         }
     }
 }
