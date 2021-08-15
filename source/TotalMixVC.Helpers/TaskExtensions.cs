@@ -59,10 +59,10 @@ namespace TotalMixVC.Helpers
             if (completedTask == cancellationTask)
             {
                 timeoutCancellationTokenSource.Cancel();
-                throw new OperationCanceledException("The operation was cancelled by the caller.");
+                throw new OperationCanceledException();
             }
 
-            throw new TimeoutException("The operation has timed out.");
+            throw new TimeoutException();
         }
 
         /// <summary>
@@ -112,10 +112,10 @@ namespace TotalMixVC.Helpers
             if (completedTask == cancellationTask)
             {
                 timeoutCancellationTokenSource.Cancel();
-                throw new OperationCanceledException("The operation was cancelled by the caller.");
+                throw new OperationCanceledException();
             }
 
-            throw new TimeoutException("The operation has timed out.");
+            throw new TimeoutException();
         }
     }
 }
