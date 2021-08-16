@@ -30,11 +30,11 @@
     </PackageReference>
     <PackageReference Include="NSubstitute" Version="4.2.2" />
     <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.14" />
-    <PackageReference Include="Roslynator.Analyzers" Version="3.2.0">
+    <PackageReference Include="Roslynator.Analyzers" Version="3.2.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Roslynator.Formatting.Analyzers" Version="1.2.0">
+    <PackageReference Include="Roslynator.Formatting.Analyzers" Version="1.2.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

@@ -231,10 +231,9 @@ dotnet_diagnostic.RCS0050.severity = warning
 # Ensure a new line after the closing brace of a do while loop.
 dotnet_diagnostic.RCS0051.severity = warning
 
-# TODO: Re-enable this rule after you can upgrade the Formatting package to 1.2.1.
 # Ensure a new line after an equals sign when the declaration follows on the next line.
-# dotnet_diagnostic.RCS0052.severity = warning
-# roslynator.RCS0052.invert = true
+dotnet_diagnostic.RCS0052.severity = warning
+roslynator.RCS0052.invert = true
 
 # Ensure multi-line parameters are formatted and indented correctly.
 dotnet_diagnostic.RCS0053.severity = warning

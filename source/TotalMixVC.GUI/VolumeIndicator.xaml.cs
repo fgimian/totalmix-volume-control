@@ -74,8 +74,8 @@ namespace TotalMixVC.GUI
             await _joinableTaskFactory.SwitchToMainThreadAsync();
 
             // Update the volume rectangle with the percentage and text box decibel reading.
-            VolumeReadingCurrentRectangle.Width
-                = (int)(VolumeReadingBackgroundRectangle.ActualWidth * volume);
+            VolumeReadingCurrentRectangle.Width =
+                (int)(VolumeReadingBackgroundRectangle.ActualWidth * volume);
             VolumeDecibelsTextBox.Text = volumeDecibels;
         }
 
