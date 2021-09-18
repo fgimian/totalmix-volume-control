@@ -144,9 +144,6 @@ namespace TotalMixVC.GUI
                     // Switch to the background thread to avoid UI interruptions.
                     await TaskScheduler.Default;
 
-                    // Obtain the initialized state before setting the volume.
-                    bool initializedBeforeReceive = _volumeManager.IsVolumeInitialized;
-
                     // The device sends a ping roughly every 2 seconds (usually a pinch over
                     // 2 seconds), so we'll timeout at 3 seconds to be on the safe side.
                     bool received = await _volumeManager
@@ -161,13 +158,6 @@ namespace TotalMixVC.GUI
                             .UpdateVolumeAsync(
                                 _volumeManager.Volume, _volumeManager.VolumeDecibels)
                             .ConfigureAwait(false);
-
-                        if (initializedBeforeReceive)
-                        {
-                            await _volumeIndicator
-                                .DisplayCurrentVolumeAsync()
-                                .ConfigureAwait(false);
-                        }
                     }
 
                     // Switch to the UI thread and update the tray tooltip text.
