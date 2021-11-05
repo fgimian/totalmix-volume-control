@@ -22,6 +22,10 @@ You may download the latest release from the
 [releases page](https://github.com/fgimian/totalmix-volume-control/releases).  Simply expand the
 **Assets** item under the latest release and download the release installer.
 
+You'll also need to install the
+[.NET 5.0 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/5.0/runtime)
+to run the application.
+
 ### Usage
 
 After starting the application, the keyboard shortcut bindings are enabled:
@@ -59,16 +63,13 @@ also:
 
 ## Building from Source
 
-You'll need to download and extract the source code from GitHub or clone the Git repository
-and then follow the steps below:
+After cloning the source code from GitHub, follow the steps below:
 
-1. Install the **.NET 5.0 desktop app Runtime** from
-   [Microsoft's Download .NET 5.0 Runtime](https://dotnet.microsoft.com/download/dotnet/5.0/runtime)
-   page.
+1. Install the [.NET 5.0 SDK](https://dotnet.microsoft.com/download).
 2. Open a PowerShell prompt and build the project
 
     ```powershell
-    cd ~\Downloads\totalmix-volume-control
+    cd .\totalmix-volume-control
     .\build.ps1 --target Distribute --configuration Release
     ```
 
