@@ -12,7 +12,7 @@
 #define AppRepoIssuesURL AppRepoURL + "/issues"
 #define AppRepoReleasesURL AppRepoURL + "/releases"
 #define AppIconPath "source\TotalMixVC.GUI\Icons\TotalMixVC.ico"
-#define AppPublishPath "source\TotalMixVC.GUI\bin\" + AppBuildConfiguration + "\net6.0-windows\publish"
+#define AppPublishPath "source\TotalMixVC.GUI\bin\" + AppBuildConfiguration + "\net6.0-windows\win-x64"
 #define AppExeName "TotalMixVC.GUI.exe"
 
 [Setup]

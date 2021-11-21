@@ -172,7 +172,9 @@ public class DistributeTask : FrostingTask<BuildContext>
             project: context.ProjectRoot + context.Directory("source") + context.GUIProjectName,
             settings: new DotNetCorePublishSettings
             {
-                Configuration = context.BuildConfiguration
+                Configuration = context.BuildConfiguration,
+                Runtime = "win-x64",
+                SelfContained = true
             });
 
         context.Log.Information("Obtaining the application version using GitVersion");

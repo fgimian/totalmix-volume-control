@@ -22,10 +22,6 @@ You may download the latest release from the
 [releases page](https://github.com/fgimian/totalmix-volume-control/releases).  Simply expand the
 **Assets** item under the latest release and download the release installer.
 
-You'll also need to install the
-[.NET 6.0 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/6.0/runtime)
-to run the application.
-
 ### Usage
 
 After starting the application, the keyboard shortcut bindings are enabled:
