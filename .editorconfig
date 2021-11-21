@@ -9,7 +9,7 @@ root = true
 indent_style = space
 
 # XML project and config files.
-[*.{csprojj}]
+[*.csproj]
 indent_size = 2
 
 # C# code.
