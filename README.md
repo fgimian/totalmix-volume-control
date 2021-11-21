@@ -23,7 +23,7 @@ You may download the latest release from the
 **Assets** item under the latest release and download the release installer.
 
 You'll also need to install the
-[.NET 5.0 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/5.0/runtime)
+[.NET 6.0 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/6.0/runtime)
 to run the application.
 
 ### Usage
@@ -65,7 +65,7 @@ also:
 
 After cloning the source code from GitHub, follow the steps below:
 
-1. Install the [.NET 5.0 SDK](https://dotnet.microsoft.com/download).
+1. Install the [.NET 6.0 SDK](https://dotnet.microsoft.com/download).
 2. Open a PowerShell prompt and build the project
 
     ```powershell

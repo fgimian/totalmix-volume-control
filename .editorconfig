@@ -23,6 +23,9 @@ max_line_length = 100
 insert_final_newline = true
 trim_trailing_whitespace = true
 
+# Prefer file-scope namespace declarations.
+csharp_style_namespace_declarations = file_scoped:warning
+
 # Ensure that unused imports are reported.
 dotnet_diagnostic.CS8019.severity = warning
 

@@ -5,77 +5,76 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using OscCore;
 
-namespace TotalMixVC.Communicator
+namespace TotalMixVC.Communicator;
+
+/// <summary>
+/// Provides a UDP packet sender for Open Source Control (OSC).
+/// </summary>
+[ExcludeFromCodeCoverage]
+public class Sender : ISender, IDisposable
 {
+    private readonly UdpClient _client;
+
+    private readonly IPEndPoint _localEP;
+
+    private bool _disposed = false;
+
     /// <summary>
-    /// Provides a UDP packet sender for Open Source Control (OSC).
+    /// Initializes a new instance of the <see cref="Sender"/> class.
     /// </summary>
-    [ExcludeFromCodeCoverage]
-    public class Sender : ISender, IDisposable
+    /// <param name="localEP">The endpoint to receive OSC data from.</param>
+    public Sender(IPEndPoint localEP)
     {
-        private readonly UdpClient _client;
+        _localEP = localEP;
+        _client = new UdpClient();
+    }
 
-        private readonly IPEndPoint _localEP;
+    /// <summary>
+    /// Finalizes an instance of the <see cref="Sender"/> class.
+    /// </summary>
+    ~Sender()
+    {
+        Dispose(false);
+    }
 
-        private bool _disposed = false;
+    /// <summary>
+    /// Disposes the current sender.
+    /// </summary>
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Sender"/> class.
-        /// </summary>
-        /// <param name="localEP">The endpoint to receive OSC data from.</param>
-        public Sender(IPEndPoint localEP)
+    /// <summary>
+    /// Sends an OSC packet to the configured endpoint.
+    /// </summary>
+    /// <param name="message">
+    /// The <see cref="OscBundle"/> or <see cref="OscMessage"/> message to send.
+    /// </param>
+    /// <returns>The number of bytes sent to the endpoint.</returns>
+    public Task<int> SendAsync(OscPacket message)
+    {
+        byte[] datagram = message.ToByteArray();
+        return _client.SendAsync(datagram, datagram.Length, _localEP);
+    }
+
+    /// <summary>
+    /// Disposes the current sender.
+    /// </summary>
+    /// <param name="disposing">Whether managed resources should be disposed.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
         {
-            _localEP = localEP;
-            _client = new UdpClient();
+            return;
         }
 
-        /// <summary>
-        /// Finalizes an instance of the <see cref="Sender"/> class.
-        /// </summary>
-        ~Sender()
+        if (disposing)
         {
-            Dispose(false);
+            _client.Dispose();
         }
 
-        /// <summary>
-        /// Disposes the current sender.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Sends an OSC packet to the configured endpoint.
-        /// </summary>
-        /// <param name="message">
-        /// The <see cref="OscBundle"/> or <see cref="OscMessage"/> message to send.
-        /// </param>
-        /// <returns>The number of bytes sent to the endpoint.</returns>
-        public Task<int> SendAsync(OscPacket message)
-        {
-            byte[] datagram = message.ToByteArray();
-            return _client.SendAsync(datagram, datagram.Length, _localEP);
-        }
-
-        /// <summary>
-        /// Disposes the current sender.
-        /// </summary>
-        /// <param name="disposing">Whether managed resources should be disposed.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_disposed)
-            {
-                return;
-            }
-
-            if (disposing)
-            {
-                _client.Dispose();
-            }
-
-            _disposed = true;
-        }
+        _disposed = true;
     }
 }
