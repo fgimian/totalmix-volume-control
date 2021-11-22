@@ -1,5 +1,10 @@
 trigger:
-- main
+  branches:
+    include:
+      - main
+  tags:
+    include:
+      - '*'
 
 pool:
   vmImage: 'windows-latest'
@@ -8,39 +13,33 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: UseDotNet@2
-  inputs:
-    packageType: sdk
-    version: 6.0.x
-
-- task: NuGetToolInstaller@1
-
-- task: PowerShell@2
-  inputs:
-    filePath: '$(System.DefaultWorkingDirectory)/build.ps1'
-    arguments: >
-      --target Distribute
-      --configuration $(buildConfiguration)
-      --coverage-format cobertura
-
-- task: PublishTestResults@2
-  inputs:
-    testResultsFormat: xUnit
-    testResultsFiles: '$(System.DefaultWorkingDirectory)/source/**/TestResults.xml'
-
-- task: PublishCodeCoverageResults@1
-  inputs:
-    codeCoverageTool: 'Cobertura'
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/.coverage/Cobertura.xml'
-    pathToSources: '$(System.DefaultWorkingDirectory)/source'
-
-- task: CopyFiles@2
-  inputs:
-    SourceFolder: 'artifacts'
-    Contents: '*.exe'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-
-- task: PublishPipelineArtifact@1
-  inputs:
-    targetPath: '$(Pipeline.Workspace)'
-    publishLocation: 'pipeline'
+  - task: UseDotNet@2
+    inputs:
+      packageType: sdk
+      version: 6.0.x
+  - task: NuGetToolInstaller@1
+  - task: PowerShell@2
+    inputs:
+      filePath: '$(System.DefaultWorkingDirectory)/build.ps1'
+      arguments: >
+        --target Distribute
+        --configuration $(buildConfiguration)
+        --coverage-format cobertura
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: xUnit
+      testResultsFiles: '$(System.DefaultWorkingDirectory)/source/**/TestResults.xml'
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      codeCoverageTool: 'Cobertura'
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/.coverage/Cobertura.xml'
+      pathToSources: '$(System.DefaultWorkingDirectory)/source'
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: 'artifacts'
+      Contents: '*.exe'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: '$(Pipeline.Workspace)'
+      publishLocation: 'pipeline'
