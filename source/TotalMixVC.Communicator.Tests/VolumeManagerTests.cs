@@ -144,7 +144,7 @@ public static class VolumeManagerTests
     public class ReceiveVolumeAsync
     {
         [Fact]
-        public async Task ReceivesBoth_UpdatesVolume_Async()
+        public async Task ReceivesAll_UpdatesVolume_Async()
         {
             // Arrange
             ISender sender = Substitute.For<ISender>();
@@ -153,6 +153,7 @@ public static class VolumeManagerTests
                 .ReceiveAsync()
                 .Returns(Task.FromResult<OscPacket>(new OscBundle(
                     OscTimeTag.Now,
+                    new OscMessage("/1/mainDim", 0f),
                     new OscMessage("/1/mastervolume", 0.20f),
                     new OscMessage("/1/mastervolumeVal", "-38.2 dB"))));
 
@@ -202,6 +203,7 @@ public static class VolumeManagerTests
                 .Returns(
                     Task.FromResult<OscPacket>(new OscBundle(
                         OscTimeTag.Now,
+                        new OscMessage("/1/mainDim", 0f),
                         new OscMessage("/1/mastervolume", 0.20f),
                         new OscMessage("/1/mastervolumeVal", "-38.2 dB"))),
                     Task.FromResult<OscPacket>(new OscBundle(
@@ -322,6 +324,7 @@ public static class VolumeManagerTests
                 .Returns(
                     Task.FromResult<OscPacket>(new OscBundle(
                         OscTimeTag.Now,
+                        new OscMessage("/1/mainDim", 0f),
                         new OscMessage("/1/mastervolume", 0.20f),
                         new OscMessage("/1/mastervolumeVal", "-38.2 dB"))),
                     Task.FromException<OscPacket>(new TimeoutException("weov")));
@@ -375,6 +378,7 @@ public static class VolumeManagerTests
                 .ReceiveAsync()
                 .Returns(Task.FromResult<OscPacket>(new OscBundle(
                     OscTimeTag.Now,
+                    new OscMessage("/1/mainDim", 0f),
                     new OscMessage("/1/mastervolume", 0.20f),
                     new OscMessage("/1/mastervolumeVal", "-38.2 dB"))));
 
@@ -410,6 +414,7 @@ public static class VolumeManagerTests
                 .ReceiveAsync()
                 .Returns(Task.FromResult<OscPacket>(new OscBundle(
                     OscTimeTag.Now,
+                    new OscMessage("/1/mainDim", 0f),
                     new OscMessage("/1/mastervolume", 0.48f),
                     new OscMessage("/1/mastervolumeVal", "-13.3 dB"))));
 
@@ -494,6 +499,7 @@ public static class VolumeManagerTests
                 .ReceiveAsync()
                 .Returns(Task.FromResult<OscPacket>(new OscBundle(
                     OscTimeTag.Now,
+                    new OscMessage("/1/mainDim", 0f),
                     new OscMessage("/1/mastervolume", 0.20f),
                     new OscMessage("/1/mastervolumeVal", "-38.2 dB"))));
 
@@ -553,6 +559,7 @@ public static class VolumeManagerTests
                 .ReceiveAsync()
                 .Returns(Task.FromResult<OscPacket>(new OscBundle(
                     OscTimeTag.Now,
+                    new OscMessage("/1/mainDim", 0f),
                     new OscMessage("/1/mastervolume", 0.20f),
                     new OscMessage("/1/mastervolumeVal", "-38.2 dB"))));
 
@@ -588,6 +595,7 @@ public static class VolumeManagerTests
                 .ReceiveAsync()
                 .Returns(Task.FromResult<OscPacket>(new OscBundle(
                     OscTimeTag.Now,
+                    new OscMessage("/1/mainDim", 0f),
                     new OscMessage("/1/mastervolume", 0.02f),
                     new OscMessage("/1/mastervolumeVal", "-62.0 dB"))));
 
@@ -671,6 +679,7 @@ public static class VolumeManagerTests
                 .ReceiveAsync()
                 .Returns(Task.FromResult<OscPacket>(new OscBundle(
                     OscTimeTag.Now,
+                    new OscMessage("/1/mainDim", 0f),
                     new OscMessage("/1/mastervolume", 0.20f),
                     new OscMessage("/1/mastervolumeVal", "-38.2 dB"))));
 

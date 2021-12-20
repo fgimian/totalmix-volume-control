@@ -386,7 +386,7 @@ public class VolumeManager
 
     private async Task<bool> UpdateVolumeFromMessagesAsync(List<OscMessage> messages)
     {
-        bool updated = false;
+        bool received = false;
 
         foreach (
             OscMessage message in messages.Where(m =>
@@ -408,7 +408,7 @@ public class VolumeManager
                     Dim = (float)message[0];
                 }
 
-                updated = true;
+                received = true;
             }
             catch (InvalidCastException)
             {
@@ -421,6 +421,6 @@ public class VolumeManager
             }
         }
 
-        return updated;
+        return received;
     }
 }
