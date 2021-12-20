@@ -369,6 +369,7 @@ public class VolumeManager
         {
             // To toggle the dim function, we must simply send 1, not the actual 0 or 1 value.
             await SendDimAsync(1.0f).ConfigureAwait(false);
+            Dim = Dim == 1.0f ? 0.0f : 1.0f;
             return true;
         }
         finally
