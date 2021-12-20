@@ -156,7 +156,9 @@ public partial class App : Application
                 {
                     await _volumeIndicator
                         .UpdateVolumeAsync(
-                            _volumeManager.Volume, _volumeManager.VolumeDecibels)
+                            _volumeManager.Volume,
+                            _volumeManager.VolumeDecibels,
+                            _volumeManager.IsDimmed)
                         .ConfigureAwait(false);
                 }
 
@@ -169,7 +171,7 @@ public partial class App : Application
             {
                 // Update the volume indicator values with initial values after a timeout.
                 await _volumeIndicator
-                    .UpdateVolumeAsync(volume: 0.0f, volumeDecibels: "-")
+                    .UpdateVolumeAsync(volume: 0.0f, volumeDecibels: "-", isDimmed: false)
                     .ConfigureAwait(false);
 
                 // Switch to the UI thread and update the tray tooltip text.

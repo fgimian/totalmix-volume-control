@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Microsoft.VisualStudio.Threading;
@@ -67,11 +68,17 @@ public partial class VolumeIndicator : Window
     /// </summary>
     /// <param name="volume">The current volume as a float.</param>
     /// <param name="volumeDecibels">The current volume in decibels as a string.</param>
+    /// <param name="isDimmed">Whether or not the volume is dimmed.</param>
     /// <returns>The task object representing the asynchronous operation.</returns>
-    public async Task UpdateVolumeAsync(float volume, string volumeDecibels)
+    public async Task UpdateVolumeAsync(float volume, string volumeDecibels, bool isDimmed)
     {
         // Switch to the UI thread.
         await _joinableTaskFactory.SwitchToMainThreadAsync();
+
+        // Update the color of text and the volume rectangle based on whether the volume is dimmed.
+        VolumeReadingCurrentRectangle.Fill =
+            (SolidColorBrush)new BrushConverter().ConvertFrom(isDimmed ? "#996500" : "#999");
+        VolumeDecibelsTextBox.Foreground = isDimmed ? Brushes.Orange : Brushes.White;
 
         // Update the volume rectangle with the percentage and text box decibel reading.
         VolumeReadingCurrentRectangle.Width =
