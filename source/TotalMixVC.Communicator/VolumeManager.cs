@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,6 +24,11 @@ public class VolumeManager
     /// The address to be used for receiving volume as a string in decibels.
     /// </summary>
     public const string VolumeDecibelsAddress = "/1/mastervolumeVal";
+
+    /// <summary>
+    /// The address to be used for sending and receiving the dim mode.
+    /// </summary>
+    public const string DimAddress = "/1/mainDim";
 
     private readonly SemaphoreSlim _volumeMutex;
 
@@ -76,6 +82,11 @@ public class VolumeManager
     /// Gets the current device volume as a string in decibels.
     /// </summary>
     public string VolumeDecibels { get; private set; }
+
+    /// <summary>
+    /// Gets whether dim is enabled on the device (where 0 is disabled and 1 is enabled).
+    /// </summary>
+    public float Dim { get; private set; } = -1.0f;
 
     /// <summary>
     /// Gets or sets the increment to use when regularly increasing or decreasing the volume.
@@ -148,18 +159,20 @@ public class VolumeManager
     /// </summary>
     public bool IsVolumeInitialized
     {
-        get => Volume != -1.0f && VolumeDecibels is not null;
+        get => Volume != -1.0f && VolumeDecibels is not null && Dim != -1.0f;
     }
 
     /// <summary>
-    /// Requests the current device volume by sending an invalid value (-1.0) so that TotalMix
-    /// can send us the current volume.  This method assumes you are running the
-    /// <see cref="ReceiveVolumeAsync"/> method in an async thread.
+    /// Requests the current device volume by sending an invalid value (-1.0) for volume and
+    /// invalid value (-1.0) for dim so that TotalMix can send us the current volume and dim.
+    /// This method assumes you are running the <see cref="ReceiveVolumeAsync"/> method in an
+    /// async thread.
     /// </summary>
     /// <returns>The task object representing the asynchronous operation.</returns>
-    public Task RequestVolumeAsync()
+    public async Task RequestVolumeAsync()
     {
-        return SendVolumeAsync(-1.0f);
+        await SendVolumeAsync(-1.0f).ConfigureAwait(false);
+        await SendDimAsync(-1.0f).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -211,6 +224,7 @@ public class VolumeManager
             {
                 Volume = -1.0f;
                 VolumeDecibels = null;
+                Dim = -1.0f;
             }
             finally
             {
@@ -328,30 +342,73 @@ public class VolumeManager
         }
     }
 
+    /// <summary>
+    /// Toggles the dim mode of the device.
+    /// </summary>
+    /// <returns>
+    /// The task object representing the asynchronous operation which will contain a boolean
+    /// indicating whether or not the dim mode needed to be updated for the device.
+    /// </returns>
+    public async Task<bool> ToggloDimAsync()
+    {
+        if (!IsVolumeInitialized)
+        {
+            return false;
+        }
+
+        await _volumeMutex.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            // To toggle the dim function, we must simply send 1, not the actual 0 or 1 value.
+            await SendDimAsync(1.0f).ConfigureAwait(false);
+            return true;
+        }
+        finally
+        {
+            _volumeMutex.Release();
+        }
+    }
+
     private Task SendVolumeAsync(float volume)
     {
         return _sender.SendAsync(new OscMessage(VolumeAddress, volume));
     }
 
+    private Task SendDimAsync(float dim)
+    {
+        return _sender.SendAsync(new OscMessage(DimAddress, dim));
+    }
+
     private async Task<bool> UpdateVolumeFromMessagesAsync(List<OscMessage> messages)
     {
-        // After a volume change, the volume in decibels is sent immediately.  This comes
-        // through much faster than the bundle containing both values, so it makes the
-        // indicator more responsive if we capture this explicitly.
-        if (
-            messages.Count == 1
-            && messages[0].Address == VolumeDecibelsAddress
-            && messages[0].Count == 1)
+        bool updated = false;
+
+        foreach (
+            OscMessage message in messages.Where(m =>
+                m.Address is VolumeDecibelsAddress or VolumeAddress or DimAddress && m.Count is 1))
         {
             await _volumeMutex.WaitAsync().ConfigureAwait(false);
             try
             {
-                VolumeDecibels = (string)messages[0][0];
-                return true;
+                if (message.Address == VolumeDecibelsAddress)
+                {
+                    VolumeDecibels = (string)message[0];
+                }
+                else if (message.Address == VolumeAddress)
+                {
+                    Volume = (float)message[0];
+                }
+                else
+                {
+                    Dim = (float)message[0];
+                }
+
+                updated = true;
             }
             catch (InvalidCastException)
             {
-                return false;
+                // Ignore errors in the impossible case that the device sends us the wrong
+                // data type.
             }
             finally
             {
@@ -359,32 +416,6 @@ public class VolumeManager
             }
         }
 
-        // A bundle containing two messages will come through next which contains two items
-        // for the volume as a decimal and also a string containing the decibel reading.
-        if (
-            messages.Count == 2
-            && messages[0].Address == VolumeAddress
-            && messages[1].Address == VolumeDecibelsAddress
-            && messages[0].Count == 1
-            && messages[1].Count == 1)
-        {
-            await _volumeMutex.WaitAsync().ConfigureAwait(false);
-            try
-            {
-                Volume = (float)messages[0][0];
-                VolumeDecibels = (string)messages[1][0];
-                return true;
-            }
-            catch (InvalidCastException)
-            {
-                return false;
-            }
-            finally
-            {
-                _volumeMutex.Release();
-            }
-        }
-
-        return false;
+        return updated;
     }
 }

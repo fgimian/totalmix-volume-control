@@ -280,5 +280,17 @@ public partial class App : Application
                         .ConfigureAwait(false);
                 })
                 .Join());
+
+        hotKeyManager.Register(
+            hotkey: new Hotkey { KeyModifier = KeyModifier.None, Key = Key.VolumeMute },
+            action: () => _joinableTaskFactory
+                .RunAsync(async () =>
+                {
+                    await _volumeManager.ToggloDimAsync().ConfigureAwait(false);
+                    await _volumeIndicator
+                        .DisplayCurrentVolumeAsync()
+                        .ConfigureAwait(false);
+                })
+                .Join());
     }
 }
