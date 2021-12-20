@@ -144,7 +144,7 @@ public static class VolumeManagerTests
     public class ReceiveVolumeAsync
     {
         [Fact]
-        public async Task ReceivesAll_UpdatesVolume_Async()
+        public async Task ReceivesAllNormal_UpdatesVolume_Async()
         {
             // Arrange
             ISender sender = Substitute.For<ISender>();
@@ -166,11 +166,12 @@ public static class VolumeManagerTests
             Assert.True(received);
             Assert.Equal(0.20f, volumeManager.Volume);
             Assert.Equal("-38.2 dB", volumeManager.VolumeDecibels);
+            Assert.False(volumeManager.IsDimmed);
             Assert.True(volumeManager.IsVolumeInitialized);
         }
 
         [Fact]
-        public async Task ReceivesBothInvalid_DoesNotReceiveResult_Async()
+        public async Task ReceivesAllDimmed_UpdatesVolume_Async()
         {
             // Arrange
             ISender sender = Substitute.For<ISender>();
@@ -179,6 +180,34 @@ public static class VolumeManagerTests
                 .ReceiveAsync()
                 .Returns(Task.FromResult<OscPacket>(new OscBundle(
                     OscTimeTag.Now,
+                    new OscMessage("/1/mainDim", 1f),
+                    new OscMessage("/1/mastervolume", 0.20f),
+                    new OscMessage("/1/mastervolumeVal", "-38.2 dB"))));
+
+            VolumeManager volumeManager = new(sender, listener);
+
+            // Act
+            bool received = await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
+
+            // Assert
+            Assert.True(received);
+            Assert.Equal(0.20f, volumeManager.Volume);
+            Assert.Equal("-38.2 dB", volumeManager.VolumeDecibels);
+            Assert.True(volumeManager.IsDimmed);
+            Assert.True(volumeManager.IsVolumeInitialized);
+        }
+
+        [Fact]
+        public async Task ReceivesInvalidTypes_DoesNotReceiveResult_Async()
+        {
+            // Arrange
+            ISender sender = Substitute.For<ISender>();
+            IListener listener = Substitute.For<IListener>();
+            listener
+                .ReceiveAsync()
+                .Returns(Task.FromResult<OscPacket>(new OscBundle(
+                    OscTimeTag.Now,
+                    new OscMessage("/1/mainDim", "On"),
                     new OscMessage("/1/mastervolume", "-38.2 dB"),
                     new OscMessage("/1/mastervolumeVal", 0.20f))));
 
@@ -213,12 +242,12 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener);
 
             // Act
-            bool receivedBoth = await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
+            bool receivedAll = await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
             bool receivedDecibelsOnly =
                 await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
 
             // Assert
-            Assert.True(receivedBoth);
+            Assert.True(receivedAll);
             Assert.True(receivedDecibelsOnly);
             Assert.Equal(0.20f, volumeManager.Volume);
             Assert.Equal("-40.5 dB", volumeManager.VolumeDecibels);
@@ -451,6 +480,7 @@ public static class VolumeManagerTests
                 .ReceiveAsync()
                 .Returns(Task.FromResult<OscPacket>(new OscBundle(
                     OscTimeTag.Now,
+                    new OscMessage("/1/mainDim", 0f),
                     new OscMessage("/1/mastervolume", 0.50f),
                     new OscMessage("/1/mastervolumeVal", "-12.1 dB"))));
 
@@ -631,6 +661,7 @@ public static class VolumeManagerTests
                 .ReceiveAsync()
                 .Returns(Task.FromResult<OscPacket>(new OscBundle(
                     OscTimeTag.Now,
+                    new OscMessage("/1/mainDim", 0f),
                     new OscMessage("/1/mastervolume", 0.00f),
                     new OscMessage("/1/mastervolumeVal", "-oo"))));
 
@@ -705,6 +736,57 @@ public static class VolumeManagerTests
 
             Assert.True(updated);
             Assert.Equal(0.19f, volumeManager.Volume);
+        }
+    }
+
+    public class ToggloDimAsync
+    {
+        [Fact]
+        public async Task VolumeNotInitialized_DoesNotUpdateDim_Async()
+        {
+            // Arrange
+            ISender sender = Substitute.For<ISender>();
+            IListener listener = Substitute.For<IListener>();
+
+            VolumeManager volumeManager = new(sender, listener);
+
+            // Act
+            bool updated = await volumeManager.ToggloDimAsync().ConfigureAwait(false);
+
+            // Assert
+            Assert.False(updated);
+        }
+
+        [Fact]
+        public async Task AfterVolumeInitialized_UpdatesDim_Async()
+        {
+            // Arrange
+            ISender sender = Substitute.For<ISender>();
+            IListener listener = Substitute.For<IListener>();
+            listener
+                .ReceiveAsync()
+                .Returns(Task.FromResult<OscPacket>(new OscBundle(
+                    OscTimeTag.Now,
+                    new OscMessage("/1/mainDim", 0f),
+                    new OscMessage("/1/mastervolume", 0.20f),
+                    new OscMessage("/1/mastervolumeVal", "-38.2 dB"))));
+
+            VolumeManager volumeManager = new(sender, listener);
+
+            // Act
+            await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
+            bool updated = await volumeManager.ToggloDimAsync().ConfigureAwait(false);
+
+            // Assert
+            await sender
+                .Received()
+                .SendAsync(Arg.Is<OscMessage>(
+                    m =>
+                        m.Address == "/1/mainDim"
+                        && m.SequenceEqual(new object[] { 1.0f })))
+                .ConfigureAwait(false);
+
+            Assert.True(updated);
         }
     }
 }

@@ -91,7 +91,10 @@ public class VolumeManager
     /// <summary>
     /// Gets a value indicating whether the device volume is dimmed.
     /// </summary>
-    public bool IsDimmed { get => Dim == 1.0f; }
+    public bool IsDimmed
+    {
+        get => Dim == 1.0f;
+    }
 
     /// <summary>
     /// Gets or sets the increment to use when regularly increasing or decreasing the volume.
