@@ -166,6 +166,7 @@ public partial class App : Application
                 await _joinableTaskFactory.SwitchToMainThreadAsync();
                 _trayToolTipStatusTextBlock.Text =
                     "Successfully communicating with your RME device.";
+                _trayIcon.ToolTipText = "TotalMixVC - Connection established.";
             }
             catch (TimeoutException)
             {
@@ -189,6 +190,7 @@ public partial class App : Application
                         "5. Ensure the incoming port is 7001 and outgoing port is 9001",
                         "6. Ensure the IP or Host Name is set to 127.0.0.1"
                     });
+                _trayIcon.ToolTipText = "TotalMixVC - Unable to connect to your device";
             }
             catch (OperationCanceledException)
             {
