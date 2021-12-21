@@ -1,7 +1,7 @@
 # TotalMix Volume Control
 
-[![Build Status](https://dev.azure.com/fgimian/totalmix-volume-control/_apis/build/status/fgimian.totalmix-volume-control?branchName=main)](https://dev.azure.com/fgimian/totalmix-volume-control/_build/latest?definitionId=1&branchName=main)
-[![Coverage Status](https://img.shields.io/azure-devops/coverage/fgimian/totalmix-volume-control/1)](https://dev.azure.com/fgimian/totalmix-volume-control/_build/latest?definitionId=1&branchName=main)
+[![Build Status](https://github.com/fgimian/totalmix-volume-control/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/fgimian/totalmix-volume-control/actions)
+[![Coverage Status](https://codecov.io/gh/fgimian/totalmix-volume-control/branch/main/graph/badge.svg?token=tp21mkIuFm)](https://codecov.io/gh/fgimian/totalmix-volume-control)
 [![License](https://img.shields.io/github/license/fgimian/totalmix-volume-control)](https://github.com/fgimian/totalmix-volume-control/blob/main/LICENSE)
 [![Latest Release](https://img.shields.io/github/v/release/fgimian/totalmix-volume-control?include_prereleases)](https://github.com/fgimian/totalmix-volume-control/releases)
 

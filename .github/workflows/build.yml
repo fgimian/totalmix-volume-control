@@ -1,0 +1,44 @@
+name: build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Restore dependencies, build, test & distribute using Cake Frosting
+      run: ./build.ps1 --target Distribute --configuration ${{ matrix.configuration }}
+
+    - name: Upload coverage
+      if: ${{ matrix.configuration == 'Release' }}
+      uses: codecov/codecov-action@v2
+      with:
+        directory: ./.coverage
+        files: Cobertura.xml
+        fail_ci_if_error: true
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: TotalMixVC ${{ matrix.configuration }} Setup
+        path: artifacts/*.exe
+        if-no-files-found: error
