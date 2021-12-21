@@ -16,11 +16,8 @@ using Cake.Core.IO;
 using Cake.Coverlet;
 using Cake.Frosting;
 
-#pragma warning disable CA1050 // Declare types in namespaces.
-#pragma warning disable RCS1110 // Declare type inside namespace.
-#pragma warning disable RCS1060 // Declare each type in a separate file.
-#pragma warning disable S3903 // Types should be defined in named namespaces.
-#pragma warning disable SA1402 // File may only contain a single type.
+namespace Build;
+
 #pragma warning disable SA1600 // Elements should be documented.
 
 public static class Program
