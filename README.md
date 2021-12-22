@@ -8,7 +8,8 @@
 ![Logo](https://raw.githubusercontent.com/fgimian/totalmix-volume-control/main/images/Logo.png)
 
 This project uses the OSC protocol to communicate with RME TotalMixFX software and binds
-the volume keys on your keyboard to control the master volume in Windows.
+the volume keys on your keyboard to control the master volume and mute key to control dim in
+Windows.
 
 You may see the [related thread on the RME forums](https://forum.rme-audio.de/viewtopic.php?pid=174137)
 and the [thread on the Gearspace forums](https://gearspace.com/board/music-computers/1358200-my-new-little-open-source-project-rme-totalmix-volume-control-windows.html)
@@ -29,13 +30,17 @@ After starting the application, the keyboard shortcut bindings are enabled:
 * **Volume Up / Down**: Increase or decrease the volume by 1% respectively.
 * **Shift + Volume Up / Down**: Increase or decrease the volume by 0.5% respectively
   (fine adjustment).
+* **Mute**: Toggles the dim model of the device.
 
 **Note**: You can still access the regular volume indicator by using **Ctrl + Volume Up / Down**
-or **Alt + Volume Up / Down**.
+or **Alt + Volume Up / Down** and the regular mute functionality using **Ctrl + Mute**
+or **Alt + Mute**.
 
 When the volume is changed, a volume indicator will appear in the top left of your screen:
 
 ![Volume Indicator](https://raw.githubusercontent.com/fgimian/totalmix-volume-control/main/images/VolumeIndicator.png)
+
+The text and volume bar will turn orange if the device is dimmed.
 
 If you hover over the tray icon, a tooltip will appear that indicates the health of the connection
 with your device.
