@@ -67,14 +67,20 @@ also:
 After cloning the source code from GitHub, follow the steps below:
 
 1. Install the [.NET 6.0 SDK](https://dotnet.microsoft.com/download).
-2. Open a PowerShell prompt and build the project
+2. Open a PowerShel prompt and enable it for your user account;
+  
+   ```powershell
+   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+   ```
+
+3. Open a PowerShell prompt and build the project
 
     ```powershell
     cd .\totalmix-volume-control
     .\build.ps1 --target Distribute --configuration Release
     ```
 
-3. You'll now find an installer under the **artifacts** sub-directory
+4. You'll now find an installer under the **artifacts** sub-directory
 
 ## Building the Icon
 
