@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AsyncFixer" Version="1.5.1">
+    <PackageReference Include="AsyncFixer" Version="1.6.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -21,19 +21,19 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.0.64">
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.6.40">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Roslynator.Analyzers" Version="3.2.2">
+    <PackageReference Include="Roslynator.Analyzers" Version="4.3.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Roslynator.Formatting.Analyzers" Version="1.2.2">
+    <PackageReference Include="Roslynator.Formatting.Analyzers" Version="4.3.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.32.0.39516">
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="9.3.0.71466">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -46,9 +46,9 @@
 
   <ItemGroup>
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Threading" Version="17.0.64" />
+    <PackageReference Include="Microsoft.VisualStudio.Threading" Version="17.6.40" />
     <PackageReference Include="OscCore" Version="1.0.5" />
-    <PackageReference Include="WindowsShortcutFactory" Version="1.0.0" />
+    <PackageReference Include="WindowsShortcutFactory" Version="1.1.0" />
   </ItemGroup>
 
 </Project>
