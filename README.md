@@ -86,7 +86,7 @@ scoop install imagemagick
 scoop install inkscape
 
 # Browse to the icon path.
-cd .\source\TotalMixVC.GUI\Icons
+cd .\src\TotalMixVC.GUI\Icons
 
 # Build PNGs of different sizes using Inkscape.
 ~/scoop/shims/inkscape.exe -w 16 -h 16 -o 16.png TotalMixVC.svg

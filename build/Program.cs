@@ -74,14 +74,14 @@ public sealed class CleanTask : FrostingTask<BuildContext>
 
     public override void Run(BuildContext context)
     {
-        context.Log.Information("Deleting bin and obj directories under source");
+        context.Log.Information("Deleting bin and obj directories under src");
         context.CleanDirectories(
             new GlobPattern(
                 context.ProjectRoot
-                + context.Directory("source/**/bin")
+                + context.Directory("src/**/bin")
                 + context.Directory(context.BuildConfiguration)));
         context.CleanDirectories(
-            new GlobPattern(context.ProjectRoot + context.Directory("source/**/obj")));
+            new GlobPattern(context.ProjectRoot + context.Directory("src/**/obj")));
     }
 }
 
@@ -143,7 +143,7 @@ public class TestTask : FrostingTask<BuildContext>
         context.ReportGenerator(
             pattern: new GlobPattern(
                 context.ProjectRoot
-                + context.Directory("source/**")
+                + context.Directory("src/**")
                 + context.File("coverage.opencover.xml")),
             targetDir: coveragePath,
             settings: new ReportGeneratorSettings
@@ -166,7 +166,7 @@ public class DistributeTask : FrostingTask<BuildContext>
     {
         context.Log.Information("Publishing a distrutable version of the application");
         context.DotNetCorePublish(
-            project: context.ProjectRoot + context.Directory("source") + context.GuiProjectName,
+            project: context.ProjectRoot + context.Directory("src") + context.GuiProjectName,
             settings: new DotNetCorePublishSettings
             {
                 Configuration = context.BuildConfiguration,
