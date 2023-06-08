@@ -45,7 +45,7 @@ public class BuildContext : FrostingContext
         // Variables
         ProjectRoot = context.Directory("../");
         SolutionPath = ProjectRoot + context.File($"{ProjectName}.sln");
-        GUIProjectName = context.Directory($"{ProjectName}.GUI");
+        GuiProjectName = context.Directory($"{ProjectName}.GUI");
         InnoSetupScriptPath = ProjectRoot + context.File($"{ProjectName}.iss");
     }
 
@@ -59,7 +59,7 @@ public class BuildContext : FrostingContext
 
     public ConvertableFilePath SolutionPath { get; }
 
-    public ConvertableDirectoryPath GUIProjectName { get; }
+    public ConvertableDirectoryPath GuiProjectName { get; }
 
     public ConvertableFilePath InnoSetupScriptPath { get; }
 }
@@ -166,7 +166,7 @@ public class DistributeTask : FrostingTask<BuildContext>
     {
         context.Log.Information("Publishing a distrutable version of the application");
         context.DotNetCorePublish(
-            project: context.ProjectRoot + context.Directory("source") + context.GUIProjectName,
+            project: context.ProjectRoot + context.Directory("source") + context.GuiProjectName,
             settings: new DotNetCorePublishSettings
             {
                 Configuration = context.BuildConfiguration,
