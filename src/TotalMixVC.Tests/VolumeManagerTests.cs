@@ -1,12 +1,12 @@
-﻿using System;
+﻿namespace TotalMixVC.Tests;
+
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using NSubstitute;
 using OscCore;
 using TotalMixVC.Communicator;
 using Xunit;
-
-namespace TotalMixVC.Tests;
 
 public static class VolumeManagerTests
 {

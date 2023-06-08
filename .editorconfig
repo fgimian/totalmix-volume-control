@@ -1,4 +1,4 @@
-# See https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/code-style-rule-options
+﻿# See https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/code-style-rule-options
 # for C# defaults.
 
 # Set this to the top-most EditorConfig file.
@@ -26,8 +26,23 @@ trim_trailing_whitespace = true
 # Prefer file-scope namespace declarations.
 csharp_style_namespace_declarations = file_scoped:warning
 
+# Warn when initialising variables to their default value.
+dotnet_diagnostic.CA1805.severity = warning
+
+# Ensure that specific exception types are raised.
+dotnet_diagnostic.CA2201.severity = warning
+
 # Ensure that unused imports are reported.
 dotnet_diagnostic.CS8019.severity = warning
+
+# Name can be simplified (to ensure unnecessary generics are omitted).
+dotnet_diagnostic.IDE0001.severity = warning
+
+# Ensure that unnecessary casts are reported.
+dotnet_diagnostic.IDE0004.severity = warning
+
+# Ensure that namespaces match their folder structure.
+dotnet_diagnostic.IDE0130.severity = warning
 
 # --------------------------------------------------------------------------------------------------
 # StyleCop
@@ -49,7 +64,10 @@ dotnet_diagnostic.SA1309.severity = none
 # Roslynator
 # --------------------------------------------------------------------------------------------------
 
-# Force braces around if stamement blocks.
+# Increase the severity of all diagnostics during code review.
+# dotnet_analyzer_diagnostic.category-roslynator.severity = warning
+
+# Force braces around if statement blocks.
 dotnet_diagnostic.RCS1007.severity = warning
 
 # Enable explicit types.
@@ -73,9 +91,8 @@ dotnet_diagnostic.RCS1045.severity = warning
 # Ensure async methods end with the word Async as per Microsoft recommendations.
 dotnet_diagnostic.RCS1046.severity = warning
 
-# Omit empty argument lists when initializing objects.
+# Force empty argument lists when initializing objects for consistency.
 dotnet_diagnostic.RCS1050.severity = warning
-roslynator.RCS1050.invert = true
 
 # Declare each attribute on a separate line.
 dotnet_diagnostic.RCS1052.severity = warning
@@ -86,6 +103,9 @@ dotnet_diagnostic.RCS1060.severity = warning
 # Prefer while loops when creating infinite loops.
 dotnet_diagnostic.RCS1064.severity = warning
 
+# Ensure redundant constructors are reported.
+dotnet_diagnostic.RCS1074.severity = warning
+
 # Prefer string.Empty when creating empty strings.
 dotnet_diagnostic.RCS1078.severity = warning
 roslynator.RCS1078.invert = true
@@ -93,17 +113,10 @@ roslynator.RCS1078.invert = true
 # Ensure each variable is declared on a separate line.
 dotnet_diagnostic.RCS1081.severity = warning
 
-# Disable forced strings to be joined as Roslynator doesn't seem to understand verbatim strings.
-# See https://github.com/JosefPihrt/Roslynator/issues/835
-dotnet_diagnostic.RCS1190.severity = none
-
 # Ensure using directives are at the top level.
 dotnet_diagnostic.RCS1094.severity = warning
 
-# Format documentation summaries on multiple lines.
-dotnet_diagnostic.RCS1101.severity = warning
-
-# Force braces around if / else stamement blocks.
+# Force braces around if / else statement blocks.
 dotnet_diagnostic.RCS1126.severity = warning
 
 # Avoid assigning multiple variables at the same time.
@@ -112,8 +125,14 @@ dotnet_diagnostic.RCS1162.severity = warning
 # Remove redundant async / await.
 dotnet_diagnostic.RCS1174.severity = warning
 
+# Ensure method comments are converted to documentation comments.
+dotnet_diagnostic.RCS1181.severity = warning
+
 # Use pattern matching when checking for null.
 dotnet_diagnostic.RCS1248.severity = warning
+
+# Format documentation summaries on multiple lines.
+roslynator_doc_comment_summary_style = multi_line
 
 # --------------------------------------------------------------------------------------------------
 # Roslynator Formatting
@@ -158,8 +177,8 @@ dotnet_diagnostic.RCS0013.severity = warning
 # Ensure a new line after attribute listings.
 dotnet_diagnostic.RCS0016.severity = warning
 
-# Disable forced single line accessors to expanded into multiple lines.
-dotnet_diagnostic.RCS0020.severity = none
+# Ensure single line accessors are expanded into multiple lines.
+dotnet_diagnostic.RCS0020.severity = warning
 
 # Ensure a new line after the opening brace of a block.
 dotnet_diagnostic.RCS0021.severity = warning
@@ -213,9 +232,6 @@ dotnet_diagnostic.RCS0041.severity = warning
 # Ensure no now line between automatic property accessors.
 dotnet_diagnostic.RCS0042.severity = warning
 
-# Ensure no new lines for single-line property accessors.
-dotnet_diagnostic.RCS0043.severity = warning
-
 # Ensure Windows line endings are used new line characters.
 dotnet_diagnostic.RCS0044.severity = warning
 
@@ -244,13 +260,12 @@ dotnet_diagnostic.RCS0053.severity = warning
 # Ensure chained calls are formatted and indented correctly.
 dotnet_diagnostic.RCS0054.severity = warning
 
-# Disable repair of binary expression chains as they are buggy when joining strings.
-# See https://github.com/JosefPihrt/Roslynator/issues/836
-dotnet_diagnostic.RCS0055.severity = none
-
 # Ensure that long lines are flagged.
 dotnet_diagnostic.RCS0056.severity = warning
-roslynator.max_line_length = 100
+roslynator_max_line_length = 100
+
+# Ensure no new lines for single-line property accessors.
+roslynator_accessor_braces_style = single_line_when_expression_is_on_single_line
 
 [**/obj/**.cs]
 # Ignore unused using statements in generated code.
@@ -258,7 +273,10 @@ dotnet_diagnostic.CS8019.severity = none
 
 [**/*Tests.cs]
 # Prefer anonymous functions in tests to allow for mocked functions to be defined within tests.
-csharp_style_pattern_local_over_anonymous_function = false
+csharp_style_prefer_local_over_anonymous_function = false
+
+# Do not force short-hand object initialisers in tests so properties may be set in the Act stage.
+dotnet_diagnostic.IDE0017.severity = none
 
 # Disable documentation requirements for unit tests.
 dotnet_diagnostic.SA0001.severity = none

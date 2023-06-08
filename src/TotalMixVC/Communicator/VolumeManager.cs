@@ -1,4 +1,6 @@
-﻿using System;
+﻿namespace TotalMixVC.Communicator;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -6,8 +8,6 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using OscCore;
-
-namespace TotalMixVC.Communicator;
 
 /// <summary>
 /// Tracks the volume of the device and provides a way to send volume updates.
@@ -212,7 +212,7 @@ public class VolumeManager
         {
             packet = await _listener
                 .ReceiveAsync()
-                .TimeoutAfter<OscPacket>(timeout, cancellationTokenSource)
+                .TimeoutAfter(timeout, cancellationTokenSource)
                 .ConfigureAwait(false);
         }
         catch (OscException)

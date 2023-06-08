@@ -1,4 +1,6 @@
-﻿using System;
+﻿namespace Build;
+
+using System;
 using System.Collections.Generic;
 using Cake.Common;
 using Cake.Common.IO;
@@ -15,8 +17,6 @@ using Cake.Core.Diagnostics;
 using Cake.Core.IO;
 using Cake.Coverlet;
 using Cake.Frosting;
-
-namespace Build;
 
 #pragma warning disable SA1600 // Elements should be documented.
 
@@ -40,7 +40,7 @@ public class BuildContext : FrostingContext
         : base(context)
     {
         // Arguments
-        BuildConfiguration = context.Argument<string>("configuration", "Debug");
+        BuildConfiguration = context.Argument("configuration", "Debug");
 
         // Variables
         ProjectRoot = context.Directory("../");
@@ -102,7 +102,7 @@ public sealed class BuildTask : FrostingTask<BuildContext>
         context.Log.Information("Building the solution");
         context.DotNetCoreBuild(
             project: context.SolutionPath,
-            settings: new DotNetCoreBuildSettings
+            settings: new DotNetCoreBuildSettings()
             {
                 Configuration = context.BuildConfiguration,
                 NoRestore = true
@@ -122,7 +122,7 @@ public class TestTask : FrostingTask<BuildContext>
         context.Log.Information("Running unit tests and collecting test coverage with Coverlet");
         context.DotNetCoreTest(
             project: context.SolutionPath,
-            settings: new DotNetCoreTestSettings
+            settings: new DotNetCoreTestSettings()
             {
                 Configuration = context.BuildConfiguration,
                 Loggers = new string[] { "xunit" },
@@ -130,7 +130,7 @@ public class TestTask : FrostingTask<BuildContext>
                 NoBuild = true,
                 NoRestore = true
             },
-            coverletSettings: new CoverletSettings
+            coverletSettings: new CoverletSettings()
             {
                 CollectCoverage = true,
                 CoverletOutputFormat = CoverletOutputFormat.opencover
@@ -143,7 +143,7 @@ public class TestTask : FrostingTask<BuildContext>
                 + context.Directory("src/**")
                 + context.File("coverage.opencover.xml")),
             targetDir: coveragePath,
-            settings: new ReportGeneratorSettings
+            settings: new ReportGeneratorSettings()
             {
                 ReportTypes = new ReportGeneratorReportType[]
                 {
@@ -167,7 +167,7 @@ public class DistributeTask : FrostingTask<BuildContext>
                 context.ProjectRoot
                 + context.Directory("src")
                 + context.Directory(context.ProjectName),
-            settings: new DotNetCorePublishSettings
+            settings: new DotNetCorePublishSettings()
             {
                 Configuration = context.BuildConfiguration,
                 Runtime = "win-x64",
@@ -180,10 +180,10 @@ public class DistributeTask : FrostingTask<BuildContext>
         context.Log.Information($"Building the Inno Setup installer for v{version.FullSemVer}");
         context.InnoSetup(
             scriptFile: context.InnoSetupScriptPath,
-            settings: new InnoSetupSettings
+            settings: new InnoSetupSettings()
             {
                 OutputDirectory = context.ProjectRoot + context.Directory("artifacts"),
-                Defines = new Dictionary<string, string>
+                Defines = new Dictionary<string, string>()
                 {
                     { "AppVersion", version.FullSemVer },
                     { "AppBuildConfiguration", context.BuildConfiguration }

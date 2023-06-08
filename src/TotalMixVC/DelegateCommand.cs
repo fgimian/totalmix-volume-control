@@ -1,7 +1,7 @@
-﻿using System;
-using System.Windows.Input;
+﻿namespace TotalMixVC;
 
-namespace TotalMixVC;
+using System;
+using System.Windows.Input;
 
 /// <summary>
 /// Implements the ICommand interface for system tray commands.

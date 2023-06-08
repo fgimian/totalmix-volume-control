@@ -1,11 +1,11 @@
-﻿using System;
+﻿namespace TotalMixVC.Hotkeys;
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
 using System.Windows.Interop;
-
-namespace TotalMixVC.Hotkeys;
 
 /// <summary>
 /// Manages various global hotkeys along with their associated actions.
@@ -16,7 +16,7 @@ public class GlobalHotKeyManager : IDisposable
 
     private readonly Dictionary<Hotkey, Action> _actions;
 
-    private bool _disposed = false;
+    private bool _disposed;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GlobalHotKeyManager"/> class.

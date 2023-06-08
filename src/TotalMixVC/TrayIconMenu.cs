@@ -1,11 +1,10 @@
-﻿using System;
-using System.Diagnostics;
+﻿namespace TotalMixVC;
+
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using WindowsShortcutFactory;
-
-namespace TotalMixVC;
 
 /// <summary>
 /// Implements the system tray menu functionality.
@@ -32,7 +31,7 @@ public static class TrayIconMenu
             string shortcutPath = Path.Join(
                 Environment.GetFolderPath(Environment.SpecialFolder.Startup),
                 "TotalMix Volume Control.lnk");
-            string appExecutablePath = Process.GetCurrentProcess().MainModule.FileName;
+            string appExecutablePath = Environment.ProcessPath;
 
             if (value)
             {

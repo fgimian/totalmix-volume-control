@@ -1,7 +1,7 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿namespace TotalMixVC;
 
-namespace TotalMixVC;
+using System;
+using System.Runtime.InteropServices;
 
 /// <summary>
 /// Provides several useful utilities for manipulating windows.
@@ -22,7 +22,7 @@ internal static class WindowServices
     public static void SetWindowExTransparent(IntPtr hwnd)
     {
         int extendedStyle = GetWindowLong(hwnd, GwlExstyle);
-        SetWindowLong(hwnd, GwlExstyle, extendedStyle | WsExTransparent);
+        _ = SetWindowLong(hwnd, GwlExstyle, extendedStyle | WsExTransparent);
     }
 
     [DllImport("user32.dll")]

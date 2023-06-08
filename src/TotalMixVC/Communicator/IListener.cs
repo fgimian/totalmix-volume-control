@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using OscCore;
+﻿namespace TotalMixVC.Communicator;
 
-namespace TotalMixVC.Communicator;
+using System.Threading.Tasks;
+using OscCore;
 
 /// <summary>
 /// Interface defining a UDP receiver for Open Source Control (OSC) traffic.

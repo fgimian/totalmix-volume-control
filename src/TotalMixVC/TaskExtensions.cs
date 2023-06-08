@@ -1,10 +1,10 @@
-﻿using System;
+﻿namespace TotalMixVC;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-
-namespace TotalMixVC;
 
 /// <summary>
 /// Provides various useful extensions to async tasks.
