@@ -41,13 +41,11 @@
                            Foreground="White"
                            FontWeight="Bold"
                            FontSize="15"
-                           Text="TotalMix ">
-                </TextBlock>
+                           Text="TotalMix "/>
                 <TextBlock VerticalAlignment="Center"
                            Foreground="#e06464"
                            FontSize="15"
-                           Text="Volume">
-                </TextBlock>
+                           Text="Volume"/>
             </StackPanel>
 
             <!-- Volume Reading -->
@@ -57,8 +55,7 @@
                        Margin="0 15 0 25"
                        Foreground="White"
                        FontSize="30"
-                       Text="-">
-            </TextBlock>
+                       Text="-"/>
 
             <!-- Volume Bar -->
             <Grid>
