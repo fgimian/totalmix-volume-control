@@ -21,6 +21,16 @@ namespace TotalMixVC;
 /// </summary>
 public partial class App : Application
 {
+    private const string CommunicationErrorFormatString =
+        "Unable to communicate with your RME device.\n"
+        + "\n"
+        + "1. Open TotalMix\n"
+        + "2. Enable OSC under Options / Enable OSC Control\n"
+        + "3. Open Options / Settings and select the OSC tab\n"
+        + "4. Ensure one of the Remote Controller Select slots is In Use and is selected\n"
+        + "5. Ensure the incoming port is {0} and outgoing port is {1}\n"
+        + "6. Ensure the IP or Host Name is set to {2}";
+
     private VolumeManager _volumeManager;
 
     private VolumeIndicator _volumeIndicator;
@@ -177,19 +187,8 @@ public partial class App : Application
 
                 // Switch to the UI thread and update the tray tooltip text.
                 await _joinableTaskFactory.SwitchToMainThreadAsync();
-                _trayToolTipStatusTextBlock.Text = string.Join(
-                    '\n',
-                    new string[]
-                    {
-                        "Unable to communicate with your RME device.",
-                        string.Empty,
-                        "1. Open TotalMix",
-                        "2. Enable OSC under Options / Enable OSC Control",
-                        "3. Open Options / Settings and select the OSC tab",
-                        "4. Ensure that Remote Controller Select 1 is In Use",
-                        "5. Ensure the incoming port is 7001 and outgoing port is 9001",
-                        "6. Ensure the IP or Host Name is set to 127.0.0.1"
-                    });
+                _trayToolTipStatusTextBlock.Text = string.Format(
+                    CommunicationErrorFormatString, 7001, 9001, "127.0.0.1");
                 _trayIcon.ToolTipText = "TotalMixVC - Unable to connect to your device";
             }
             catch (OperationCanceledException)
