@@ -51,8 +51,7 @@
             <!-- Volume Reading -->
             <TextBlock x:Name="VolumeDecibelsTextBox"
                        HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       Margin="0 15 0 25"
+                       Margin="0 19 0 23"
                        Foreground="White"
                        FontSize="30"
                        Text="-"/>
