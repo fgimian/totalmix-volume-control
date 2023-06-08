@@ -18,17 +18,17 @@ public class VolumeManager
     /// <summary>
     /// The address to be used to sending and receiving volume as a float.
     /// </summary>
-    public const string VolumeAddress = "/1/mastervolume";
+    private const string VolumeAddress = "/1/mastervolume";
 
     /// <summary>
     /// The address to be used for receiving volume as a string in decibels.
     /// </summary>
-    public const string VolumeDecibelsAddress = "/1/mastervolumeVal";
+    private const string VolumeDecibelsAddress = "/1/mastervolumeVal";
 
     /// <summary>
     /// The address to be used for sending and receiving the dim mode.
     /// </summary>
-    public const string DimAddress = "/1/mainDim";
+    private const string DimAddress = "/1/mainDim";
 
     private readonly SemaphoreSlim _volumeMutex;
 
