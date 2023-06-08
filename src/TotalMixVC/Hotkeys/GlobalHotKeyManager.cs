@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Input;
 using System.Windows.Interop;
 
-namespace TotalMixVC.GUI.Hotkeys;
+namespace TotalMixVC.Hotkeys;
 
 /// <summary>
 /// Manages various global hotkeys along with their associated actions.

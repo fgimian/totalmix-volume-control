@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace TotalMixVC.GUI;
+namespace TotalMixVC;
 
 /// <summary>
 /// Provides several useful utilities for manipulating windows.

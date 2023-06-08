@@ -8,7 +8,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Microsoft.VisualStudio.Threading;
 
-namespace TotalMixVC.GUI;
+namespace TotalMixVC;
 
 /// <summary>
 /// Interaction logic for VolumeIndicator.xaml.

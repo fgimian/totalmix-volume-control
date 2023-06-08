@@ -3,9 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using NSubstitute;
 using OscCore;
+using TotalMixVC.Communicator;
 using Xunit;
 
-namespace TotalMixVC.Communicator.Tests;
+namespace TotalMixVC.Tests;
 
 public static class VolumeManagerTests
 {

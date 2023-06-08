@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace TotalMixVC.GUI.Hotkeys;
+namespace TotalMixVC.Hotkeys;
 
 /// <summary>
 /// Represents a hotkey that may be bound.

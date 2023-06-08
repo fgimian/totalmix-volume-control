@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using WindowsShortcutFactory;
 
-namespace TotalMixVC.GUI;
+namespace TotalMixVC;
 
 /// <summary>
 /// Implements the system tray menu functionality.

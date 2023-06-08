@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TotalMixVC.Helpers;
+namespace TotalMixVC;
 
 /// <summary>
 /// Provides various useful extensions to async tasks.

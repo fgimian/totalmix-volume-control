@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TotalMixVC.GUI.Hotkeys;
+namespace TotalMixVC.Hotkeys;
 
 /// <summary>
 /// Represents a key modifier for a shortcut.

@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace TotalMixVC.Helpers.Tests;
+namespace TotalMixVC.Tests;
 
 public class TaskExtensionsTests
 {

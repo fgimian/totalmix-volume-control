@@ -12,9 +12,9 @@ using System.Windows.Input;
 using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.VisualStudio.Threading;
 using TotalMixVC.Communicator;
-using TotalMixVC.GUI.Hotkeys;
+using TotalMixVC.Hotkeys;
 
-namespace TotalMixVC.GUI;
+namespace TotalMixVC;
 
 /// <summary>
 /// Interaction logic for App.xaml.

@@ -59,7 +59,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TotalMixVC.Communicator\TotalMixVC.Communicator.csproj" />
+    <ProjectReference Include="..\TotalMixVC\TotalMixVC.csproj" />
   </ItemGroup>
 
 </Project>
