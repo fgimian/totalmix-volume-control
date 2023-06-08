@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
@@ -94,6 +95,17 @@ public partial class VolumeIndicator : Window
     {
         // Cancel the close window operation.
         e.Cancel = true;
+    }
+
+    /// <summary>
+    /// Ensures that the mouse can click through the volume indicator window.
+    /// </summary>
+    /// <param name="e">The event data.</param>
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+        IntPtr hwnd = new WindowInteropHelper(this).Handle;
+        WindowServices.SetWindowExTransparent(hwnd);
     }
 
     private void Hide(object sender, EventArgs e)
