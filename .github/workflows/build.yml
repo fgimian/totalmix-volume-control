@@ -29,7 +29,7 @@ jobs:
       uses: extractions/setup-just@v1
 
     - name: Restore dependencies, build, test & distribute using Just
-      run: just distribute ${{ matrix.configuration }}
+      run: just configuration=${{ matrix.configuration }} distribute
 
     - name: Upload coverage
       if: ${{ matrix.configuration == 'Release' }}

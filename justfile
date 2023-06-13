@@ -2,19 +2,20 @@ set shell := ["pwsh", "-nop", "-c"]
 
 coverage_path := ".coverage"
 installer_path := "artifacts"
+configuration := "Debug"
 
 [private]
 default:
     @just --list --unsorted
 
 # clean all object and binary files along with test output
-clean cfg="Debug":
+clean:
     #!pwsh -nop
     foreach ($path in @(
         '.coverage'
         'src/*/TestResults'
-        'src/*/bin/{{ cfg }}'
-        'src/*/obj/{{ cfg }}'
+        'src/*/bin/{{ configuration }}'
+        'src/*/obj/{{ configuration }}'
     )) {
         if (Test-Path -Path $path) {
             Remove-Item -Path $path -Recurse -Force
@@ -27,13 +28,13 @@ restore:
     dotnet restore
 
 # build the application
-build cfg="Debug": restore
-    dotnet build --configuration {{ cfg }} --no-restore
+build: restore
+    dotnet build --configuration {{ configuration }} --no-restore
 
 # test the application and produce a coverage report
-test cfg="Debug": (build cfg)
+test:
     dotnet test \
-        --configuration {{ cfg }} --logger xunit --verbosity normal --no-build \
+        --configuration {{ configuration }} --logger xunit --verbosity normal --no-build \
         /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
     dotnet reportgenerator \
         -reports:src/*/coverage.opencover.xml \
@@ -41,9 +42,10 @@ test cfg="Debug": (build cfg)
         "-reporttypes:Cobertura;lcov;Html"
 
 # publish the application ready for distribution
-publish cfg="Debug": (test cfg)
-    dotnet publish src/TotalMixVC --configuration {{ cfg }} --runtime win-x64 --self-contained
+publish:
+    dotnet publish \
+        src/TotalMixVC --configuration {{ configuration }} --runtime win-x64 --self-contained
 
 # create an installer for distribution
-distribute cfg="Debug": (publish cfg)
-    dotnet iscc "/O{{ installer_path }}" /DAppBuildConfiguration={{ cfg }} TotalMixVC.iss
+distribute:
+    dotnet iscc "/O{{ installer_path }}" /DAppBuildConfiguration={{ configuration }} TotalMixVC.iss
