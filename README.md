@@ -67,14 +67,15 @@ also:
 After cloning the source code from GitHub, follow the steps below:
 
 1. Install the [.NET 6.0 SDK](https://dotnet.microsoft.com/download).
-2. Open a PowerShell prompt and build the project
+2. Install [Just](https://github.com/casey/just)
+3. Open a PowerShell prompt and build the project
 
     ```powershell
-    cd .\totalmix-volume-control
-    .\build.ps1 --target Distribute --configuration Release
+    cd totalmix-volume-control
+    just distribute Release
     ```
 
-3. You'll now find an installer under the **artifacts** sub-directory
+4. You'll now find an installer under the **artifacts** sub-directory
 
 ## Building the Icon
 
@@ -86,7 +87,7 @@ scoop install imagemagick
 scoop install inkscape
 
 # Browse to the icon path.
-cd .\src\TotalMixVC\Icons
+cd src/TotalMixVC/Icons
 
 # Build PNGs of different sizes using Inkscape.
 ~/scoop/shims/inkscape.exe -w 16 -h 16 -o 16.png TotalMixVC.svg

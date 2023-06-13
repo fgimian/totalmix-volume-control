@@ -25,8 +25,11 @@ jobs:
       with:
         dotnet-version: 6.0.x
 
-    - name: Restore dependencies, build, test & distribute using Cake Frosting
-      run: ./build.ps1 --target Distribute --configuration ${{ matrix.configuration }}
+    - name: Setup Just
+      uses: extractions/setup-just@v1
+
+    - name: Restore dependencies, build, test & distribute using Just
+      run: just distribute ${{ matrix.configuration }}
 
     - name: Upload coverage
       if: ${{ matrix.configuration == 'Release' }}

@@ -14,6 +14,7 @@
 #define AppIconPath "src\TotalMixVC\Icons\TotalMixVC.ico"
 #define AppPublishPath "src\TotalMixVC\bin\" + AppBuildConfiguration + "\net6.0-windows\win-x64\publish"
 #define AppExeName "TotalMixVC.exe"
+#define AppVersion GetStringFileInfo(AddBackslash(AppPublishPath) + AppExeName, "ProductVersion")
 
 [Setup]
 AppId={{1542C049-A295-4E81-B1A4-2BE9D8F8F939}

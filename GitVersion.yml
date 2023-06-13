@@ -1,0 +1,4 @@
+# Use a full semantic version such as "0.4.1-just.1+12" as the product version instead of the 
+# default very long informational version such as
+# "0.4.1-just.1+12.Branch.just.Sha.e45cb7d0d4ee662bd69fcde8ea355e30943354b5".
+assembly-informational-format: '{FullSemVer}'
