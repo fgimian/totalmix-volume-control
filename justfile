@@ -32,7 +32,7 @@ build: restore
     dotnet build --configuration {{ configuration }} --no-restore
 
 # test the application and produce a coverage report
-test:
+test: build
     dotnet test \
         --configuration {{ configuration }} --logger xunit --verbosity normal --no-build \
         /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
@@ -42,10 +42,10 @@ test:
         "-reporttypes:Cobertura;lcov;Html"
 
 # publish the application ready for distribution
-publish:
+publish: test
     dotnet publish \
         src/TotalMixVC --configuration {{ configuration }} --runtime win-x64 --self-contained
 
 # create an installer for distribution
-distribute:
+distribute: publish
     dotnet iscc "/O{{ installer_path }}" /DAppBuildConfiguration={{ configuration }} TotalMixVC.iss
