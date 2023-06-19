@@ -29,6 +29,9 @@ public partial class App : Application
         + "5. Ensure the incoming port is {0} and outgoing port is {1}\n"
         + "6. Ensure the remote IP or Host Name is set to {2}";
 
+    // Disable non-nullable field must contain a non-null value when exiting constructor. These
+    // fields are initialized in OnStartup which is called by the constructor.
+#pragma warning disable CS8618
     private VolumeManager _volumeManager;
 
     private VolumeIndicator _volumeIndicator;
@@ -44,6 +47,7 @@ public partial class App : Application
     private JoinableTask _volumeReceiveTask;
 
     private JoinableTask _volumeInitializeTask;
+#pragma warning restore CS8618
 
     private Config _config = new();
 
