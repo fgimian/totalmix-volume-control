@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -11,6 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.VisualStudio.Threading;
+using Tomlyn;
 using TotalMixVC.Communicator;
 using TotalMixVC.Hotkeys;
 
@@ -47,6 +49,8 @@ public partial class App : Application
 
     private JoinableTask _volumeInitializeTask;
 
+    private Config _config = new();
+
     /// <summary>
     /// Starts the various required components after the application startup event is fired.
     /// </summary>
@@ -55,17 +59,36 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
-        // Create the volume manager which will communicate with the device.
-        _volumeManager = new(
-            outgoingEP: new IPEndPoint(IPAddress.Loopback, 7001),
-            incomingEP: new IPEndPoint(IPAddress.Loopback, 9001))
+        // Attempt to load the configuration if it exists.
+        string configPath = Path.Join(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "TotalMix Volume Control",
+            "config.toml");
+
+        if (File.Exists(configPath))
         {
-            VolumeRegularIncrement = 0.02f,
-            VolumeFineIncrement = 0.01f
+            // TODO: Handle possible errors here.
+            string configText = File.ReadAllText(configPath);
+            _config = Toml.ToModel<Config>(configText);
+        }
+
+        // Create the volume manager which will communicate with the device.
+        // TODO: Handle possible parsing errors below.
+        _volumeManager = new(
+            outgoingEP: new IPEndPoint(
+                IPAddress.Parse(_config.Osc.OutgoingHostname),
+                _config.Osc.OutgoingPort),
+            incomingEP: new IPEndPoint(
+                IPAddress.Parse(_config.Osc.IncomingHostname),
+                _config.Osc.IncomingPort))
+        {
+            VolumeRegularIncrement = _config.Volume.Increment,
+            VolumeFineIncrement = _config.Volume.FineIncrement,
+            VolumeMax = _config.Volume.Max
         };
 
         // Create the volume indicator widget which displays volume changes.
-        _volumeIndicator = new();
+        _volumeIndicator = new(_config);
 
         // Create a parent window which is not visible in the taskbar or Alt+Tab.
         Window hiddenParentWindow = new()
@@ -154,6 +177,9 @@ public partial class App : Application
                 // Switch to the background thread to avoid UI interruptions.
                 await TaskScheduler.Default;
 
+                // Obtain the initialized state before setting the volume.
+                bool initializedBeforeReceive = _volumeManager.IsVolumeInitialized;
+
                 // The device sends a ping roughly every 2 seconds (usually a pinch over
                 // 2 seconds), so we'll timeout at 3 seconds to be on the safe side.
                 bool received = await _volumeManager
@@ -170,6 +196,13 @@ public partial class App : Application
                             _volumeManager.VolumeDecibels,
                             _volumeManager.IsDimmed)
                         .ConfigureAwait(false);
+
+                    if (initializedBeforeReceive && _config.Interface.ShowRemoteVolumeChanges)
+                    {
+                        await _volumeIndicator
+                            .DisplayCurrentVolumeAsync()
+                            .ConfigureAwait(false);
+                    }
                 }
 
                 // Switch to the UI thread and update the tray tooltip text.

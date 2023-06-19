@@ -1,0 +1,62 @@
+[osc]
+# The hostname and port that TotalMix Volume Control should send to.  This should be set
+# to match the "Port incoming" setting in TotalMixFX.
+outgoing_hostname = "127.0.0.1"
+outgoing_port = 7001
+
+# The hostname and port that TotalMix Volume Control should receive from.  This should be set
+# to match the "Port outgoing" setting in TotalMixFX.
+incoming_hostname = "127.0.0.1"
+incoming_port = 9001
+
+[volume]
+# The amount that the volume should be increased when using the volume keys (with a max of 0.10
+# which will increase the volume by 10%).
+increment = 0.02
+
+# The amount that the volume should be increased when using the volume keys and holding shift down
+# (with a max of 0.05 which will increase the volume by 5%).
+fine_increment = 0.01
+
+# The maximum volume to send (with a max of 1.0 which is 100% volume).
+max = 1.0
+
+[theme]
+# The main widget background corner rounding and color.
+background_rounding = 10.0
+background_color = "#e21e2328"
+
+# The TotalMix Volume heading text colors.
+heading_totalmix_color = "#ffffff"
+heading_volume_color = "#e06464"
+
+# The main decibel volume readout text colors.
+volume_readout_color_normal = "#ffffff"
+volume_readout_color_dimmed = "#ffa500"
+
+# The horizontal volume bar colors.
+volume_bar_background_color = "#333333"
+volume_bar_foreground_color_normal = "#999999"
+volume_bar_foreground_color_dimmed = "#996500"
+
+[interface]
+# Scale the interface by a particular factor (e.g. 2.0 will be twice as large).
+scaling = 1.0
+
+# The position offset from the top left corner to display the widget at.
+position_offset = 40.0
+
+# The amount of time in seconds to display the widget upon hitting the volume keys before
+# beginning the fade out animation.
+hide_delay = 2.0
+
+# The duration of the fade out animation in seconds.
+fade_out_time = 1.0
+
+# Whether to show the indicator any time the volume is changed via the device or any other
+# external means (e.g. an RME ARC controller).
+#
+# Please note that in my testing RME devices send volume changes at infrequent but random times,
+# even when the volume has not been changed intentionally. This is ultimately why this setting is
+# off by default.
+show_remote_volume_changes = false

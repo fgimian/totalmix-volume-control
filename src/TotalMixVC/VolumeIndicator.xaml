@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TotalMixVC"
         mc:Ignorable="d"
-        Title="VolumeIndicator" Height="165" Width="165"
+        Title="VolumeIndicator"
+        SizeToContent="WidthAndHeight"
         WindowStartupLocation="Manual"
         Left="40"
         Top="40"
@@ -17,6 +18,7 @@
         Topmost="True">
 
     <Window.Resources>
+        <ScaleTransform x:Key="WindowScaleTransform" ScaleX="1.0" ScaleY="1.0"/>
         <Storyboard x:Key="Hide">
             <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="0:0:1" To="0.0"/>
             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility">
@@ -31,25 +33,30 @@
         </Storyboard>
     </Window.Resources>
 
-    <Border BorderThickness="25"
+    <Border x:Name="VolumeWidgetBorder"
+            BorderThickness="25"
             BorderBrush="#e21e2328"
-            CornerRadius="1">
-        <StackPanel Background="#e21e2328">
+            CornerRadius="1"
+            LayoutTransform="{StaticResource WindowScaleTransform}">
+
+        <StackPanel Background="{Binding ElementName=VolumeWidgetBorder, Path=BorderBrush}">
             <!-- Title -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock VerticalAlignment="Center"
+                <TextBlock x:Name="VolumeWidgetTitleTotalMix"
+                           VerticalAlignment="Center"
                            Foreground="White"
                            FontWeight="Bold"
                            FontSize="15"
                            Text="TotalMix "/>
-                <TextBlock VerticalAlignment="Center"
+                <TextBlock x:Name="VolumeWidgetTitleVolume"
+                           VerticalAlignment="Center"
                            Foreground="#e06464"
                            FontSize="15"
                            Text="Volume"/>
             </StackPanel>
 
             <!-- Volume Reading -->
-            <TextBlock x:Name="VolumeDecibelsTextBox"
+            <TextBlock x:Name="VolumeWidgetDecibelsTextBox"
                        HorizontalAlignment="Center"
                        Margin="0 19 0 23"
                        Foreground="White"
@@ -57,15 +64,15 @@
                        Text="-"/>
 
             <!-- Volume Bar -->
-            <Grid>
+            <Grid Margin="0 0 0 3">
                 <!-- Background -->
-                <Rectangle x:Name="VolumeReadingBackgroundRectangle"
+                <Rectangle x:Name="VolumeWidgetReadingBackgroundRectangle"
                            HorizontalAlignment="Stretch"
                            Fill="#333"
                            Height="10"/>
 
                 <!-- Current Reading -->
-                <Rectangle x:Name="VolumeReadingCurrentRectangle"
+                <Rectangle x:Name="VolumeWidgetReadingCurrentRectangle"
                            HorizontalAlignment="Left"
                            Width="0"
                            Fill="#999"
