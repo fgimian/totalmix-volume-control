@@ -56,7 +56,7 @@ public partial class VolumeIndicator : Window
 
         // Display the volume indicator with the current volume details.  We use a dispatcher
         // to ensure that this work occurs in the UI thread.
-        Storyboard showStoryboard = FindResource("Show") as Storyboard;
+        Storyboard showStoryboard = Resources["Show"] as Storyboard;
         showStoryboard.Begin(this);
 
         // Switch to the background thread to avoid UI interruptions.
@@ -126,7 +126,7 @@ public partial class VolumeIndicator : Window
         DispatcherTimer timer = (DispatcherTimer)sender;
         timer.Stop();
 
-        Storyboard hideStoryboard = FindResource("Hide") as Storyboard;
+        Storyboard hideStoryboard = Resources["Hide"] as Storyboard;
         hideStoryboard.Begin(this);
     }
 

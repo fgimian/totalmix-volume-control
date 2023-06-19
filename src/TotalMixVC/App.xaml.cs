@@ -114,7 +114,7 @@ public partial class App : Application
         _volumeIndicator.Opacity = 1.0;
 
         // Create the system tray icon and set the icon to match the application.
-        _trayIcon = (TaskbarIcon)FindResource("TrayIcon");
+        _trayIcon = Resources["TrayIcon"] as TaskbarIcon;
         _trayIcon.Icon = Icon.ExtractAssociatedIcon(
             Assembly.GetEntryAssembly().ManifestModule.Name);
 
