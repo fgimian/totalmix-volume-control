@@ -48,4 +48,4 @@ publish: test
 
 # create an installer for distribution
 distribute: publish
-    dotnet iscc "/O{{ installer_path }}" /DAppBuildConfiguration={{ configuration }} TotalMixVC.iss
+    iscc "/O{{ installer_path }}" /DAppBuildConfiguration={{ configuration }} TotalMixVC.iss
