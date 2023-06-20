@@ -66,7 +66,7 @@ also:
 
 After cloning the source code from GitHub, follow the steps below:
 
-1. Install the [.NET 6.0 SDK](https://dotnet.microsoft.com/download).
+1. Install the [.NET 7.0 SDK](https://dotnet.microsoft.com/download).
 2. Install [Just](https://github.com/casey/just)
 3. Open a PowerShell prompt and build the project
 

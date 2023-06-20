@@ -80,7 +80,7 @@ public class VolumeManager
     /// <summary>
     /// Gets the current device volume as a string in decibels.
     /// </summary>
-    public string VolumeDecibels { get; private set; }
+    public string? VolumeDecibels { get; private set; }
 
     /// <summary>
     /// Gets whether dim is enabled on the device (where 0 is disabled and 1 is enabled).
@@ -201,7 +201,7 @@ public class VolumeManager
     /// </exception>
     /// <exception cref="TimeoutException">Thrown if the task times out.</exception>
     public async Task<bool> ReceiveVolumeAsync(
-        int timeout = 5000, CancellationTokenSource cancellationTokenSource = null)
+        int timeout = 5000, CancellationTokenSource? cancellationTokenSource = null)
     {
         // Ping events are sent from the device every around every 1 second, so we only
         // wait until a given timeout of 5 seconds before giving up and forcing a fresh
@@ -242,23 +242,21 @@ public class VolumeManager
         }
 
         // Volume changes are only presented in bundles.
-        if (packet is not OscBundle)
+        if (packet is OscBundle bundle)
         {
-            return false;
+            // Build a list of messages from the bundle.
+            List<OscMessage> messages = new();
+            IEnumerator<OscMessage> messageEnumerator = bundle.Messages();
+            while (messageEnumerator.MoveNext())
+            {
+                messages.Add(messageEnumerator.Current);
+            }
+
+            // Attempt to update the volume reading from the bundle of messages.
+            return await UpdateVolumeFromMessagesAsync(messages).ConfigureAwait(false);
         }
 
-        OscBundle bundle = packet as OscBundle;
-
-        // Build a list of messages from the bundle.
-        List<OscMessage> messages = new();
-        IEnumerator<OscMessage> messageEnumerator = bundle.Messages();
-        while (messageEnumerator.MoveNext())
-        {
-            messages.Add(messageEnumerator.Current);
-        }
-
-        // Attempt to update the volume reading from the bundle of messages.
-        return await UpdateVolumeFromMessagesAsync(messages).ConfigureAwait(false);
+        return false;
     }
 
     /// <summary>

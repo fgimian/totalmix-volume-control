@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -10,9 +11,13 @@ using System.Windows.Interop;
 /// <summary>
 /// Manages various global hotkeys along with their associated actions.
 /// </summary>
-public class GlobalHotKeyManager : IDisposable
+public partial class GlobalHotKeyManager : IDisposable
 {
-    private const int WmHotkey = 0x0312;
+    [SuppressMessage(
+        "StyleCop.CSharp.NamingRules",
+        "SA1310:Field names should not contain underscore",
+        Justification = "Use the appropriate case for constants to match the Win32 SDK.")]
+    private const int WM_HOTKEY = 0x0312;
 
     private readonly Dictionary<Hotkey, Action> _actions;
 
@@ -55,7 +60,7 @@ public class GlobalHotKeyManager : IDisposable
         KeyModifier keyModifier = hotkey.KeyModifier;
         int key = KeyInterop.VirtualKeyFromKey(hotkey.Key);
 
-        if (!RegisterHotKey(IntPtr.Zero, hotkey.GetHashCode(), (uint)keyModifier, (uint)key))
+        if (!RegisterHotKey(nint.Zero, hotkey.GetHashCode(), (uint)keyModifier, (uint)key))
         {
             throw new Win32Exception(Marshal.GetLastWin32Error());
         }
@@ -69,7 +74,7 @@ public class GlobalHotKeyManager : IDisposable
     /// <param name="handled">Whether or not the key stroke has been handled.</param>
     public void OnThreadPreprocessMessage(ref MSG msg, ref bool handled)
     {
-        if (msg.message != WmHotkey)
+        if (msg.message != WM_HOTKEY)
         {
             return;
         }
@@ -105,17 +110,19 @@ public class GlobalHotKeyManager : IDisposable
         {
             foreach (KeyValuePair<Hotkey, Action> kvp in _actions)
             {
-                UnregisterHotKey(IntPtr.Zero, kvp.Key.GetHashCode());
+                UnregisterHotKey(nint.Zero, kvp.Key.GetHashCode());
             }
         }
 
         _disposed = true;
     }
 
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern bool RegisterHotKey(
-        IntPtr hWnd, int id, uint fsModifiers, uint vlc);
+    [LibraryImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool RegisterHotKey(
+    nint hWnd, int id, uint fsModifiers, uint vlc);
 
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+    [LibraryImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool UnregisterHotKey(nint hWnd, int id);
 }

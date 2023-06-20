@@ -1,16 +1,20 @@
 ﻿namespace TotalMixVC;
 
-using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 /// <summary>
 /// Provides several useful utilities for manipulating windows.
 /// </summary>
-internal static class WindowServices
+[SuppressMessage(
+    "StyleCop.CSharp.NamingRules",
+    "SA1310:Field names should not contain underscore",
+    Justification = "Use the appropriate case for constants to match the Win32 SDK.")]
+internal static partial class WindowServices
 {
-    private const int WsExTransparent = 0x00000020;
+    private const int WS_EX_TRANSPARENT = 0x00000020;
 
-    private const int GwlExstyle = -20;
+    private const int GWL_EXSTYLE = -20;
 
     /// <summary>
     /// Sets the extended window style to be transparent so that mouse events can pass through
@@ -19,15 +23,15 @@ internal static class WindowServices
     /// <param name="hwnd">
     /// The raw window handle which is typically obtained via WindowInteropHelper.
     /// </param>
-    public static void SetWindowExTransparent(IntPtr hwnd)
+    public static void SetWindowExTransparent(nint hwnd)
     {
-        int extendedStyle = GetWindowLong(hwnd, GwlExstyle);
-        _ = SetWindowLong(hwnd, GwlExstyle, extendedStyle | WsExTransparent);
+        int extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+        _ = SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_TRANSPARENT);
     }
 
-    [DllImport("user32.dll")]
-    private static extern int GetWindowLong(IntPtr hwnd, int index);
+    [LibraryImport("user32.dll")]
+    private static partial int GetWindowLong(nint hwnd, int index);
 
-    [DllImport("user32.dll")]
-    private static extern int SetWindowLong(IntPtr hwnd, int index, int newStyle);
+    [LibraryImport("user32.dll")]
+    private static partial int SetWindowLong(nint hwnd, int index, int newStyle);
 }

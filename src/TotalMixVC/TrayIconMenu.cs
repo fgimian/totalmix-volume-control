@@ -31,16 +31,16 @@ public static class TrayIconMenu
             string shortcutPath = Path.Join(
                 Environment.GetFolderPath(Environment.SpecialFolder.Startup),
                 "TotalMix Volume Control.lnk");
-            string appExecutablePath = Environment.ProcessPath;
+            string? appExecutablePath = Environment.ProcessPath;
 
             if (value)
             {
                 using WindowsShortcut shortcut = new()
                 {
                     Description = "TotalMix Volume Control",
-                    WorkingDirectory = Directory.GetParent(appExecutablePath).FullName,
+                    WorkingDirectory = Directory.GetParent(appExecutablePath!)?.FullName,
                     Path = appExecutablePath,
-                    IconLocation = new IconLocation(appExecutablePath, index: 0)
+                    IconLocation = new IconLocation(appExecutablePath!, index: 0)
                 };
 
                 shortcut.Save(shortcutPath);
@@ -55,8 +55,5 @@ public static class TrayIconMenu
     /// <summary>
     /// Gets the Exit tray icon command which shuts down the application.
     /// </summary>
-    public static ICommand ExitCommand => new DelegateCommand
-    {
-        CommandAction = () => Application.Current.Shutdown()
-    };
+    public static ICommand ExitCommand => new DelegateCommand(() => Application.Current.Shutdown());
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -56,7 +54,7 @@ public partial class VolumeIndicator : Window
 
         // Display the volume indicator with the current volume details.  We use a dispatcher
         // to ensure that this work occurs in the UI thread.
-        Storyboard showStoryboard = Resources["Show"] as Storyboard;
+        Storyboard showStoryboard = (Storyboard)Resources["Show"];
         showStoryboard.Begin(this);
 
         // Switch to the background thread to avoid UI interruptions.
@@ -85,12 +83,13 @@ public partial class VolumeIndicator : Window
         await _joinableTaskFactory.SwitchToMainThreadAsync();
 
         // Update the color of text and the volume rectangle based on whether the volume is dimmed.
+        BrushConverter brushConverter = new();
         VolumeWidgetReadingCurrentRectangle.Fill =
-            (SolidColorBrush)new BrushConverter().ConvertFrom(isDimmed
+            (SolidColorBrush?)brushConverter.ConvertFrom(isDimmed
                 ? _config.Theme.VolumeBarForegroundColorDimmed
                 : _config.Theme.VolumeBarForegroundColorNormal);
         VolumeWidgetDecibelsTextBox.Foreground =
-            (SolidColorBrush)new BrushConverter().ConvertFrom(isDimmed
+            (SolidColorBrush?)brushConverter.ConvertFrom(isDimmed
                 ? _config.Theme.VolumeReadoutColorDimmed
                 : _config.Theme.VolumeReadoutColorNormal);
 
@@ -117,29 +116,29 @@ public partial class VolumeIndicator : Window
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);
-        IntPtr hwnd = new WindowInteropHelper(this).Handle;
+        nint hwnd = new WindowInteropHelper(this).Handle;
         WindowServices.SetWindowExTransparent(hwnd);
     }
 
-    private void Hide(object sender, EventArgs e)
+    private void Hide(object? sender, EventArgs e)
     {
-        DispatcherTimer timer = (DispatcherTimer)sender;
-        timer.Stop();
+        DispatcherTimer? timer = (DispatcherTimer?)sender;
+        timer?.Stop();
 
-        Storyboard hideStoryboard = Resources["Hide"] as Storyboard;
+        Storyboard hideStoryboard = (Storyboard)Resources["Hide"];
         hideStoryboard.Begin(this);
     }
 
     private void ConfigureInterface()
     {
-        ScaleTransform scaleTransform = Resources["WindowScaleTransform"] as ScaleTransform;
+        ScaleTransform scaleTransform = (ScaleTransform)Resources["WindowScaleTransform"];
         scaleTransform.ScaleX = _config.Interface.Scaling;
         scaleTransform.ScaleY = _config.Interface.Scaling;
 
-        Storyboard hideStoryboard = Resources["Hide"] as Storyboard;
-        DoubleAnimation opacityAnimation = hideStoryboard.Children[0] as DoubleAnimation;
+        Storyboard hideStoryboard = (Storyboard)Resources["Hide"];
+        DoubleAnimation opacityAnimation = (DoubleAnimation)hideStoryboard.Children[0];
         ObjectAnimationUsingKeyFrames visibilityAnimation =
-            hideStoryboard.Children[1] as ObjectAnimationUsingKeyFrames;
+            (ObjectAnimationUsingKeyFrames)hideStoryboard.Children[1];
         TimeSpan animationTime = TimeSpan.FromSeconds(_config.Interface.FadeOutTime);
 
         opacityAnimation.Duration = new Duration(animationTime);
@@ -151,28 +150,30 @@ public partial class VolumeIndicator : Window
 
     private void ConfigureTheme()
     {
+        BrushConverter brushConverter = new();
+
         VolumeWidgetBorder.BorderBrush =
-            (SolidColorBrush)new BrushConverter().ConvertFrom(_config.Theme.BackgroundColor);
+            (SolidColorBrush?)brushConverter.ConvertFrom(_config.Theme.BackgroundColor);
         VolumeWidgetBorder.CornerRadius = new CornerRadius(_config.Theme.BackgroundRounding);
 
         VolumeWidgetTitleTotalMix.Foreground =
-            (SolidColorBrush)new BrushConverter().ConvertFrom(
+            (SolidColorBrush?)brushConverter.ConvertFrom(
                 _config.Theme.HeadingTotalmixColor);
 
         VolumeWidgetTitleVolume.Foreground =
-            (SolidColorBrush)new BrushConverter().ConvertFrom(
+            (SolidColorBrush?)brushConverter.ConvertFrom(
                 _config.Theme.HeadingVolumeColor);
 
         VolumeWidgetDecibelsTextBox.Foreground =
-            (SolidColorBrush)new BrushConverter().ConvertFrom(
+            (SolidColorBrush?)brushConverter.ConvertFrom(
                 _config.Theme.VolumeReadoutColorNormal);
 
         VolumeWidgetReadingBackgroundRectangle.Fill =
-            (SolidColorBrush)new BrushConverter().ConvertFrom(
+            (SolidColorBrush?)brushConverter.ConvertFrom(
                 _config.Theme.VolumeBarBackgroundColor);
 
         VolumeWidgetReadingCurrentRectangle.Fill =
-            (SolidColorBrush)new BrushConverter().ConvertFrom(
+            (SolidColorBrush?)brushConverter.ConvertFrom(
                 _config.Theme.VolumeBarForegroundColorNormal);
     }
 }

@@ -41,7 +41,7 @@ public static class TaskExtensions
     public static async Task TimeoutAfter(
         this Task task,
         int millisecondsTimeout,
-        CancellationTokenSource cancellationTokenSource = null)
+        CancellationTokenSource? cancellationTokenSource = null)
     {
         using CancellationTokenSource timeoutCancellationTokenSource = new();
 
@@ -107,7 +107,7 @@ public static class TaskExtensions
     public static async Task<TResult> TimeoutAfter<TResult>(
         this Task<TResult> task,
         int millisecondsTimeout,
-        CancellationTokenSource cancellationTokenSource = null)
+        CancellationTokenSource? cancellationTokenSource = null)
     {
         using CancellationTokenSource timeoutCancellationTokenSource = new();
 

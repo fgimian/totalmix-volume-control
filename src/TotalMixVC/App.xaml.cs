@@ -1,12 +1,8 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -113,15 +109,20 @@ public partial class App : Application
         _volumeIndicator.Hide();
         _volumeIndicator.Opacity = 1.0;
 
-        // Create the system tray icon and set the icon to match the application.
-        _trayIcon = Resources["TrayIcon"] as TaskbarIcon;
-        _trayIcon.Icon = Icon.ExtractAssociatedIcon(
-            Assembly.GetEntryAssembly().ManifestModule.Name);
+        // Create the system tray icon.
+        _trayIcon = (TaskbarIcon)Resources["TrayIcon"];
+
+        // Set the tray icon to match the application.
+        Assembly? assembly = Assembly.GetEntryAssembly();
+        if (assembly is not null)
+        {
+            _trayIcon.Icon = Icon.ExtractAssociatedIcon(assembly.ManifestModule.Name);
+        }
 
         // Obtain the tooltip text area so the text may be updated as required while the app
         // is running.
-        Border trayToolTipBorder = _trayIcon.TrayToolTip as Border;
-        StackPanel trayToolTipStackPanel = trayToolTipBorder.Child as StackPanel;
+        Border trayToolTipBorder = (Border)_trayIcon.TrayToolTip;
+        StackPanel trayToolTipStackPanel = (StackPanel)trayToolTipBorder.Child;
         _trayToolTipStatusTextBlock =
             trayToolTipStackPanel
                 .Children
@@ -193,7 +194,7 @@ public partial class App : Application
                     await _volumeIndicator
                         .UpdateVolumeAsync(
                             _volumeManager.Volume,
-                            _volumeManager.VolumeDecibels,
+                            _volumeManager.VolumeDecibels!,
                             _volumeManager.IsDimmed)
                         .ConfigureAwait(false);
 
