@@ -39,7 +39,8 @@ test: build
     dotnet reportgenerator \
         -reports:src/*/coverage.opencover.xml \
         "-targetdir:{{ coverage_path }}" \
-        "-reporttypes:Cobertura;lcov;Html"
+        "-reporttypes:Cobertura;lcov;Html" \
+        -filefilters:-*.g.cs
 
 # publish the application ready for distribution
 publish: test
