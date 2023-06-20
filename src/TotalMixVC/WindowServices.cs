@@ -25,13 +25,13 @@ internal static partial class WindowServices
     /// </param>
     public static void SetWindowExTransparent(nint hwnd)
     {
-        int extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
-        _ = SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_TRANSPARENT);
+        int extendedStyle = GetWindowLongW(hwnd, GWL_EXSTYLE);
+        _ = SetWindowLongW(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_TRANSPARENT);
     }
 
     [LibraryImport("user32.dll")]
-    private static partial int GetWindowLong(nint hwnd, int index);
+    private static partial int GetWindowLongW(nint hwnd, int index);
 
     [LibraryImport("user32.dll")]
-    private static partial int SetWindowLong(nint hwnd, int index, int newStyle);
+    private static partial int SetWindowLongW(nint hwnd, int index, int newStyle);
 }
