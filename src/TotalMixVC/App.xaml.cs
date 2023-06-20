@@ -27,7 +27,7 @@ public partial class App : Application
         + "3. Open Options / Settings and select the OSC tab\n"
         + "4. Ensure one of the Remote Controller Select slots is In Use and is selected\n"
         + "5. Ensure the incoming port is {0} and outgoing port is {1}\n"
-        + "6. Ensure the IP or Host Name is set to {2}";
+        + "6. Ensure the remote IP or Host Name is set to {2}";
 
     private VolumeManager _volumeManager;
 
@@ -222,7 +222,10 @@ public partial class App : Application
                 // Switch to the UI thread and update the tray tooltip text.
                 await _joinableTaskFactory.SwitchToMainThreadAsync();
                 _trayToolTipStatusTextBlock.Text = string.Format(
-                    CommunicationErrorFormatString, 7001, 9001, "127.0.0.1");
+                    CommunicationErrorFormatString,
+                    _config.Osc.OutgoingPort,
+                    _config.Osc.IncomingPort,
+                    _config.Osc.IncomingHostname);
                 _trayIcon.ToolTipText = "TotalMixVC - Unable to connect to your device";
             }
             catch (OperationCanceledException)

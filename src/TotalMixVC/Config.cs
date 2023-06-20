@@ -12,7 +12,8 @@ public record Osc
     /// </summary>
     public ushort OutgoingPort { get; init; } = 7001;
 
-    /// <summary>Gets the hostname to receive volume changes from.</summary>
+    /// <summary>Gets the hostname to receive volume changes from. This should match the
+    /// "Remote Controller Address" and should typically be "127.0.0.1".</summary>
     public string IncomingHostname { get; init; } = "127.0.0.1";
 
     /// <summary>

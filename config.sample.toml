@@ -1,6 +1,7 @@
 [osc]
-# The hostname and port that TotalMix Volume Control should send to.  This should be set
-# to match the "Port incoming" setting in TotalMixFX.
+# The hostname port that TotalMix Volume Control should send to.  TotalMixFX listens on 0.0.0.0
+# so the hostname may be any IP address on your network.  Generally 127.0.0.1 (localhost) is
+# recommended. T The port should be set to match the "Port incoming" setting in TotalMixFX.
 outgoing_hostname = "127.0.0.1"
 outgoing_port = 7001
 
