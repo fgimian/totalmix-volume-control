@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.VisualStudio.Threading;
 using Tomlyn;
@@ -36,7 +37,7 @@ public partial class App : Application
 
     private VolumeIndicator _volumeIndicator;
 
-    private TextBlock _trayToolTipStatusTextBlock;
+    private TextBlock _trayToolTipStatus;
 
     private TaskbarIcon _trayIcon;
 
@@ -126,12 +127,12 @@ public partial class App : Application
         // Obtain the tooltip text area so the text may be updated as required while the app
         // is running.
         Border trayToolTipBorder = (Border)_trayIcon.TrayToolTip;
-        StackPanel trayToolTipStackPanel = (StackPanel)trayToolTipBorder.Child;
-        _trayToolTipStatusTextBlock =
-            trayToolTipStackPanel
-                .Children
-                .OfType<TextBlock>()
-                .First(b => b.Name == "Status");
+        _trayToolTipStatus = (TextBlock)LogicalTreeHelper.FindLogicalNode(
+            trayToolTipBorder, "TrayToolTipStatus");
+
+        // Configure the tray tooltip interface and theme.
+        ConfigureInterface();
+        ConfigureTheme();
 
         // Create a task factory for the current thread (which is the UI thread).
         _joinableTaskFactory = new(new JoinableTaskContext());
@@ -212,7 +213,7 @@ public partial class App : Application
 
                 // Switch to the UI thread and update the tray tooltip text.
                 await _joinableTaskFactory.SwitchToMainThreadAsync();
-                _trayToolTipStatusTextBlock.Text =
+                _trayToolTipStatus.Text =
                     "Successfully communicating with your RME device.";
                 _trayIcon.ToolTipText = "TotalMixVC - Connection established.";
             }
@@ -225,7 +226,7 @@ public partial class App : Application
 
                 // Switch to the UI thread and update the tray tooltip text.
                 await _joinableTaskFactory.SwitchToMainThreadAsync();
-                _trayToolTipStatusTextBlock.Text = string.Format(
+                _trayToolTipStatus.Text = string.Format(
                     CommunicationErrorFormatString,
                     _config.Osc.OutgoingPort,
                     _config.Osc.IncomingPort,
@@ -336,5 +337,52 @@ public partial class App : Application
                         .ConfigureAwait(false);
                 })
                 .Join());
+    }
+
+    private void ConfigureInterface()
+    {
+        ScaleTransform scaleTransform =
+            (ScaleTransform)_trayIcon.Resources["TrayIconScaleTransform"];
+        scaleTransform.ScaleX = _config.Interface.Scaling;
+        scaleTransform.ScaleY = _config.Interface.Scaling;
+    }
+
+    private void ConfigureTheme()
+    {
+        BrushConverter brushConverter = new();
+
+        Border trayToolTipBorder = (Border)_trayIcon.TrayToolTip;
+
+        // TODO: Determine why binding this to border brush doesn't work.
+        StackPanel trayToolTipPanel = (StackPanel)LogicalTreeHelper.FindLogicalNode(
+            trayToolTipBorder, "TrayToolTipPanel");
+
+        TextBlock trayToolTipTitleTotalMix = (TextBlock)LogicalTreeHelper.FindLogicalNode(
+            trayToolTipBorder, "TrayToolTipTitleTotalMix");
+
+        TextBlock trayToolTipTitleVolume = (TextBlock)LogicalTreeHelper.FindLogicalNode(
+            trayToolTipBorder, "TrayToolTipTitleVolume");
+
+        TextBlock trayToolTipStatus = (TextBlock)LogicalTreeHelper.FindLogicalNode(
+            trayToolTipBorder, "TrayToolTipStatus");
+
+        trayToolTipBorder.BorderBrush =
+            (SolidColorBrush?)brushConverter.ConvertFrom(_config.Theme.BackgroundColor);
+        trayToolTipBorder.CornerRadius = new CornerRadius(_config.Theme.BackgroundRounding);
+
+        trayToolTipPanel.Background =
+            (SolidColorBrush?)brushConverter.ConvertFrom(_config.Theme.BackgroundColor);
+
+        trayToolTipTitleTotalMix.Foreground =
+            (SolidColorBrush?)brushConverter.ConvertFrom(
+                _config.Theme.HeadingTotalmixColor);
+
+        trayToolTipTitleVolume.Foreground =
+            (SolidColorBrush?)brushConverter.ConvertFrom(
+                _config.Theme.HeadingVolumeColor);
+
+        trayToolTipStatus.Foreground =
+            (SolidColorBrush?)brushConverter.ConvertFrom(
+                _config.Theme.TrayTooltipMessageColor);
     }
 }

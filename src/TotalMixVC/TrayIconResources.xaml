@@ -16,27 +16,34 @@
                     ToolTipText="TotalMix Volume Control"
                     MenuActivation="LeftOrRightClick"
                     ContextMenu="{StaticResource TrayIconMenu}">
+        <tb:TaskbarIcon.Resources>
+            <ScaleTransform x:Key="TrayIconScaleTransform" ScaleX="1.0" ScaleY="1.0"/>
+        </tb:TaskbarIcon.Resources>
         <tb:TaskbarIcon.TrayToolTip>
-            <Border BorderThickness="15"
+            <Border x:Name="TrayToolTipBorder"
+                    BorderThickness="15"
                     BorderBrush="#e21e2328"
-                    CornerRadius="1">
-                <StackPanel Background="#e21e2328">
+                    CornerRadius="1"
+                    LayoutTransform="{StaticResource TrayIconScaleTransform}">
+                <StackPanel x:Name="TrayToolTipPanel" Background="#e21e2328">
                     <!-- Title -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <TextBlock VerticalAlignment="Center"
+                        <TextBlock x:Name="TrayToolTipTitleTotalMix"
+                                   VerticalAlignment="Center"
                                    Foreground="White"
                                    FontWeight="Bold"
                                    FontSize="15"
                                    Text="TotalMix ">
                         </TextBlock>
-                        <TextBlock VerticalAlignment="Center"
+                        <TextBlock x:Name="TrayToolTipTitleVolume"
+                                   VerticalAlignment="Center"
                                    Foreground="#e06464"
                                    FontSize="15"
                                    Text="Volume">
                         </TextBlock>
                     </StackPanel>
                     <!-- Status -->
-                    <TextBlock x:Name="Status"
+                    <TextBlock x:Name="TrayToolTipStatus"
                                HorizontalAlignment="Left"
                                VerticalAlignment="Center"
                                Margin="0 15 0 0"
