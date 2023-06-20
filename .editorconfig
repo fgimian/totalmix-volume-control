@@ -177,9 +177,6 @@ dotnet_diagnostic.RCS0013.severity = warning
 # Ensure a new line after attribute listings.
 dotnet_diagnostic.RCS0016.severity = warning
 
-# Ensure single line accessors are expanded into multiple lines.
-dotnet_diagnostic.RCS0020.severity = warning
-
 # Ensure a new line after the opening brace of a block.
 dotnet_diagnostic.RCS0021.severity = warning
 
@@ -263,9 +260,6 @@ dotnet_diagnostic.RCS0054.severity = warning
 # Ensure that long lines are flagged.
 dotnet_diagnostic.RCS0056.severity = warning
 roslynator_max_line_length = 100
-
-# Ensure no new lines for single-line property accessors.
-roslynator_accessor_braces_style = single_line_when_expression_is_on_single_line
 
 [**/obj/**.cs]
 # Ignore unused using statements in generated code.
