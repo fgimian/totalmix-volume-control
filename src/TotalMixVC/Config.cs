@@ -76,11 +76,12 @@ public record Theme
     /// <summary>Gets the background color of volume bar on the widget.</summary>
     public string VolumeBarBackgroundColor { get; init; } = "#333333";
 
-    /// <summary>Gets the foreground color of volume bar on the widget.</summary>
+    /// <summary>Gets the current reading foreground color of volume bar on the widget.</summary>
     public string VolumeBarForegroundColorNormal { get; init; } = "#999999";
 
     /// <summary>
-    /// Gets the foreground color of volume bar on the widget when the volume is dimmed.
+    /// Gets the current reading foreground color of volume bar on the widget when the volume is
+    /// dimmed.
     /// </summary>
     public string VolumeBarForegroundColorDimmed { get; init; } = "#996500";
 

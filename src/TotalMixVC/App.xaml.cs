@@ -107,7 +107,7 @@ public partial class App : Application
         _volumeIndicator.Owner = hiddenParentWindow;
         hiddenParentWindow.Hide();
 
-        // Silently display the volume indicator so the volume reading background rectangle
+        // Silently display the volume indicator so the volume bar rectangle background
         // width is initialized.
         _volumeIndicator.Opacity = 0.0;
         _volumeIndicator.Show();

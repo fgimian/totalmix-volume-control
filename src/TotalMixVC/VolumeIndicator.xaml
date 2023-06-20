@@ -19,13 +19,13 @@
 
     <Window.Resources>
         <ScaleTransform x:Key="WindowScaleTransform" ScaleX="1.0" ScaleY="1.0"/>
-        <Storyboard x:Key="Hide">
+        <Storyboard x:Key="WindowStoryboardHide">
             <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="0:0:1" To="0.0"/>
             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility">
                 <DiscreteObjectKeyFrame KeyTime="0:0:1" Value="{x:Static Visibility.Hidden}"/>
             </ObjectAnimationUsingKeyFrames>
         </Storyboard>
-        <Storyboard x:Key="Show">
+        <Storyboard x:Key="WindowStoryboardShow">
             <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="0:0:0" To="1.0"/>
             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility">
                 <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}"/>
@@ -38,7 +38,6 @@
             BorderBrush="#e21e2328"
             CornerRadius="1"
             LayoutTransform="{StaticResource WindowScaleTransform}">
-
         <StackPanel Background="{Binding ElementName=VolumeWidgetBorder, Path=BorderBrush}">
             <!-- Title -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -54,25 +53,22 @@
                            FontSize="15"
                            Text="Volume"/>
             </StackPanel>
-
-            <!-- Volume Reading -->
-            <TextBlock x:Name="VolumeWidgetDecibelsTextBox"
+            <!-- Volume Readout -->
+            <TextBlock x:Name="VolumeWidgetReadout"
                        HorizontalAlignment="Center"
                        Margin="0 19 0 23"
                        Foreground="White"
                        FontSize="30"
                        Text="-"/>
-
             <!-- Volume Bar -->
             <Grid Margin="0 0 0 3">
                 <!-- Background -->
-                <Rectangle x:Name="VolumeWidgetReadingBackgroundRectangle"
+                <Rectangle x:Name="VolumeWidgetBarBackground"
                            HorizontalAlignment="Stretch"
                            Fill="#333"
                            Height="10"/>
-
-                <!-- Current Reading -->
-                <Rectangle x:Name="VolumeWidgetReadingCurrentRectangle"
+                <!-- Current Reading Foreground -->
+                <Rectangle x:Name="VolumeWidgetBarForeground"
                            HorizontalAlignment="Left"
                            Width="0"
                            Fill="#999"
