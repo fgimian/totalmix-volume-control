@@ -1,10 +1,9 @@
 ﻿namespace TotalMixVC;
 
 using System;
-using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using WindowsShortcutFactory;
+using Microsoft.Win32;
 
 /// <summary>
 /// Implements the system tray menu functionality.
@@ -19,35 +18,25 @@ public static class TrayIconMenu
     {
         get
         {
-            string shortcutPath = Path.Join(
-                Environment.GetFolderPath(Environment.SpecialFolder.Startup),
-                "TotalMix Volume Control.lnk");
+            using RegistryKey? runKey = Registry.CurrentUser.OpenSubKey(
+                @"Software\Microsoft\Windows\CurrentVersion\Run");
 
-            return File.Exists(shortcutPath);
+            return runKey?.GetValue("TotalMix Volume Control") is not null;
         }
 
         set
         {
-            string shortcutPath = Path.Join(
-                Environment.GetFolderPath(Environment.SpecialFolder.Startup),
-                "TotalMix Volume Control.lnk");
-            string? appExecutablePath = Environment.ProcessPath;
+            using RegistryKey? runKey = Registry.CurrentUser.OpenSubKey(
+                @"Software\Microsoft\Windows\CurrentVersion\Run", writable: true);
 
             if (value)
             {
-                using WindowsShortcut shortcut = new()
-                {
-                    Description = "TotalMix Volume Control",
-                    WorkingDirectory = Directory.GetParent(appExecutablePath!)?.FullName,
-                    Path = appExecutablePath,
-                    IconLocation = new IconLocation(appExecutablePath!, index: 0)
-                };
-
-                shortcut.Save(shortcutPath);
+                string? appExecutablePath = Environment.ProcessPath;
+                runKey?.SetValue("TotalMix Volume Control", appExecutablePath!);
             }
             else
             {
-                File.Delete(shortcutPath);
+                runKey?.DeleteValue("TotalMix Volume Control");
             }
         }
     }
