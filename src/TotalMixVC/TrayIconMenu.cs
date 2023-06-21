@@ -53,7 +53,16 @@ public static class TrayIconMenu
     }
 
     /// <summary>
-    /// Gets the Exit tray icon command which shuts down the application.
+    /// Gets the command which reloads the application configuration.
+    /// </summary>
+    public static ICommand ReloadConfig => new DelegateCommand(() =>
+    {
+        App app = (App)Application.Current;
+        app.ReloadConfig();
+    });
+
+    /// <summary>
+    /// Gets the ommand which shuts down the application.
     /// </summary>
     public static ICommand ExitCommand => new DelegateCommand(() => Application.Current.Shutdown());
 }

@@ -4,6 +4,7 @@
                     xmlns:local="clr-namespace:TotalMixVC">
     <!-- Tray Icon Context Menu -->
     <ContextMenu x:Key="TrayIconMenu" x:Shared="false">
+        <MenuItem Header="Reload config" Command="{Binding Source={x:Static local:TrayIconMenu.ReloadConfig}}" />
         <MenuItem Header="Run when Windows starts"
                   IsCheckable="True"
                   IsChecked="{Binding Path=(local:TrayIconMenu.RunOnStartup), Mode=TwoWay}" />

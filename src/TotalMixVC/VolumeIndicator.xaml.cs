@@ -17,7 +17,7 @@ public partial class VolumeIndicator : Window
 
     private readonly DispatcherTimer _hideWindowTimer;
 
-    private readonly Config _config;
+    private Config _config;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="VolumeIndicator"/> class.
@@ -29,18 +29,29 @@ public partial class VolumeIndicator : Window
 
         _config = config;
 
-        // Configure the volume indicator interface and theme.
-        ConfigureInterface();
-        ConfigureTheme();
-
         // Create a task factory for the current thread (which is the UI thread).
         _joinableTaskFactory = new(new JoinableTaskContext());
 
         // Create the timer that will hide the window after not used for a little while.
-        _hideWindowTimer = new() { Interval = TimeSpan.FromSeconds(_config.Interface.HideDelay) };
+        _hideWindowTimer = new();
 
         // When the timer elapses, hide the window.
         _hideWindowTimer.Tick += Hide;
+
+        // Configure the volume indicator interface and theme.
+        ConfigureInterface();
+        ConfigureTheme();
+    }
+
+    /// <summary>
+    /// Updates the volume indicator with the provided configuration.
+    /// </summary>
+    /// <param name="config">Configuration for the application.</param>
+    public void UpdateConfig(Config config)
+    {
+        _config = config;
+        ConfigureInterface();
+        ConfigureTheme();
     }
 
     /// <summary>
@@ -131,6 +142,8 @@ public partial class VolumeIndicator : Window
 
     private void ConfigureInterface()
     {
+        _hideWindowTimer.Interval = TimeSpan.FromSeconds(_config.Interface.HideDelay);
+
         ScaleTransform scaleTransform = (ScaleTransform)Resources["WindowScaleTransform"];
         scaleTransform.ScaleX = _config.Interface.Scaling;
         scaleTransform.ScaleY = _config.Interface.Scaling;

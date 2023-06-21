@@ -30,6 +30,11 @@ public partial class App : Application
         + "5. Ensure the incoming port is {0} and outgoing port is {1}\n"
         + "6. Ensure the remote IP or Host Name is set to {2}";
 
+    private static readonly string ConfigPath = Path.Join(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        "TotalMix Volume Control",
+        "config.toml");
+
     // Disable non-nullable field must contain a non-null value when exiting constructor. These
     // fields are initialized in OnStartup which is called by the constructor.
 #pragma warning disable CS8618
@@ -53,6 +58,34 @@ public partial class App : Application
     private Config _config = new();
 
     /// <summary>
+    /// Reloads the application configuration and updates all components accordingly.
+    /// </summary>
+    public void ReloadConfig()
+    {
+        if (!File.Exists(ConfigPath))
+        {
+            // TODO: Determine why the message box doesn't stay open.
+            MessageBox.Show(
+                $"A configuration file at {ConfigPath} could not be found.",
+                caption: "Configuration File Error",
+                button: MessageBoxButton.OK,
+                icon: MessageBoxImage.Error);
+            return;
+        }
+
+        // TODO: Handle possible errors here.
+        string configText = File.ReadAllText(ConfigPath);
+        _config = Toml.ToModel<Config>(configText);
+
+        // TODO: Also reconnect to the hostname and port in the config after update.
+        ConfigureVolumeManager();
+        ConfigureInterface();
+        ConfigureTheme();
+
+        _volumeIndicator.UpdateConfig(_config);
+    }
+
+    /// <summary>
     /// Starts the various required components after the application startup event is fired.
     /// </summary>
     /// <param name="e">The event data.</param>
@@ -61,15 +94,10 @@ public partial class App : Application
         base.OnStartup(e);
 
         // Attempt to load the configuration if it exists.
-        string configPath = Path.Join(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "TotalMix Volume Control",
-            "config.toml");
-
-        if (File.Exists(configPath))
+        if (File.Exists(ConfigPath))
         {
             // TODO: Handle possible errors here.
-            string configText = File.ReadAllText(configPath);
+            string configText = File.ReadAllText(ConfigPath);
             _config = Toml.ToModel<Config>(configText);
         }
 
@@ -81,12 +109,9 @@ public partial class App : Application
                 _config.Osc.OutgoingPort),
             incomingEP: new IPEndPoint(
                 IPAddress.Parse(_config.Osc.IncomingHostname),
-                _config.Osc.IncomingPort))
-        {
-            VolumeRegularIncrement = _config.Volume.Increment,
-            VolumeFineIncrement = _config.Volume.FineIncrement,
-            VolumeMax = _config.Volume.Max
-        };
+                _config.Osc.IncomingPort));
+
+        ConfigureVolumeManager();
 
         // Create the volume indicator widget which displays volume changes.
         _volumeIndicator = new(_config);
@@ -337,6 +362,13 @@ public partial class App : Application
                         .ConfigureAwait(false);
                 })
                 .Join());
+    }
+
+    private void ConfigureVolumeManager()
+    {
+        _volumeManager.VolumeRegularIncrement = _config.Volume.Increment;
+        _volumeManager.VolumeFineIncrement = _config.Volume.FineIncrement;
+        _volumeManager.VolumeMax = _config.Volume.Max;
     }
 
     private void ConfigureInterface()

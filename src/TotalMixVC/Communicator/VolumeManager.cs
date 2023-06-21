@@ -35,9 +35,9 @@ public class VolumeManager
 
     private readonly IListener _listener;
 
-    private float _volumeRegularIncrement;
+    private float _volumeRegularIncrement = 0.02f;
 
-    private float _volumeFineIncrement;
+    private float _volumeFineIncrement = 0.01f;
 
     private float _volumeMax = 1.0f;
 
