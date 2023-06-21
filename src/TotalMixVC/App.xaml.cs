@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Net;
@@ -69,7 +70,7 @@ public partial class App : Application
                 $"A configuration file at {ConfigPath} could not be found.",
                 caption: "Configuration File Error",
                 button: MessageBoxButton.OK,
-                icon: MessageBoxImage.Error);
+                icon: MessageBoxImage.Exclamation);
             return;
         }
 
@@ -172,7 +173,21 @@ public partial class App : Application
         _volumeInitializeTask = _joinableTaskFactory.RunAsync(RequestVolumeAsync);
 
         // Register all the hotkeys for changing the volume.
-        RegisterHotkeys();
+        try
+        {
+            RegisterHotkeys();
+        }
+        catch (Win32Exception)
+        {
+            MessageBox.Show(
+                "Unable to map the required volume hotkeys. Please exit any applications that may "
+                + "be using them and try again.\n\n"
+                + "TotalMix Volume Control will now exit.",
+                caption: "Hotkey Registration Error",
+                button: MessageBoxButton.OK,
+                icon: MessageBoxImage.Exclamation);
+            Shutdown();
+        }
     }
 
     /// <summary>
