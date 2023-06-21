@@ -59,6 +59,37 @@ public partial class App : Application
     private Config _config = new();
 
     /// <summary>
+    /// Loads the configuration file and reports errors in message boxes if they occur.
+    /// </summary>
+    public void LoadConfig()
+    {
+        try
+        {
+            string configText = File.ReadAllText(ConfigPath);
+            _config = Toml.ToModel<Config>(configText);
+        }
+        catch (TomlException ex)
+        {
+            string errors = string.Join(
+                '\n', ex.Diagnostics.Select(diagnostic => $"- {diagnostic}"));
+            MessageBox.Show(
+                $"Unable to parse the config file at {ConfigPath}.\n\n{errors}",
+                caption: "Configuration File Error",
+                button: MessageBoxButton.OK,
+                icon: MessageBoxImage.Exclamation);
+        }
+        catch (Exception ex)
+        {
+            string message = ex.InnerException?.Message ?? ex.Message;
+            MessageBox.Show(
+                $"Unable to load the config file at {ConfigPath}.\n\n{message}",
+                caption: "Configuration File Error",
+                button: MessageBoxButton.OK,
+                icon: MessageBoxImage.Exclamation);
+        }
+    }
+
+    /// <summary>
     /// Reloads the application configuration and updates all components accordingly.
     /// </summary>
     public void ReloadConfig()
@@ -74,9 +105,7 @@ public partial class App : Application
             return;
         }
 
-        // TODO: Handle possible errors here.
-        string configText = File.ReadAllText(ConfigPath);
-        _config = Toml.ToModel<Config>(configText);
+        LoadConfig();
 
         // TODO: Also reconnect to the hostname and port in the config after update.
         ConfigureVolumeManager();
@@ -97,9 +126,7 @@ public partial class App : Application
         // Attempt to load the configuration if it exists.
         if (File.Exists(ConfigPath))
         {
-            // TODO: Handle possible errors here.
-            string configText = File.ReadAllText(ConfigPath);
-            _config = Toml.ToModel<Config>(configText);
+            LoadConfig();
         }
 
         // Create the volume manager which will communicate with the device.
