@@ -69,19 +69,19 @@ public partial class App : Application
             string configText = File.ReadAllText(ConfigPath);
             _config = Toml.ToModel<Config>(configText);
         }
-        catch (TomlException ex)
+        catch (TomlException e)
         {
             string errors = string.Join(
-                '\n', ex.Diagnostics.Select(diagnostic => $"- {diagnostic}"));
+                '\n', e.Diagnostics.Select(diagnostic => $"- {diagnostic}"));
             MessageBox.Show(
                 $"Unable to parse the config file at {ConfigPath}.\n\n{errors}",
                 caption: "Configuration File Error",
                 button: MessageBoxButton.OK,
                 icon: MessageBoxImage.Exclamation);
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            string message = ex.InnerException?.Message ?? ex.Message;
+            string message = e.InnerException?.Message ?? e.Message;
             MessageBox.Show(
                 $"Unable to load the config file at {ConfigPath}.\n\n{message}",
                 caption: "Configuration File Error",
