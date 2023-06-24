@@ -12,6 +12,7 @@ using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.VisualStudio.Threading;
 using Tomlyn;
 using TotalMixVC.Communicator;
+using TotalMixVC.Configuration;
 using TotalMixVC.Hotkeys;
 
 namespace TotalMixVC;
