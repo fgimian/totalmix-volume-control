@@ -7,6 +7,9 @@
     "orderingRules": {
       "systemUsingDirectivesFirst": true,
       "usingDirectivesPlacement": "outsideNamespace"
+    },
+    "documentationRules": {
+      "companyName": "Fotis Gimian"
     }
   }
 }
