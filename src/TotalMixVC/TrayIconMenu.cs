@@ -1,9 +1,8 @@
-﻿namespace TotalMixVC;
-
-using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using Microsoft.Win32;
+
+namespace TotalMixVC;
 
 /// <summary>
 /// Implements the system tray menu functionality.

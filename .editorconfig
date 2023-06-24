@@ -26,6 +26,9 @@ trim_trailing_whitespace = true
 # Prefer file-scope namespace declarations.
 csharp_style_namespace_declarations = file_scoped:warning
 
+# Ensure using statements are placed before namespace definitions to avoid name conflicts.
+csharp_using_directive_placement = outside_namespace:warning
+
 # Warn when initialising variables to their default value.
 dotnet_diagnostic.CA1805.severity = warning
 
@@ -159,7 +162,7 @@ dotnet_diagnostic.RCS0007.severity = warning
 # Ensure an empty line after blocks.
 dotnet_diagnostic.RCS0008.severity = warning
 
-# Ensure an empty line between decleration and documentation comments.
+# Ensure an empty line between declaration and documentation comments.
 dotnet_diagnostic.RCS0009.severity = warning
 
 # Ensure an empty line between declarations (e.g. methods).

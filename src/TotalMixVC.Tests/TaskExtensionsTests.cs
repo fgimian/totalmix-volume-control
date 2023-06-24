@@ -1,9 +1,6 @@
-﻿namespace TotalMixVC.Tests;
+﻿using Xunit;
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
+namespace TotalMixVC.Tests;
 
 public class TaskExtensionsTests
 {

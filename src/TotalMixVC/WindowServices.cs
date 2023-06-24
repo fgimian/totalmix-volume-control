@@ -1,7 +1,7 @@
-﻿namespace TotalMixVC;
-
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+
+namespace TotalMixVC;
 
 /// <summary>
 /// Provides several useful utilities for manipulating windows.
