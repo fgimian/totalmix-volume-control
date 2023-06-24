@@ -28,19 +28,11 @@ public class Sender : ISender, IDisposable
     }
 
     /// <summary>
-    /// Finalizes an instance of the <see cref="Sender"/> class.
-    /// </summary>
-    ~Sender()
-    {
-        Dispose(false);
-    }
-
-    /// <summary>
     /// Disposes the current sender.
     /// </summary>
     public void Dispose()
     {
-        Dispose(true);
+        Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 

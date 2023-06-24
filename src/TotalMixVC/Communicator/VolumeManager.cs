@@ -104,7 +104,8 @@ public class VolumeManager
         {
             if (value is <= 0.0f or > 0.10f)
             {
-                throw new ArgumentException(
+                throw new ArgumentOutOfRangeException(
+                    nameof(value),
                     "Regular volume increment must be greater than 0 and less than 0.1.");
             }
 
@@ -126,7 +127,8 @@ public class VolumeManager
         {
             if (value is <= 0.0f or > 0.05f)
             {
-                throw new ArgumentException(
+                throw new ArgumentOutOfRangeException(
+                    nameof(value),
                     "Fine volume increment must be greater than 0 and less than 0.05.");
             }
 
@@ -148,7 +150,8 @@ public class VolumeManager
         {
             if (value is <= 0.0f or > 1.0f)
             {
-                throw new ArgumentException("Volume max can't be greater than 1.0.");
+                throw new ArgumentOutOfRangeException(
+                    nameof(value), "Volume max can't be greater than 1.0.");
             }
 
             _volumeMax = value;
@@ -221,7 +224,9 @@ public class VolumeManager
             // Reset the volume back to an initial state so that the caller is forced to
             // request device volume before continuing as this may have changed while the
             // device was offline.
-            await _volumeMutex.WaitAsync().ConfigureAwait(false);
+            await _volumeMutex
+                .WaitAsync(cancellationTokenSource?.Token ?? default)
+                .ConfigureAwait(false);
             try
             {
                 Volume = -1.0f;

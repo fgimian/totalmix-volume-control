@@ -25,19 +25,11 @@ public class Listener : IListener, IDisposable
     }
 
     /// <summary>
-    /// Finalizes an instance of the <see cref="Listener"/> class.
-    /// </summary>
-    ~Listener()
-    {
-        Dispose(false);
-    }
-
-    /// <summary>
     /// Disposes the current listener.
     /// </summary>
     public void Dispose()
     {
-        Dispose(true);
+        Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 

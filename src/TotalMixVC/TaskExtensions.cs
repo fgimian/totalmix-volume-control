@@ -45,7 +45,7 @@ public static class TaskExtensions
         // a cancellation token provided by the caller.
         List<CancellationToken> cancellationTokens = new()
         {
-            timeoutCancellationTokenSource.Token
+            timeoutCancellationTokenSource.Token,
         };
 
         if (cancellationTokenSource is not null)
@@ -71,10 +71,8 @@ public static class TaskExtensions
             {
                 throw new OperationCanceledException();
             }
-            else
-            {
-                throw new TimeoutException();
-            }
+
+            throw new TimeoutException();
         }
 
         combinedCancellationTokenSource.Cancel();
@@ -111,7 +109,7 @@ public static class TaskExtensions
         // a cancellation token provided by the caller.
         List<CancellationToken> cancellationTokens = new()
         {
-            timeoutCancellationTokenSource.Token
+            timeoutCancellationTokenSource.Token,
         };
 
         if (cancellationTokenSource is not null)
@@ -137,10 +135,8 @@ public static class TaskExtensions
             {
                 throw new OperationCanceledException();
             }
-            else
-            {
-                throw new TimeoutException();
-            }
+
+            throw new TimeoutException();
         }
 
         combinedCancellationTokenSource.Cancel();

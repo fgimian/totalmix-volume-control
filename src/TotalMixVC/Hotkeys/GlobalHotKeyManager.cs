@@ -35,14 +35,6 @@ public partial class GlobalHotKeyManager : IDisposable
     }
 
     /// <summary>
-    /// Finalizes an instance of the <see cref="GlobalHotKeyManager"/> class.
-    /// </summary>
-    ~GlobalHotKeyManager()
-    {
-        Dispose(false);
-    }
-
-    /// <summary>
     /// Registers a hotkey with an associated action that should be triggered when the hotkey
     /// is detected globally.
     /// </summary>
@@ -89,7 +81,7 @@ public partial class GlobalHotKeyManager : IDisposable
     /// </summary>
     public void Dispose()
     {
-        Dispose(true);
+        Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 

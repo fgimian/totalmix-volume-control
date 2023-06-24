@@ -29,5 +29,5 @@ public enum KeyModifier
     /// <summary>
     /// The Win / Windows key modifier.
     /// </summary>
-    Win = 0x0008
+    Win = 0x0008,
 }

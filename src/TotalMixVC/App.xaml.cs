@@ -153,7 +153,7 @@ public partial class App : Application
             Width = 0,
             Height = 0,
             WindowStyle = WindowStyle.ToolWindow,
-            ShowInTaskbar = false
+            ShowInTaskbar = false,
         };
 
         // Set the owner of our volume indicator window to the hidden parent.
@@ -280,7 +280,8 @@ public partial class App : Application
                 }
 
                 // Switch to the UI thread and update the tray tooltip text.
-                await _joinableTaskFactory.SwitchToMainThreadAsync();
+                await _joinableTaskFactory.SwitchToMainThreadAsync(
+                    _taskCancellationTokenSource.Token);
                 _trayToolTipStatus.Text =
                     "Successfully communicating with your RME device.";
                 _trayIcon.ToolTipText = "TotalMixVC - Connection established.";
@@ -293,7 +294,8 @@ public partial class App : Application
                     .ConfigureAwait(false);
 
                 // Switch to the UI thread and update the tray tooltip text.
-                await _joinableTaskFactory.SwitchToMainThreadAsync();
+                await _joinableTaskFactory.SwitchToMainThreadAsync(
+                    _taskCancellationTokenSource.Token);
                 _trayToolTipStatus.Text = string.Format(
                     CommunicationErrorFormatString,
                     _config.Osc.OutgoingPort,
@@ -353,7 +355,7 @@ public partial class App : Application
                         .DisplayCurrentVolumeAsync()
                         .ConfigureAwait(false);
                 })
-                .Join());
+                .Join(_taskCancellationTokenSource.Token));
 
         hotKeyManager.Register(
             hotkey: new Hotkey { KeyModifier = KeyModifier.None, Key = Key.VolumeDown },
@@ -366,7 +368,7 @@ public partial class App : Application
                         .DisplayCurrentVolumeAsync()
                         .ConfigureAwait(false);
                 })
-                .Join());
+                .Join(_taskCancellationTokenSource.Token));
 
         hotKeyManager.Register(
             hotkey: new Hotkey { KeyModifier = KeyModifier.Shift, Key = Key.VolumeUp },
@@ -379,7 +381,7 @@ public partial class App : Application
                         .DisplayCurrentVolumeAsync()
                         .ConfigureAwait(false);
                 })
-                .Join());
+                .Join(_taskCancellationTokenSource.Token));
 
         hotKeyManager.Register(
             hotkey: new Hotkey { KeyModifier = KeyModifier.Shift, Key = Key.VolumeDown },
@@ -392,7 +394,7 @@ public partial class App : Application
                         .DisplayCurrentVolumeAsync()
                         .ConfigureAwait(false);
                 })
-                .Join());
+                .Join(_taskCancellationTokenSource.Token));
 
         hotKeyManager.Register(
             hotkey: new Hotkey { KeyModifier = KeyModifier.None, Key = Key.VolumeMute },
@@ -404,7 +406,7 @@ public partial class App : Application
                         .DisplayCurrentVolumeAsync()
                         .ConfigureAwait(false);
                 })
-                .Join());
+                .Join(_taskCancellationTokenSource.Token));
     }
 
     private void ConfigureVolumeManager()

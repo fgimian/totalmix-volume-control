@@ -51,9 +51,6 @@ dotnet_diagnostic.IDE0130.severity = warning
 # StyleCop
 # --------------------------------------------------------------------------------------------------
 
-# Disable forced trailing commas.
-dotnet_diagnostic.SA1413.severity = none
-
 # Disable a requirement of having a file header at the top of all files.
 dotnet_diagnostic.SA1633.severity = none
 
@@ -67,11 +64,11 @@ dotnet_diagnostic.SA1309.severity = none
 dotnet_diagnostic.SA1118.severity = none
 
 # --------------------------------------------------------------------------------------------------
-# SonarAnalyzer
+# Sonar
 # --------------------------------------------------------------------------------------------------
 
-# Report remaining TODOs as suggestions instead of warnings.
-dotnet_diagnostic.S1135.severity = suggestion
+# Disable reporting of TODOs in favour of Meziantou.Analyzer which does the same.
+dotnet_diagnostic.S1135.severity = none
 
 # --------------------------------------------------------------------------------------------------
 # Roslynator
@@ -94,9 +91,6 @@ dotnet_diagnostic.RCS1013.severity = warning
 
 # Ensure modifiers are ordered.
 dotnet_diagnostic.RCS1019.severity = warning
-
-# Remove trailing comma in initializer.
-dotnet_diagnostic.RCS1035.severity = warning
 
 # Ensure private fields use camel case and start with an underscore.
 dotnet_diagnostic.RCS1045.severity = warning
@@ -273,6 +267,31 @@ dotnet_diagnostic.RCS0054.severity = warning
 # Ensure that long lines are flagged.
 dotnet_diagnostic.RCS0056.severity = warning
 roslynator_max_line_length = 100
+
+# --------------------------------------------------------------------------------------------------
+# Meziantou
+# --------------------------------------------------------------------------------------------------
+
+# Ignore culture-sensitive recommendations.
+dotnet_diagnostic.MA0074.severity = none
+dotnet_diagnostic.MA0075.severity = none
+dotnet_diagnostic.MA0076.severity = none
+dotnet_diagnostic.MA0011.severity = none
+
+# Disable forced use of comparer when strings are being compared.
+dotnet_diagnostic.MA0002.severity = none
+
+# Disable forced use of string.Equals for all string comparisons.
+dotnet_diagnostic.MA0006.severity = none
+
+# Disable enforcing of a timeout on regular expression evaluation.
+dotnet_diagnostic.MA0009.severity = none
+
+# Report remaining TODOs as suggestions instead of warnings.
+dotnet_diagnostic.MA0026.severity = suggestion
+
+# Allow longer methods.
+dotnet_diagnostic.MA0051.severity = none
 
 [**/obj/**.cs]
 # Ignore unused using statements in generated code.

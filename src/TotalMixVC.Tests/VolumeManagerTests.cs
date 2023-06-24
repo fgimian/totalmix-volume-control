@@ -41,7 +41,7 @@ public static class VolumeManagerTests
             Action action = () => volumeManager.VolumeRegularIncrement = volumeRegularIncrement;
 
             // Assert
-            Assert.Throws<ArgumentException>(action);
+            Assert.Throws<ArgumentOutOfRangeException>(action);
         }
 
         [Fact]
@@ -76,7 +76,7 @@ public static class VolumeManagerTests
             Action action = () => volumeManager.VolumeFineIncrement = volumeFineIncrement;
 
             // Assert
-            Assert.Throws<ArgumentException>(action);
+            Assert.Throws<ArgumentOutOfRangeException>(action);
         }
 
         [Fact]
@@ -110,7 +110,7 @@ public static class VolumeManagerTests
             Action action = () => volumeManager.VolumeMax = volumeMax;
 
             // Assert
-            Assert.Throws<ArgumentException>(action);
+            Assert.Throws<ArgumentOutOfRangeException>(action);
         }
     }
 
@@ -385,7 +385,7 @@ public static class VolumeManagerTests
 
             VolumeManager volumeManager = new(sender, listener)
             {
-                VolumeRegularIncrement = 0.02f
+                VolumeRegularIncrement = 0.02f,
             };
 
             // Act
@@ -411,7 +411,7 @@ public static class VolumeManagerTests
 
             VolumeManager volumeManager = new(sender, listener)
             {
-                VolumeRegularIncrement = 0.02f
+                VolumeRegularIncrement = 0.02f,
             };
 
             // Act
@@ -448,7 +448,7 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener)
             {
                 VolumeRegularIncrement = 0.05f,
-                VolumeMax = 0.50f
+                VolumeMax = 0.50f,
             };
 
             // Act
@@ -485,7 +485,7 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener)
             {
                 VolumeRegularIncrement = 0.05f,
-                VolumeMax = 0.50f
+                VolumeMax = 0.50f,
             };
 
             // Act
@@ -505,7 +505,7 @@ public static class VolumeManagerTests
 
             VolumeManager volumeManager = new(sender, listener)
             {
-                VolumeFineIncrement = 0.01f
+                VolumeFineIncrement = 0.01f,
             };
 
             // Act
@@ -533,7 +533,7 @@ public static class VolumeManagerTests
 
             VolumeManager volumeManager = new(sender, listener)
             {
-                VolumeFineIncrement = 0.01f
+                VolumeFineIncrement = 0.01f,
             };
 
             // Act
@@ -567,7 +567,7 @@ public static class VolumeManagerTests
 
             VolumeManager volumeManager = new(sender, listener)
             {
-                VolumeRegularIncrement = 0.02f
+                VolumeRegularIncrement = 0.02f,
             };
 
             // Act
@@ -593,7 +593,7 @@ public static class VolumeManagerTests
 
             VolumeManager volumeManager = new(sender, listener)
             {
-                VolumeRegularIncrement = 0.02f
+                VolumeRegularIncrement = 0.02f,
             };
 
             // Act
@@ -629,7 +629,7 @@ public static class VolumeManagerTests
 
             VolumeManager volumeManager = new(sender, listener)
             {
-                VolumeRegularIncrement = 0.05f
+                VolumeRegularIncrement = 0.05f,
             };
 
             // Act
@@ -666,7 +666,7 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener)
             {
                 VolumeRegularIncrement = 0.05f,
-                VolumeMax = 0.50f
+                VolumeMax = 0.50f,
             };
 
             // Act
@@ -686,7 +686,7 @@ public static class VolumeManagerTests
 
             VolumeManager volumeManager = new(sender, listener)
             {
-                VolumeFineIncrement = 0.01f
+                VolumeFineIncrement = 0.01f,
             };
 
             // Act
@@ -714,7 +714,7 @@ public static class VolumeManagerTests
 
             VolumeManager volumeManager = new(sender, listener)
             {
-                VolumeFineIncrement = 0.01f
+                VolumeFineIncrement = 0.01f,
             };
 
             // Act
