@@ -14,7 +14,8 @@ public partial class GlobalHotKeyManager : IDisposable
     [SuppressMessage(
         "StyleCop.CSharp.NamingRules",
         "SA1310:Field names should not contain underscore",
-        Justification = "Use the appropriate case for constants to match the Win32 SDK.")]
+        Justification = "Use the appropriate case for constants to match the Win32 SDK."
+    )]
     private const int WM_HOTKEY = 0x0312;
 
     private readonly Dictionary<Hotkey, Action> _actions;
@@ -109,8 +110,7 @@ public partial class GlobalHotKeyManager : IDisposable
 
     [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static partial bool RegisterHotKey(
-    nint hWnd, int id, uint fsModifiers, uint vlc);
+    private static partial bool RegisterHotKey(nint hWnd, int id, uint fsModifiers, uint vlc);
 
     [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]

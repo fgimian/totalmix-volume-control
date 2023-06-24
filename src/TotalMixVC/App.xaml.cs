@@ -35,7 +35,8 @@ public partial class App : Application
     private static readonly string ConfigPath = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "TotalMix Volume Control",
-        "config.toml");
+        "config.toml"
+    );
 
     // Disable non-nullable field must contain a non-null value when exiting constructor. These
     // fields are initialized in OnStartup which is called by the constructor.
@@ -72,12 +73,15 @@ public partial class App : Application
         catch (TomlException e)
         {
             string errors = string.Join(
-                '\n', e.Diagnostics.Select(diagnostic => $"- {diagnostic}"));
+                '\n',
+                e.Diagnostics.Select(diagnostic => $"- {diagnostic}")
+            );
             MessageBox.Show(
                 $"Unable to parse the config file at {ConfigPath}.\n\n{errors}",
                 caption: "Configuration File Error",
                 button: MessageBoxButton.OK,
-                icon: MessageBoxImage.Exclamation);
+                icon: MessageBoxImage.Exclamation
+            );
         }
         catch (Exception e)
         {
@@ -86,7 +90,8 @@ public partial class App : Application
                 $"Unable to load the config file at {ConfigPath}.\n\n{message}",
                 caption: "Configuration File Error",
                 button: MessageBoxButton.OK,
-                icon: MessageBoxImage.Exclamation);
+                icon: MessageBoxImage.Exclamation
+            );
         }
     }
 
@@ -102,7 +107,8 @@ public partial class App : Application
                 $"A configuration file at {ConfigPath} could not be found.",
                 caption: "Configuration File Error",
                 button: MessageBoxButton.OK,
-                icon: MessageBoxImage.Exclamation);
+                icon: MessageBoxImage.Exclamation
+            );
             return;
         }
 
@@ -135,10 +141,13 @@ public partial class App : Application
         _volumeManager = new(
             outgoingEP: new IPEndPoint(
                 IPAddress.Parse(_config.Osc.OutgoingHostname),
-                _config.Osc.OutgoingPort),
+                _config.Osc.OutgoingPort
+            ),
             incomingEP: new IPEndPoint(
                 IPAddress.Parse(_config.Osc.IncomingHostname),
-                _config.Osc.IncomingPort));
+                _config.Osc.IncomingPort
+            )
+        );
 
         ConfigureVolumeManager();
 
@@ -146,15 +155,16 @@ public partial class App : Application
         _volumeIndicator = new(_config);
 
         // Create a parent window which is not visible in the taskbar or Alt+Tab.
-        Window hiddenParentWindow = new()
-        {
-            Top = -100,
-            Left = -100,
-            Width = 0,
-            Height = 0,
-            WindowStyle = WindowStyle.ToolWindow,
-            ShowInTaskbar = false,
-        };
+        Window hiddenParentWindow =
+            new()
+            {
+                Top = -100,
+                Left = -100,
+                Width = 0,
+                Height = 0,
+                WindowStyle = WindowStyle.ToolWindow,
+                ShowInTaskbar = false,
+            };
 
         // Set the owner of our volume indicator window to the hidden parent.
         hiddenParentWindow.Show();
@@ -181,8 +191,8 @@ public partial class App : Application
         // Obtain the tooltip text area so the text may be updated as required while the app
         // is running.
         Border trayToolTipBorder = (Border)_trayIcon.TrayToolTip;
-        _trayToolTipStatus = (TextBlock)LogicalTreeHelper.FindLogicalNode(
-            trayToolTipBorder, "TrayToolTipStatus");
+        _trayToolTipStatus = (TextBlock)
+            LogicalTreeHelper.FindLogicalNode(trayToolTipBorder, "TrayToolTipStatus");
 
         // Configure the tray tooltip interface and theme.
         ConfigureInterface();
@@ -209,11 +219,12 @@ public partial class App : Application
         {
             MessageBox.Show(
                 "Unable to map the required volume hotkeys. Please exit any applications that may "
-                + "be using them and try again.\n\n"
-                + "TotalMix Volume Control will now exit.",
+                    + "be using them and try again.\n\n"
+                    + "TotalMix Volume Control will now exit.",
                 caption: "Hotkey Registration Error",
                 button: MessageBoxButton.OK,
-                icon: MessageBoxImage.Exclamation);
+                icon: MessageBoxImage.Exclamation
+            );
             Shutdown();
         }
     }
@@ -225,7 +236,8 @@ public partial class App : Application
     [SuppressMessage(
         "Usage",
         "VSTHRD100:Avoid async void methods",
-        Justification = "Event handlers must be async void based on their definition.")]
+        Justification = "Event handlers must be async void based on their definition."
+    )]
     protected override async void OnExit(ExitEventArgs e)
     {
         base.OnExit(e);
@@ -268,22 +280,21 @@ public partial class App : Application
                         .UpdateVolumeAsync(
                             _volumeManager.Volume,
                             _volumeManager.VolumeDecibels!,
-                            _volumeManager.IsDimmed)
+                            _volumeManager.IsDimmed
+                        )
                         .ConfigureAwait(false);
 
                     if (initializedBeforeReceive && _config.Interface.ShowRemoteVolumeChanges)
                     {
-                        await _volumeIndicator
-                            .DisplayCurrentVolumeAsync()
-                            .ConfigureAwait(false);
+                        await _volumeIndicator.DisplayCurrentVolumeAsync().ConfigureAwait(false);
                     }
                 }
 
                 // Switch to the UI thread and update the tray tooltip text.
                 await _joinableTaskFactory.SwitchToMainThreadAsync(
-                    _taskCancellationTokenSource.Token);
-                _trayToolTipStatus.Text =
-                    "Successfully communicating with your RME device.";
+                    _taskCancellationTokenSource.Token
+                );
+                _trayToolTipStatus.Text = "Successfully communicating with your RME device.";
                 _trayIcon.ToolTipText = "TotalMixVC - Connection established.";
             }
             catch (TimeoutException)
@@ -295,12 +306,14 @@ public partial class App : Application
 
                 // Switch to the UI thread and update the tray tooltip text.
                 await _joinableTaskFactory.SwitchToMainThreadAsync(
-                    _taskCancellationTokenSource.Token);
+                    _taskCancellationTokenSource.Token
+                );
                 _trayToolTipStatus.Text = string.Format(
                     CommunicationErrorFormatString,
                     _config.Osc.OutgoingPort,
                     _config.Osc.IncomingPort,
-                    _config.Osc.IncomingHostname);
+                    _config.Osc.IncomingHostname
+                );
                 _trayIcon.ToolTipText = "TotalMixVC - Unable to connect to your device";
             }
             catch (OperationCanceledException)
@@ -328,9 +341,7 @@ public partial class App : Application
             // for a second before checking again.
             try
             {
-                await Task
-                    .Delay(1000, _taskCancellationTokenSource.Token)
-                    .ConfigureAwait(false);
+                await Task.Delay(1000, _taskCancellationTokenSource.Token).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -346,67 +357,67 @@ public partial class App : Application
 
         hotKeyManager.Register(
             hotkey: new Hotkey { KeyModifier = KeyModifier.None, Key = Key.VolumeUp },
-            action: () => _joinableTaskFactory
-                .RunAsync(async () =>
-                {
-                    // Increase the volume and show the volume indicator.
-                    await _volumeManager.IncreaseVolumeAsync().ConfigureAwait(false);
-                    await _volumeIndicator
-                        .DisplayCurrentVolumeAsync()
-                        .ConfigureAwait(false);
-                })
-                .Join(_taskCancellationTokenSource.Token));
+            action: () =>
+                _joinableTaskFactory
+                    .RunAsync(async () =>
+                    {
+                        // Increase the volume and show the volume indicator.
+                        await _volumeManager.IncreaseVolumeAsync().ConfigureAwait(false);
+                        await _volumeIndicator.DisplayCurrentVolumeAsync().ConfigureAwait(false);
+                    })
+                    .Join(_taskCancellationTokenSource.Token)
+        );
 
         hotKeyManager.Register(
             hotkey: new Hotkey { KeyModifier = KeyModifier.None, Key = Key.VolumeDown },
-            action: () => _joinableTaskFactory
-                .RunAsync(async () =>
-                {
-                    // Decrease the volume and show the volume indicator.
-                    await _volumeManager.DecreaseVolumeAsync().ConfigureAwait(false);
-                    await _volumeIndicator
-                        .DisplayCurrentVolumeAsync()
-                        .ConfigureAwait(false);
-                })
-                .Join(_taskCancellationTokenSource.Token));
+            action: () =>
+                _joinableTaskFactory
+                    .RunAsync(async () =>
+                    {
+                        // Decrease the volume and show the volume indicator.
+                        await _volumeManager.DecreaseVolumeAsync().ConfigureAwait(false);
+                        await _volumeIndicator.DisplayCurrentVolumeAsync().ConfigureAwait(false);
+                    })
+                    .Join(_taskCancellationTokenSource.Token)
+        );
 
         hotKeyManager.Register(
             hotkey: new Hotkey { KeyModifier = KeyModifier.Shift, Key = Key.VolumeUp },
-            action: () => _joinableTaskFactory
-                .RunAsync(async () =>
-                {
-                    // Finely increase the volume and show the volume indicator.
-                    await _volumeManager.IncreaseVolumeAsync(fine: true).ConfigureAwait(false);
-                    await _volumeIndicator
-                        .DisplayCurrentVolumeAsync()
-                        .ConfigureAwait(false);
-                })
-                .Join(_taskCancellationTokenSource.Token));
+            action: () =>
+                _joinableTaskFactory
+                    .RunAsync(async () =>
+                    {
+                        // Finely increase the volume and show the volume indicator.
+                        await _volumeManager.IncreaseVolumeAsync(fine: true).ConfigureAwait(false);
+                        await _volumeIndicator.DisplayCurrentVolumeAsync().ConfigureAwait(false);
+                    })
+                    .Join(_taskCancellationTokenSource.Token)
+        );
 
         hotKeyManager.Register(
             hotkey: new Hotkey { KeyModifier = KeyModifier.Shift, Key = Key.VolumeDown },
-            action: () => _joinableTaskFactory
-                .RunAsync(async () =>
-                {
-                    // Finely decrease the volume and show the volume indicator.
-                    await _volumeManager.DecreaseVolumeAsync(fine: true).ConfigureAwait(false);
-                    await _volumeIndicator
-                        .DisplayCurrentVolumeAsync()
-                        .ConfigureAwait(false);
-                })
-                .Join(_taskCancellationTokenSource.Token));
+            action: () =>
+                _joinableTaskFactory
+                    .RunAsync(async () =>
+                    {
+                        // Finely decrease the volume and show the volume indicator.
+                        await _volumeManager.DecreaseVolumeAsync(fine: true).ConfigureAwait(false);
+                        await _volumeIndicator.DisplayCurrentVolumeAsync().ConfigureAwait(false);
+                    })
+                    .Join(_taskCancellationTokenSource.Token)
+        );
 
         hotKeyManager.Register(
             hotkey: new Hotkey { KeyModifier = KeyModifier.None, Key = Key.VolumeMute },
-            action: () => _joinableTaskFactory
-                .RunAsync(async () =>
-                {
-                    await _volumeManager.ToggloDimAsync().ConfigureAwait(false);
-                    await _volumeIndicator
-                        .DisplayCurrentVolumeAsync()
-                        .ConfigureAwait(false);
-                })
-                .Join(_taskCancellationTokenSource.Token));
+            action: () =>
+                _joinableTaskFactory
+                    .RunAsync(async () =>
+                    {
+                        await _volumeManager.ToggloDimAsync().ConfigureAwait(false);
+                        await _volumeIndicator.DisplayCurrentVolumeAsync().ConfigureAwait(false);
+                    })
+                    .Join(_taskCancellationTokenSource.Token)
+        );
     }
 
     private void ConfigureVolumeManager()
@@ -418,8 +429,8 @@ public partial class App : Application
 
     private void ConfigureInterface()
     {
-        ScaleTransform scaleTransform =
-            (ScaleTransform)_trayIcon.Resources["TrayIconScaleTransform"];
+        ScaleTransform scaleTransform = (ScaleTransform)
+            _trayIcon.Resources["TrayIconScaleTransform"];
         scaleTransform.ScaleX = _config.Interface.Scaling;
         scaleTransform.ScaleY = _config.Interface.Scaling;
     }
@@ -431,35 +442,32 @@ public partial class App : Application
         Border trayToolTipBorder = (Border)_trayIcon.TrayToolTip;
 
         // TODO: Determine why binding this to border brush doesn't work.
-        StackPanel trayToolTipPanel = (StackPanel)LogicalTreeHelper.FindLogicalNode(
-            trayToolTipBorder, "TrayToolTipPanel");
+        StackPanel trayToolTipPanel = (StackPanel)
+            LogicalTreeHelper.FindLogicalNode(trayToolTipBorder, "TrayToolTipPanel");
 
-        TextBlock trayToolTipTitleTotalMix = (TextBlock)LogicalTreeHelper.FindLogicalNode(
-            trayToolTipBorder, "TrayToolTipTitleTotalMix");
+        TextBlock trayToolTipTitleTotalMix = (TextBlock)
+            LogicalTreeHelper.FindLogicalNode(trayToolTipBorder, "TrayToolTipTitleTotalMix");
 
-        TextBlock trayToolTipTitleVolume = (TextBlock)LogicalTreeHelper.FindLogicalNode(
-            trayToolTipBorder, "TrayToolTipTitleVolume");
+        TextBlock trayToolTipTitleVolume = (TextBlock)
+            LogicalTreeHelper.FindLogicalNode(trayToolTipBorder, "TrayToolTipTitleVolume");
 
-        TextBlock trayToolTipStatus = (TextBlock)LogicalTreeHelper.FindLogicalNode(
-            trayToolTipBorder, "TrayToolTipStatus");
+        TextBlock trayToolTipStatus = (TextBlock)
+            LogicalTreeHelper.FindLogicalNode(trayToolTipBorder, "TrayToolTipStatus");
 
-        trayToolTipBorder.BorderBrush =
-            (SolidColorBrush?)brushConverter.ConvertFrom(_config.Theme.BackgroundColor);
+        trayToolTipBorder.BorderBrush = (SolidColorBrush?)
+            brushConverter.ConvertFrom(_config.Theme.BackgroundColor);
         trayToolTipBorder.CornerRadius = new CornerRadius(_config.Theme.BackgroundRounding);
 
-        trayToolTipPanel.Background =
-            (SolidColorBrush?)brushConverter.ConvertFrom(_config.Theme.BackgroundColor);
+        trayToolTipPanel.Background = (SolidColorBrush?)
+            brushConverter.ConvertFrom(_config.Theme.BackgroundColor);
 
-        trayToolTipTitleTotalMix.Foreground =
-            (SolidColorBrush?)brushConverter.ConvertFrom(
-                _config.Theme.HeadingTotalmixColor);
+        trayToolTipTitleTotalMix.Foreground = (SolidColorBrush?)
+            brushConverter.ConvertFrom(_config.Theme.HeadingTotalmixColor);
 
-        trayToolTipTitleVolume.Foreground =
-            (SolidColorBrush?)brushConverter.ConvertFrom(
-                _config.Theme.HeadingVolumeColor);
+        trayToolTipTitleVolume.Foreground = (SolidColorBrush?)
+            brushConverter.ConvertFrom(_config.Theme.HeadingVolumeColor);
 
-        trayToolTipStatus.Foreground =
-            (SolidColorBrush?)brushConverter.ConvertFrom(
-                _config.Theme.TrayTooltipMessageColor);
+        trayToolTipStatus.Foreground = (SolidColorBrush?)
+            brushConverter.ConvertFrom(_config.Theme.TrayTooltipMessageColor);
     }
 }

@@ -9,7 +9,8 @@ namespace TotalMixVC;
 [SuppressMessage(
     "StyleCop.CSharp.NamingRules",
     "SA1310:Field names should not contain underscore",
-    Justification = "Use the appropriate case for constants to match the Win32 SDK.")]
+    Justification = "Use the appropriate case for constants to match the Win32 SDK."
+)]
 internal static partial class WindowServices
 {
     private const int WS_EX_TRANSPARENT = 0x00000020;

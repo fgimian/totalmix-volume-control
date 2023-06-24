@@ -6,7 +6,8 @@ namespace TotalMixVC.Tests;
 [SuppressMessage(
     "Usage",
     "MA0040:Forward the CancellationToken parameter to methods that take one",
-    Justification = "Forwarding the cancellation token would invalidate these tests.")]
+    Justification = "Forwarding the cancellation token would invalidate these tests."
+)]
 public class TaskExtensionsTests
 {
     [Fact]
@@ -42,9 +43,7 @@ public class TaskExtensionsTests
         Func<Task> timeoutTask = () => Task.Run(task).TimeoutAfter(1);
 
         // Assert
-        await Assert
-            .ThrowsAsync<TimeoutException>(timeoutTask)
-            .ConfigureAwait(false);
+        await Assert.ThrowsAsync<TimeoutException>(timeoutTask).ConfigureAwait(false);
         Assert.False(completed);
     }
 
@@ -70,11 +69,12 @@ public class TaskExtensionsTests
 
         // Assert
         await Assert
-            .ThrowsAsync<OperationCanceledException>(async () =>
-                await Task
-                    .Run(task)
-                    .TimeoutAfter(1000, cancellationTokenSource)
-                    .ConfigureAwait(false))
+            .ThrowsAsync<OperationCanceledException>(
+                async () =>
+                    await Task.Run(task)
+                        .TimeoutAfter(1000, cancellationTokenSource)
+                        .ConfigureAwait(false)
+            )
             .ConfigureAwait(false);
         Assert.False(completed);
         await cancelTask.ConfigureAwait(false);
@@ -116,9 +116,7 @@ public class TaskExtensionsTests
         Func<Task<string>> timeoutTask = () => Task.Run(task).TimeoutAfter(1);
 
         // Assert
-        await Assert
-            .ThrowsAsync<TimeoutException>(timeoutTask)
-            .ConfigureAwait(false);
+        await Assert.ThrowsAsync<TimeoutException>(timeoutTask).ConfigureAwait(false);
         Assert.False(completed);
     }
 
@@ -145,11 +143,12 @@ public class TaskExtensionsTests
 
         // Assert
         await Assert
-            .ThrowsAsync<OperationCanceledException>(async () =>
-                await Task
-                    .Run(task)
-                    .TimeoutAfter(1000, cancellationTokenSource)
-                    .ConfigureAwait(false))
+            .ThrowsAsync<OperationCanceledException>(
+                async () =>
+                    await Task.Run(task)
+                        .TimeoutAfter(1000, cancellationTokenSource)
+                        .ConfigureAwait(false)
+            )
             .ConfigureAwait(false);
         Assert.False(completed);
         await cancelTask.ConfigureAwait(false);

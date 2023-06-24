@@ -99,14 +99,14 @@ public class VolumeManager
     public float VolumeRegularIncrement
     {
         get => _volumeRegularIncrement;
-
         set
         {
             if (value is <= 0.0f or > 0.10f)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(value),
-                    "Regular volume increment must be greater than 0 and less than 0.1.");
+                    "Regular volume increment must be greater than 0 and less than 0.1."
+                );
             }
 
             _volumeRegularIncrement = value;
@@ -122,14 +122,14 @@ public class VolumeManager
     public float VolumeFineIncrement
     {
         get => _volumeFineIncrement;
-
         set
         {
             if (value is <= 0.0f or > 0.05f)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(value),
-                    "Fine volume increment must be greater than 0 and less than 0.05.");
+                    "Fine volume increment must be greater than 0 and less than 0.05."
+                );
             }
 
             _volumeFineIncrement = value;
@@ -145,13 +145,14 @@ public class VolumeManager
     public float VolumeMax
     {
         get => _volumeMax;
-
         set
         {
             if (value is <= 0.0f or > 1.0f)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(value), "Volume max can't be greater than 1.0.");
+                    nameof(value),
+                    "Volume max can't be greater than 1.0."
+                );
             }
 
             _volumeMax = value;
@@ -199,7 +200,9 @@ public class VolumeManager
     /// </exception>
     /// <exception cref="TimeoutException">Thrown if the task times out.</exception>
     public async Task<bool> ReceiveVolumeAsync(
-        int timeout = 5000, CancellationTokenSource? cancellationTokenSource = null)
+        int timeout = 5000,
+        CancellationTokenSource? cancellationTokenSource = null
+    )
     {
         // Ping events are sent from the device every around every 1 second, so we only
         // wait until a given timeout of 5 seconds before giving up and forcing a fresh
@@ -390,8 +393,12 @@ public class VolumeManager
         bool received = false;
 
         foreach (
-            OscMessage message in messages.Where(m =>
-                m.Address is VolumeDecibelsAddress or VolumeAddress or DimAddress && m.Count is 1))
+            OscMessage message in messages.Where(
+                m =>
+                    m.Address is VolumeDecibelsAddress or VolumeAddress or DimAddress
+                    && m.Count is 1
+            )
+        )
         {
             await _volumeMutex.WaitAsync().ConfigureAwait(false);
             try

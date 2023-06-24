@@ -18,15 +18,17 @@ public static class TrayIconMenu
         get
         {
             using RegistryKey? runKey = Registry.CurrentUser.OpenSubKey(
-                @"Software\Microsoft\Windows\CurrentVersion\Run");
+                @"Software\Microsoft\Windows\CurrentVersion\Run"
+            );
 
             return runKey?.GetValue("TotalMix Volume Control") is not null;
         }
-
         set
         {
             using RegistryKey? runKey = Registry.CurrentUser.OpenSubKey(
-                @"Software\Microsoft\Windows\CurrentVersion\Run", writable: true);
+                @"Software\Microsoft\Windows\CurrentVersion\Run",
+                writable: true
+            );
 
             if (value)
             {
@@ -43,11 +45,12 @@ public static class TrayIconMenu
     /// <summary>
     /// Gets the command which reloads the application configuration.
     /// </summary>
-    public static ICommand ReloadConfig => new DelegateCommand(() =>
-    {
-        App app = (App)Application.Current;
-        app.ReloadConfig();
-    });
+    public static ICommand ReloadConfig =>
+        new DelegateCommand(() =>
+        {
+            App app = (App)Application.Current;
+            app.ReloadConfig();
+        });
 
     /// <summary>
     /// Gets the ommand which shuts down the application.

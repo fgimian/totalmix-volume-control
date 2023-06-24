@@ -60,8 +60,15 @@ dotnet_diagnostic.SA1101.severity = none
 # Allow fields to be prefixed with an underscore for private and protected members.
 dotnet_diagnostic.SA1309.severity = none
 
-# Allow arguments to be spread across multiple lines.
+# Disable rules which conflict with the CSharpier formatter.
+dotnet_diagnostic.SA1003.severity = none
+dotnet_diagnostic.SA1009.severity = none
+dotnet_diagnostic.SA1111.severity = none
 dotnet_diagnostic.SA1118.severity = none
+dotnet_diagnostic.SA1502.severity = none
+dotnet_diagnostic.SA1504.severity = none
+dotnet_diagnostic.SA1515.severity = none
+dotnet_diagnostic.SA1516.severity = none
 
 # --------------------------------------------------------------------------------------------------
 # Sonar
@@ -163,12 +170,6 @@ dotnet_diagnostic.RCS0005.severity = warning
 # Ensure an empty line is present before using statements when a header is present.
 dotnet_diagnostic.RCS0006.severity = warning
 
-# Ensure an empty line between property accessors.
-dotnet_diagnostic.RCS0007.severity = warning
-
-# Ensure an empty line after blocks.
-dotnet_diagnostic.RCS0008.severity = warning
-
 # Ensure an empty line between declaration and documentation comments.
 dotnet_diagnostic.RCS0009.severity = warning
 
@@ -187,11 +188,9 @@ dotnet_diagnostic.RCS0013.severity = warning
 # Ensure a new line after attribute listings.
 dotnet_diagnostic.RCS0016.severity = warning
 
-# Ensure a new line after the opening brace of a block.
+# Ensure a new line after the opening brace of a block if it has multiple lines.
 dotnet_diagnostic.RCS0021.severity = warning
-
-# Ensure a new line after the opening brace of an empty block.
-dotnet_diagnostic.RCS0022.severity = warning
+roslynator_block_braces_style = single_line_when_empty
 
 # Ensure a new line after the opening brace of a type declaration.
 dotnet_diagnostic.RCS0023.severity = warning
@@ -260,9 +259,6 @@ dotnet_diagnostic.RCS0051.severity = warning
 # Ensure a new line after an equals sign when the declaration follows on the next line.
 dotnet_diagnostic.RCS0052.severity = warning
 roslynator.RCS0052.invert = true
-
-# Ensure multi-line parameters are formatted and indented correctly.
-dotnet_diagnostic.RCS0053.severity = warning
 
 # Ensure chained calls are formatted and indented correctly.
 dotnet_diagnostic.RCS0054.severity = warning

@@ -8,15 +8,18 @@ namespace TotalMixVC;
 [SuppressMessage(
     "Naming",
     "RCS1046:Asynchronous method name should end with 'Async'.",
-    Justification = "The Async suffix is not added to conform to similar Task methods.")]
+    Justification = "The Async suffix is not added to conform to similar Task methods."
+)]
 [SuppressMessage(
     "Usage",
     "VSTHRD003:Avoid awaiting foreign Tasks",
-    Justification = "This conflicts with the accepted pattern for such task extensions.")]
+    Justification = "This conflicts with the accepted pattern for such task extensions."
+)]
 [SuppressMessage(
     "Style",
     "VSTHRD200:Use \"Async\" suffix for async methods",
-    Justification = "The Async suffix is not added to conform to similar Task methods.")]
+    Justification = "The Async suffix is not added to conform to similar Task methods."
+)]
 public static class TaskExtensions
 {
     /// <summary>
@@ -37,16 +40,15 @@ public static class TaskExtensions
     public static async Task TimeoutAfter(
         this Task task,
         int millisecondsTimeout,
-        CancellationTokenSource? cancellationTokenSource = null)
+        CancellationTokenSource? cancellationTokenSource = null
+    )
     {
         using CancellationTokenSource timeoutCancellationTokenSource = new();
 
         // Create a list of cancellation tokens containing the timout token and optionally
         // a cancellation token provided by the caller.
-        List<CancellationToken> cancellationTokens = new()
-        {
-            timeoutCancellationTokenSource.Token,
-        };
+        List<CancellationToken> cancellationTokens =
+            new() { timeoutCancellationTokenSource.Token, };
 
         if (cancellationTokenSource is not null)
         {
@@ -59,7 +61,9 @@ public static class TaskExtensions
             CancellationTokenSource.CreateLinkedTokenSource(cancellationTokens.ToArray());
 
         Task cancellationTask = Task.Delay(
-            millisecondsTimeout, combinedCancellationTokenSource.Token);
+            millisecondsTimeout,
+            combinedCancellationTokenSource.Token
+        );
 
         // Wait until either the given task or the cancellation task completes and return
         // or throw exceptions appropriately.
@@ -101,16 +105,15 @@ public static class TaskExtensions
     public static async Task<TResult> TimeoutAfter<TResult>(
         this Task<TResult> task,
         int millisecondsTimeout,
-        CancellationTokenSource? cancellationTokenSource = null)
+        CancellationTokenSource? cancellationTokenSource = null
+    )
     {
         using CancellationTokenSource timeoutCancellationTokenSource = new();
 
         // Create a list of cancellation tokens containing the timout token and optionally
         // a cancellation token provided by the caller.
-        List<CancellationToken> cancellationTokens = new()
-        {
-            timeoutCancellationTokenSource.Token,
-        };
+        List<CancellationToken> cancellationTokens =
+            new() { timeoutCancellationTokenSource.Token, };
 
         if (cancellationTokenSource is not null)
         {
@@ -123,7 +126,9 @@ public static class TaskExtensions
             CancellationTokenSource.CreateLinkedTokenSource(cancellationTokens.ToArray());
 
         Task cancellationTask = Task.Delay(
-            millisecondsTimeout, combinedCancellationTokenSource.Token);
+            millisecondsTimeout,
+            combinedCancellationTokenSource.Token
+        );
 
         // Wait until either the given task or the cancellation task completes and return
         // or throw exceptions appropriately.
