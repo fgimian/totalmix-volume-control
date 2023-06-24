@@ -67,6 +67,9 @@ dotnet_diagnostic.SA1118.severity = none
 # Sonar
 # --------------------------------------------------------------------------------------------------
 
+# Allow URIs to be hardcoded.
+dotnet_diagnostic.S1075.severity = none
+
 # Disable reporting of TODOs in favour of Meziantou.Analyzer which does the same.
 dotnet_diagnostic.S1135.severity = none
 
