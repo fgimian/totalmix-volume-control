@@ -63,6 +63,9 @@ dotnet_diagnostic.SA1101.severity = none
 # Allow fields to be prefixed with an underscore for private and protected members.
 dotnet_diagnostic.SA1309.severity = none
 
+# Allow arguments to be spread across multiple lines.
+dotnet_diagnostic.SA1118.severity = none
+
 # --------------------------------------------------------------------------------------------------
 # Roslynator
 # --------------------------------------------------------------------------------------------------
