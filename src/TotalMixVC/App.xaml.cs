@@ -105,8 +105,11 @@ public partial class App : Application
     {
         if (!File.Exists(ConfigPath))
         {
-            // TODO: Determine why the message box doesn't stay open.
+            // It is important to use specify the owner of the message box or it will be closed
+            // when the context menu is closed.
+            // See https://github.com/hardcodet/wpf-notifyicon/issues/74 for more information.
             MessageBox.Show(
+                _volumeIndicator,
                 $"A configuration file at {ConfigPath} could not be found.",
                 caption: "Configuration File Error",
                 button: MessageBoxButton.OK,
@@ -122,6 +125,15 @@ public partial class App : Application
         ConfigureTheme();
 
         _volumeIndicator.UpdateConfig(_config);
+
+        MessageBox.Show(
+            _volumeIndicator,
+            "Configuration has been reloaded successfully. Please note that changes to OSC "
+                + "settings will require an application restart to take effect.",
+            caption: "Configuration Reloaded",
+            button: MessageBoxButton.OK,
+            icon: MessageBoxImage.Information
+        );
     }
 
     /// <summary>
