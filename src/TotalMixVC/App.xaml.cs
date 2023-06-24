@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -41,22 +42,22 @@ public partial class App : Application
     // Disable non-nullable field must contain a non-null value when exiting constructor. These
     // fields are initialized in OnStartup which is called by the constructor.
 #pragma warning disable CS8618
-    private VolumeManager _volumeManager;
-
-    private VolumeIndicator _volumeIndicator;
-
-    private TextBlock _trayToolTipStatus;
-
-    private TaskbarIcon _trayIcon;
+    private CancellationTokenSource _taskCancellationTokenSource;
 
     private JoinableTaskFactory _joinableTaskFactory;
 
-    private CancellationTokenSource _taskCancellationTokenSource;
+    private VolumeIndicator _volumeIndicator;
 
-    private JoinableTask _volumeReceiveTask;
+    private TaskbarIcon _trayIcon;
 
-    private JoinableTask _volumeInitializeTask;
+    private TextBlock _trayToolTipStatus;
+
+    private VolumeManager _volumeManager;
+
 #pragma warning restore CS8618
+    private JoinableTask? _volumeReceiveTask;
+
+    private JoinableTask? _volumeInitializeTask;
 
     private Config _config = new();
 
@@ -77,7 +78,8 @@ public partial class App : Application
                 e.Diagnostics.Select(diagnostic => $"- {diagnostic}")
             );
             MessageBox.Show(
-                $"Unable to parse the config file at {ConfigPath}.\n\n{errors}",
+                $"Unable to parse the config file at {ConfigPath}.\n\n{errors}\n\nThe application "
+                    + "will continue with the default configuration.",
                 caption: "Configuration File Error",
                 button: MessageBoxButton.OK,
                 icon: MessageBoxImage.Exclamation
@@ -87,7 +89,8 @@ public partial class App : Application
         {
             string message = e.InnerException?.Message ?? e.Message;
             MessageBox.Show(
-                $"Unable to load the config file at {ConfigPath}.\n\n{message}",
+                $"Unable to load the config file at {ConfigPath} ({message}).\n\nThe application "
+                    + "will continue with the default configuration.",
                 caption: "Configuration File Error",
                 button: MessageBoxButton.OK,
                 icon: MessageBoxImage.Exclamation
@@ -114,7 +117,6 @@ public partial class App : Application
 
         LoadConfig();
 
-        // TODO: Also reconnect to the hostname and port in the config after update.
         ConfigureVolumeManager();
         ConfigureInterface();
         ConfigureTheme();
@@ -130,26 +132,17 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        // Create a cancellation token source to allow cancellation of tasks on exit.
+        _taskCancellationTokenSource = new();
+
+        // Create a task factory for the current thread (which is the UI thread).
+        _joinableTaskFactory = new(new JoinableTaskContext());
+
         // Attempt to load the configuration if it exists.
         if (File.Exists(ConfigPath))
         {
             LoadConfig();
         }
-
-        // Create the volume manager which will communicate with the device.
-        // TODO: Handle possible parsing errors below.
-        _volumeManager = new(
-            outgoingEP: new IPEndPoint(
-                IPAddress.Parse(_config.Osc.OutgoingHostname),
-                _config.Osc.OutgoingPort
-            ),
-            incomingEP: new IPEndPoint(
-                IPAddress.Parse(_config.Osc.IncomingHostname),
-                _config.Osc.IncomingPort
-            )
-        );
-
-        ConfigureVolumeManager();
 
         // Create the volume indicator widget which displays volume changes.
         _volumeIndicator = new(_config);
@@ -198,11 +191,37 @@ public partial class App : Application
         ConfigureInterface();
         ConfigureTheme();
 
-        // Create a task factory for the current thread (which is the UI thread).
-        _joinableTaskFactory = new(new JoinableTaskContext());
+        // Create the volume manager which will communicate with the device.
+        // TODO: Handle possible parsing errors below.
+        try
+        {
+            _volumeManager = new(
+                outgoingEP: new IPEndPoint(
+                    IPAddress.Parse(_config.Osc.OutgoingHostname),
+                    _config.Osc.OutgoingPort
+                ),
+                incomingEP: new IPEndPoint(
+                    IPAddress.Parse(_config.Osc.IncomingHostname),
+                    _config.Osc.IncomingPort
+                )
+            );
+        }
+        catch (SocketException)
+        {
+            MessageBox.Show(
+                "Unable to open a listener to receive events from the device. Please exit any "
+                    + "applications that are binding to UDP address "
+                    + $"{_config.Osc.OutgoingHostname}:{_config.Osc.OutgoingPort} and try"
+                    + "again.\n\nTotalMix Volume Control will now exit.",
+                caption: "Socket Error",
+                button: MessageBoxButton.OK,
+                icon: MessageBoxImage.Exclamation
+            );
+            Shutdown();
+            return;
+        }
 
-        // Create a cancellation token source to allow cancellation of tasks on exit.
-        _taskCancellationTokenSource = new();
+        ConfigureVolumeManager();
 
         // Start a task that will receive and record volume changes.
         _volumeReceiveTask = _joinableTaskFactory.RunAsync(ReceiveVolumeAsync);
@@ -226,6 +245,7 @@ public partial class App : Application
                 icon: MessageBoxImage.Exclamation
             );
             Shutdown();
+            return;
         }
     }
 
@@ -246,8 +266,15 @@ public partial class App : Application
         _taskCancellationTokenSource.Cancel();
 
         // Wait for running tasks to complete.
-        await _volumeReceiveTask;
-        await _volumeInitializeTask;
+        if (_volumeReceiveTask is not null)
+        {
+            await _volumeReceiveTask;
+        }
+
+        if (_volumeInitializeTask is not null)
+        {
+            await _volumeInitializeTask;
+        }
 
         // Dispose any objects which implement the IDisposable interface.
         _taskCancellationTokenSource.Dispose();
