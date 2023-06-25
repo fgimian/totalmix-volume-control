@@ -42,6 +42,12 @@ public class SolidColorBrushConverter : JsonConverter<SolidColorBrush>
         JsonSerializerOptions options
     )
     {
-        writer.WriteStringValue(value.Color.ToString());
+        string hexColor = value.Color.ToString();
+        if (hexColor.Length == 9 && hexColor.Substring(1, 2) == "FF")
+        {
+            hexColor = hexColor.Remove(1, 2);
+        }
+
+        writer.WriteStringValue(hexColor.ToLower());
     }
 }
