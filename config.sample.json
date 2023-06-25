@@ -1,3 +1,10 @@
+// TotalMix Volume Control sample configuration file.
+//
+// All the pre-filled values you see in this file are optional and represent the application
+// defaults. This JSON file supports comments and trailing commas.
+//
+// Colors may be specified as regular color names such as "blue", along with hex colors with RGB
+// or ARGB components (note that the alpha channel needs to be first if you ant transparency).
 {
     "osc": {
         // The hostname port that TotalMix Volume Control should send to. TotalMixFX listens on
