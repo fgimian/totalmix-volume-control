@@ -1,5 +1,6 @@
 ﻿using System.Net.Sockets;
 using OscCore;
+using Serilog;
 
 namespace TotalMixVC.Communicator;
 
@@ -497,14 +498,29 @@ public class VolumeManager(ISender sender) : IDisposable
             {
                 if (message.Address == VolumeDecibelsAddress)
                 {
+                    Log.Information(
+                        "Received volume dB message with value {Value} of type {ValueType}",
+                        message[0],
+                        message[0].GetType()
+                    );
                     _volumeDecibels = (string)message[0];
                 }
                 else if (message.Address == VolumeAddress)
                 {
+                    Log.Information(
+                        "Received volume message with value {Value} of type {ValueType}",
+                        message[0],
+                        message[0].GetType()
+                    );
                     _volume = (float)message[0];
                 }
                 else
                 {
+                    Log.Information(
+                        "Received dim message with value {Value} of type {ValueType}",
+                        message[0],
+                        message[0].GetType()
+                    );
                     _dim = (float)message[0];
                 }
 
