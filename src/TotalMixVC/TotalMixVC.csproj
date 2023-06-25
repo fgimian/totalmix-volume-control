@@ -17,6 +17,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Resource Include="Icons\TotalMixVC.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Threading" Version="17.6.40" />
     <PackageReference Include="OscCore" Version="1.0.5" />

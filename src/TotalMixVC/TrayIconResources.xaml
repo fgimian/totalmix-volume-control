@@ -20,6 +20,7 @@
     <!-- Tray Icon -->
     <tb:TaskbarIcon x:Key="TrayIcon"
                     ToolTipText="TotalMix Volume Control"
+                    IconSource="/Icons/TotalMixVC.ico"
                     MenuActivation="LeftOrRightClick"
                     ContextMenu="{StaticResource TrayIconMenu}">
         <tb:TaskbarIcon.Resources>

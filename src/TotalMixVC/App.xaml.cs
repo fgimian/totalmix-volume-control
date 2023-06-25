@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -249,13 +248,6 @@ public partial class App : Application
 
         // Create the system tray icon.
         _trayIcon = (TaskbarIcon)Resources["TrayIcon"];
-
-        // Set the tray icon to match the application.
-        Assembly? assembly = Assembly.GetEntryAssembly();
-        if (assembly is not null)
-        {
-            _trayIcon.Icon = Icon.ExtractAssociatedIcon(assembly.ManifestModule.Name);
-        }
 
         // Obtain the tooltip text area so the text may be updated as required while the app
         // is running.
