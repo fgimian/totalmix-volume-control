@@ -96,19 +96,12 @@ public partial class VolumeIndicator : Window
         await _joinableTaskFactory.SwitchToMainThreadAsync();
 
         // Update the color of text and the volume rectangle based on whether the volume is dimmed.
-        BrushConverter brushConverter = new();
-        VolumeWidgetBarForeground.Fill = (SolidColorBrush?)
-            brushConverter.ConvertFrom(
-                isDimmed
-                    ? _config.Theme.VolumeBarForegroundColorDimmed
-                    : _config.Theme.VolumeBarForegroundColorNormal
-            );
-        VolumeWidgetReadout.Foreground = (SolidColorBrush?)
-            brushConverter.ConvertFrom(
-                isDimmed
-                    ? _config.Theme.VolumeReadoutColorDimmed
-                    : _config.Theme.VolumeReadoutColorNormal
-            );
+        VolumeWidgetBarForeground.Fill = isDimmed
+            ? _config.Theme.VolumeBarForegroundColorDimmed
+            : _config.Theme.VolumeBarForegroundColorNormal;
+        VolumeWidgetReadout.Foreground = isDimmed
+            ? _config.Theme.VolumeReadoutColorDimmed
+            : _config.Theme.VolumeReadoutColorNormal;
 
         // Update the volume bar with the percentage and readout text box with the decibel reading.
         VolumeWidgetBarForeground.Width = (int)(VolumeWidgetBarBackground.ActualWidth * volume);
@@ -169,25 +162,12 @@ public partial class VolumeIndicator : Window
 
     private void ConfigureTheme()
     {
-        BrushConverter brushConverter = new();
-
-        VolumeWidgetBorder.BorderBrush = (SolidColorBrush?)
-            brushConverter.ConvertFrom(_config.Theme.BackgroundColor);
+        VolumeWidgetBorder.BorderBrush = _config.Theme.BackgroundColor;
         VolumeWidgetBorder.CornerRadius = new CornerRadius(_config.Theme.BackgroundRounding);
-
-        VolumeWidgetTitleTotalMix.Foreground = (SolidColorBrush?)
-            brushConverter.ConvertFrom(_config.Theme.HeadingTotalmixColor);
-
-        VolumeWidgetTitleVolume.Foreground = (SolidColorBrush?)
-            brushConverter.ConvertFrom(_config.Theme.HeadingVolumeColor);
-
-        VolumeWidgetReadout.Foreground = (SolidColorBrush?)
-            brushConverter.ConvertFrom(_config.Theme.VolumeReadoutColorNormal);
-
-        VolumeWidgetBarBackground.Fill = (SolidColorBrush?)
-            brushConverter.ConvertFrom(_config.Theme.VolumeBarBackgroundColor);
-
-        VolumeWidgetBarForeground.Fill = (SolidColorBrush?)
-            brushConverter.ConvertFrom(_config.Theme.VolumeBarForegroundColorNormal);
+        VolumeWidgetTitleTotalMix.Foreground = _config.Theme.HeadingTotalmixColor;
+        VolumeWidgetTitleVolume.Foreground = _config.Theme.HeadingVolumeColor;
+        VolumeWidgetReadout.Foreground = _config.Theme.VolumeReadoutColorNormal;
+        VolumeWidgetBarBackground.Fill = _config.Theme.VolumeBarBackgroundColor;
+        VolumeWidgetBarForeground.Fill = _config.Theme.VolumeBarForegroundColorNormal;
     }
 }

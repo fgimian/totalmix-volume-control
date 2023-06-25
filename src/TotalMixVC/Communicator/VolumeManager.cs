@@ -105,7 +105,8 @@ public class VolumeManager
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(value),
-                    "Regular volume increment must be greater than 0 and less than 0.1."
+                    "Specified volume increment must be greater than 0 and less than or equal "
+                        + "to 0.1."
                 );
             }
 
@@ -128,7 +129,8 @@ public class VolumeManager
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(value),
-                    "Fine volume increment must be greater than 0 and less than 0.05."
+                    "Specified fine volume increment must be greater than 0 and less than or "
+                        + "equal to 0.05."
                 );
             }
 
@@ -151,7 +153,7 @@ public class VolumeManager
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(value),
-                    "Volume max can't be greater than 1.0."
+                    "Specified max volume must be greater than 0 and less than or equal to 1.0."
                 );
             }
 

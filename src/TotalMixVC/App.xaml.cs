@@ -5,15 +5,17 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Text;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.VisualStudio.Threading;
-using Tomlyn;
 using TotalMixVC.Communicator;
 using TotalMixVC.Configuration;
+using TotalMixVC.Configuration.NamingPolicies;
 using TotalMixVC.Hotkeys;
 
 namespace TotalMixVC;
@@ -36,7 +38,7 @@ public partial class App : Application
     private static readonly string ConfigPath = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "TotalMix Volume Control",
-        "config.toml"
+        "config.json"
     );
 
     // Disable non-nullable field must contain a non-null value when exiting constructor. These
@@ -64,37 +66,101 @@ public partial class App : Application
     /// <summary>
     /// Loads the configuration file and reports errors in message boxes if they occur.
     /// </summary>
-    public void LoadConfig()
+    /// <param name="running">
+    /// Whether the application is already running with a previous loaded configuration.
+    /// </param>
+    /// <returns>Whether or not the config was loaded successfully.</returns>
+    [SuppressMessage(
+        "Roslynator",
+        "RCS1197:Optimize StringBuilder.Append/AppendLine call.",
+        Justification = "Disabled due to https://github.com/JosefPihrt/Roslynator/issues/899."
+    )]
+    public bool LoadConfig(bool running = false)
     {
         try
         {
             string configText = File.ReadAllText(ConfigPath);
-            _config = Toml.ToModel<Config>(configText);
+
+            JsonSerializerOptions options =
+                new()
+                {
+                    AllowTrailingCommas = true,
+                    ReadCommentHandling = JsonCommentHandling.Skip,
+                    PropertyNamingPolicy = new JsonSnakeCaseLowerNamingPolicy(),
+                };
+
+            _config = JsonSerializer.Deserialize<Config>(configText, options)!;
+
+            return true;
         }
-        catch (TomlException e)
+        catch (JsonException e)
         {
-            string errors = string.Join(
-                '\n',
-                e.Diagnostics.Select(diagnostic => $"- {diagnostic}")
+            string configDescription = running ? "existing" : "default";
+
+            StringBuilder message = new();
+
+            message.Append($"Unable to parse the config file at {ConfigPath}.\n\n{e.Message}");
+
+            if (e.InnerException is not null)
+            {
+                message.Append($" {e.InnerException.Message}");
+            }
+
+            message.Append(
+                $"\n\nThe application will continue with the {configDescription} configuration."
             );
-            MessageBox.Show(
-                $"Unable to parse the config file at {ConfigPath}.\n\n{errors}\n\nThe application "
-                    + "will continue with the default configuration.",
-                caption: "Configuration File Error",
-                button: MessageBoxButton.OK,
-                icon: MessageBoxImage.Exclamation
-            );
+
+            if (running)
+            {
+                MessageBox.Show(
+                    _volumeIndicator,
+                    message.ToString(),
+                    caption: "Configuration File Error",
+                    button: MessageBoxButton.OK,
+                    icon: MessageBoxImage.Exclamation
+                );
+            }
+            else
+            {
+                MessageBox.Show(
+                    message.ToString(),
+                    caption: "Configuration File Error",
+                    button: MessageBoxButton.OK,
+                    icon: MessageBoxImage.Exclamation
+                );
+            }
+
+            return false;
         }
         catch (Exception e)
         {
-            string message = e.InnerException?.Message ?? e.Message;
-            MessageBox.Show(
-                $"Unable to load the config file at {ConfigPath} ({message}).\n\nThe application "
-                    + "will continue with the default configuration.",
-                caption: "Configuration File Error",
-                button: MessageBoxButton.OK,
-                icon: MessageBoxImage.Exclamation
-            );
+            string configDescription = running ? "existing" : "default";
+            string message =
+                $"Unable to load the config file at {ConfigPath} "
+                + $"({e.InnerException?.Message ?? e.Message}).\n\nThe application will continue "
+                + $"with the {configDescription} configuration.";
+
+            if (running)
+            {
+                MessageBox.Show(
+                    _volumeIndicator,
+                    message,
+                    caption: "Configuration File Error",
+                    button: MessageBoxButton.OK,
+                    icon: MessageBoxImage.Exclamation
+                );
+            }
+            else
+            {
+                MessageBox.Show(
+                    message,
+                    caption: "Configuration File Error",
+                    button: MessageBoxButton.OK,
+                    icon: MessageBoxImage.Exclamation
+                );
+            }
+
+            return false;
         }
     }
 
@@ -118,7 +184,10 @@ public partial class App : Application
             return;
         }
 
-        LoadConfig();
+        if (!LoadConfig(running: true))
+        {
+            return;
+        }
 
         ConfigureVolumeManager();
         ConfigureInterface();
@@ -150,39 +219,6 @@ public partial class App : Application
         // Create a task factory for the current thread (which is the UI thread).
         _joinableTaskFactory = new(new JoinableTaskContext());
 
-        // Attempt to load the configuration if it exists.
-        if (File.Exists(ConfigPath))
-        {
-            LoadConfig();
-        }
-
-        // Create the volume indicator widget which displays volume changes.
-        _volumeIndicator = new(_config);
-
-        // Create a parent window which is not visible in the taskbar or Alt+Tab.
-        Window hiddenParentWindow =
-            new()
-            {
-                Top = -100,
-                Left = -100,
-                Width = 0,
-                Height = 0,
-                WindowStyle = WindowStyle.ToolWindow,
-                ShowInTaskbar = false,
-            };
-
-        // Set the owner of our volume indicator window to the hidden parent.
-        hiddenParentWindow.Show();
-        _volumeIndicator.Owner = hiddenParentWindow;
-        hiddenParentWindow.Hide();
-
-        // Silently display the volume indicator so the volume bar rectangle background
-        // width is initialized.
-        _volumeIndicator.Opacity = 0.0;
-        _volumeIndicator.Show();
-        _volumeIndicator.Hide();
-        _volumeIndicator.Opacity = 1.0;
-
         // Create the system tray icon.
         _trayIcon = (TaskbarIcon)Resources["TrayIcon"];
 
@@ -199,23 +235,49 @@ public partial class App : Application
         _trayToolTipStatus = (TextBlock)
             LogicalTreeHelper.FindLogicalNode(trayToolTipBorder, "TrayToolTipStatus");
 
+        // Attempt to load the configuration if it exists.
+        if (File.Exists(ConfigPath))
+        {
+            LoadConfig();
+        }
+
         // Configure the tray tooltip interface and theme.
         ConfigureInterface();
         ConfigureTheme();
 
+        // Create the volume indicator widget which displays volume changes.
+        _volumeIndicator = new(_config);
+
+        // Create a parent window which is not visible in the taskbar or Alt+Tab.
+        Window hiddenParentWindow =
+            new()
+            {
+                Top = -100,
+                Left = -100,
+                Width = 0,
+                Height = 0,
+                WindowStyle = WindowStyle.ToolWindow,
+                ShowInTaskbar = false,
+            };
+
+        // Set the owner of the volume indicator window to the hidden parent.
+        hiddenParentWindow.Show();
+        _volumeIndicator.Owner = hiddenParentWindow;
+        hiddenParentWindow.Hide();
+
+        // Silently display the volume indicator so the volume bar rectangle background
+        // width is initialized.
+        _volumeIndicator.Opacity = 0.0;
+        _volumeIndicator.Show();
+        _volumeIndicator.Hide();
+        _volumeIndicator.Opacity = 1.0;
+
         // Create the volume manager which will communicate with the device.
-        // TODO: Handle possible parsing errors below.
         try
         {
             _volumeManager = new(
-                outgoingEP: new IPEndPoint(
-                    IPAddress.Parse(_config.Osc.OutgoingHostname),
-                    _config.Osc.OutgoingPort
-                ),
-                incomingEP: new IPEndPoint(
-                    IPAddress.Parse(_config.Osc.IncomingHostname),
-                    _config.Osc.IncomingPort
-                )
+                outgoingEP: new IPEndPoint(_config.Osc.OutgoingHostname, _config.Osc.OutgoingPort),
+                incomingEP: new IPEndPoint(_config.Osc.IncomingHostname, _config.Osc.IncomingPort)
             );
         }
         catch (SocketException)
@@ -223,8 +285,8 @@ public partial class App : Application
             MessageBox.Show(
                 "Unable to open a listener to receive events from the device. Please exit any "
                     + "applications that are binding to UDP address "
-                    + $"{_config.Osc.OutgoingHostname}:{_config.Osc.OutgoingPort} and try"
-                    + "again.\n\nTotalMix Volume Control will now exit.",
+                    + $"{_config.Osc.OutgoingHostname}:{_config.Osc.OutgoingPort} and try "
+                    + "again.\n\nThe application will now exit.",
                 caption: "Socket Error",
                 button: MessageBoxButton.OK,
                 icon: MessageBoxImage.Exclamation
@@ -250,8 +312,7 @@ public partial class App : Application
         {
             MessageBox.Show(
                 "Unable to map the required volume hotkeys. Please exit any applications that may "
-                    + "be using them and try again.\n\n"
-                    + "TotalMix Volume Control will now exit.",
+                    + "be using them and try again.\n\nThe application will now exit.",
                 caption: "Hotkey Registration Error",
                 button: MessageBoxButton.OK,
                 icon: MessageBoxImage.Exclamation
@@ -476,8 +537,6 @@ public partial class App : Application
 
     private void ConfigureTheme()
     {
-        BrushConverter brushConverter = new();
-
         Border trayToolTipBorder = (Border)_trayIcon.TrayToolTip;
 
         // TODO: Determine why binding this to border brush doesn't work.
@@ -493,20 +552,11 @@ public partial class App : Application
         TextBlock trayToolTipStatus = (TextBlock)
             LogicalTreeHelper.FindLogicalNode(trayToolTipBorder, "TrayToolTipStatus");
 
-        trayToolTipBorder.BorderBrush = (SolidColorBrush?)
-            brushConverter.ConvertFrom(_config.Theme.BackgroundColor);
+        trayToolTipBorder.BorderBrush = _config.Theme.BackgroundColor;
         trayToolTipBorder.CornerRadius = new CornerRadius(_config.Theme.BackgroundRounding);
-
-        trayToolTipPanel.Background = (SolidColorBrush?)
-            brushConverter.ConvertFrom(_config.Theme.BackgroundColor);
-
-        trayToolTipTitleTotalMix.Foreground = (SolidColorBrush?)
-            brushConverter.ConvertFrom(_config.Theme.HeadingTotalmixColor);
-
-        trayToolTipTitleVolume.Foreground = (SolidColorBrush?)
-            brushConverter.ConvertFrom(_config.Theme.HeadingVolumeColor);
-
-        trayToolTipStatus.Foreground = (SolidColorBrush?)
-            brushConverter.ConvertFrom(_config.Theme.TrayTooltipMessageColor);
+        trayToolTipPanel.Background = _config.Theme.BackgroundColor;
+        trayToolTipTitleTotalMix.Foreground = _config.Theme.HeadingTotalmixColor;
+        trayToolTipTitleVolume.Foreground = _config.Theme.HeadingVolumeColor;
+        trayToolTipStatus.Foreground = _config.Theme.TrayTooltipMessageColor;
     }
 }
