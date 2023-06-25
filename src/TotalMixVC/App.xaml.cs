@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
@@ -23,6 +24,11 @@ namespace TotalMixVC;
 /// <summary>
 /// Interaction logic for App.xaml.
 /// </summary>
+[SuppressMessage(
+    "Roslynator",
+    "RCS1197:Optimize StringBuilder.Append/AppendLine call.",
+    Justification = "Disabled due to https://github.com/JosefPihrt/Roslynator/issues/899."
+)]
 public partial class App : Application
 {
     private const string CommunicationErrorFormatString =
@@ -64,17 +70,39 @@ public partial class App : Application
     private Config _config = new();
 
     /// <summary>
+    /// Shows general information about the application in a message box.
+    /// </summary>
+    public void About()
+    {
+        Assembly assembly = Assembly.GetExecutingAssembly();
+        FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+
+        StringBuilder message = new();
+        message.Append($"TotalMix Volume Control v{versionInfo.FileVersion}");
+
+        if (versionInfo.FileVersion != versionInfo.ProductVersion)
+        {
+            message.Append($" (Build Version: v{versionInfo.ProductVersion})");
+        }
+
+        message.Append('.');
+
+        MessageBox.Show(
+            owner: _volumeIndicator,
+            messageBoxText: message.ToString(),
+            caption: "About TotalMix Volume Control",
+            button: MessageBoxButton.OK,
+            icon: MessageBoxImage.Information
+        );
+    }
+
+    /// <summary>
     /// Loads the configuration file and reports errors in message boxes if they occur.
     /// </summary>
     /// <param name="running">
     /// Whether the application is already running with a previous loaded configuration.
     /// </param>
     /// <returns>Whether or not the config was loaded successfully.</returns>
-    [SuppressMessage(
-        "Roslynator",
-        "RCS1197:Optimize StringBuilder.Append/AppendLine call.",
-        Justification = "Disabled due to https://github.com/JosefPihrt/Roslynator/issues/899."
-    )]
     public bool LoadConfig(bool running = false)
     {
         try

@@ -4,12 +4,17 @@
                     xmlns:local="clr-namespace:TotalMixVC">
     <!-- Tray Icon Context Menu -->
     <ContextMenu x:Key="TrayIconMenu" x:Shared="false">
-        <MenuItem Header="Reload config" Command="{Binding Source={x:Static local:TrayIconMenu.ReloadConfig}}" />
-        <MenuItem Header="Run when Windows starts"
+        <MenuItem Header="About TotalMix Volume Control"
+                  Command="{Binding Source={x:Static local:TrayIconMenu.About}}" />
+        <Separator />
+        <MenuItem Header="Reload Configuration"
+                  Command="{Binding Source={x:Static local:TrayIconMenu.ReloadConfig}}" />
+        <MenuItem Header="Run When Windows Starts"
                   IsCheckable="True"
                   IsChecked="{Binding Path=(local:TrayIconMenu.RunOnStartup), Mode=TwoWay}" />
         <Separator />
-        <MenuItem Header="Exit" Command="{Binding Source={x:Static local:TrayIconMenu.ExitCommand}}" />
+        <MenuItem Header="Exit TotalMix Volume Control"
+                  Command="{Binding Source={x:Static local:TrayIconMenu.ExitCommand}}" />
     </ContextMenu>
 
     <!-- Tray Icon -->

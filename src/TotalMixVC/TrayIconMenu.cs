@@ -10,6 +10,26 @@ namespace TotalMixVC;
 public static class TrayIconMenu
 {
     /// <summary>
+    /// Gets the command that shows the About window for the application.
+    /// </summary>
+    public static ICommand About =>
+        new DelegateCommand(() =>
+        {
+            App app = (App)Application.Current;
+            app.About();
+        });
+
+    /// <summary>
+    /// Gets the command which reloads the application configuration.
+    /// </summary>
+    public static ICommand ReloadConfig =>
+        new DelegateCommand(() =>
+        {
+            App app = (App)Application.Current;
+            app.ReloadConfig();
+        });
+
+    /// <summary>
     /// Gets or sets a value indicating whether the application will start automatically when
     /// Windows starts.
     /// </summary>
@@ -41,16 +61,6 @@ public static class TrayIconMenu
             }
         }
     }
-
-    /// <summary>
-    /// Gets the command which reloads the application configuration.
-    /// </summary>
-    public static ICommand ReloadConfig =>
-        new DelegateCommand(() =>
-        {
-            App app = (App)Application.Current;
-            app.ReloadConfig();
-        });
 
     /// <summary>
     /// Gets the ommand which shuts down the application.
