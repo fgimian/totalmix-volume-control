@@ -13,6 +13,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.VisualStudio.Threading;
+using Serilog;
+using Serilog.Events;
 using TotalMixVC.Communicator;
 using TotalMixVC.Configuration;
 using TotalMixVC.Configuration.NamingPolicies;
@@ -240,6 +242,17 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        // Configure logging.
+        string appSettingsPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "TotalMix Volume Control"
+        );
+        Directory.CreateDirectory(appSettingsPath);
+        Log.Logger = new LoggerConfiguration().WriteTo
+            .File(Path.Combine(appSettingsPath, "app.log"))
+            .CreateLogger();
+        Log.Information("Starting up the application");
+
         // Create a cancellation token source to allow cancellation of tasks on exit.
         _taskCancellationTokenSource = new();
 
@@ -372,6 +385,9 @@ public partial class App : Application
         // Dispose any objects which implement the IDisposable interface.
         _taskCancellationTokenSource.Dispose();
         _trayIcon.Dispose();
+
+        // Close the log.
+        Log.CloseAndFlush();
     }
 
     private async Task ReceiveVolumeAsync()
@@ -441,6 +457,11 @@ public partial class App : Application
                 // This exception is raised when the app is exited so we exit the loop.
                 break;
             }
+            catch (Exception e)
+            {
+                Log.Error(e, "Unhandled exception caught while receiving volume.");
+                throw;
+            }
         }
     }
 
@@ -454,7 +475,15 @@ public partial class App : Application
             // The volume is uninitialized so it is requested from the device.
             if (!_volumeManager.IsVolumeInitialized)
             {
-                await _volumeManager.RequestVolumeAsync().ConfigureAwait(false);
+                try
+                {
+                    await _volumeManager.RequestVolumeAsync().ConfigureAwait(false);
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e, "Unhandled exception caught while requesting volume.");
+                    throw;
+                }
             }
 
             // A volume request was just sent or the volume is already known, so we sleep
@@ -482,8 +511,18 @@ public partial class App : Application
                     .RunAsync(async () =>
                     {
                         // Increase the volume and show the volume indicator.
-                        await _volumeManager.IncreaseVolumeAsync().ConfigureAwait(false);
-                        await _volumeIndicator.DisplayCurrentVolumeAsync().ConfigureAwait(false);
+                        try
+                        {
+                            await _volumeManager.IncreaseVolumeAsync().ConfigureAwait(false);
+                            await _volumeIndicator
+                                .DisplayCurrentVolumeAsync()
+                                .ConfigureAwait(false);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error(e, "Unhandled exception caught while increasing volume.");
+                            throw;
+                        }
                     })
                     .Join(_taskCancellationTokenSource.Token)
         );
@@ -495,8 +534,18 @@ public partial class App : Application
                     .RunAsync(async () =>
                     {
                         // Decrease the volume and show the volume indicator.
-                        await _volumeManager.DecreaseVolumeAsync().ConfigureAwait(false);
-                        await _volumeIndicator.DisplayCurrentVolumeAsync().ConfigureAwait(false);
+                        try
+                        {
+                            await _volumeManager.DecreaseVolumeAsync().ConfigureAwait(false);
+                            await _volumeIndicator
+                                .DisplayCurrentVolumeAsync()
+                                .ConfigureAwait(false);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error(e, "Unhandled exception caught while decreasing volume.");
+                            throw;
+                        }
                     })
                     .Join(_taskCancellationTokenSource.Token)
         );
@@ -508,8 +557,23 @@ public partial class App : Application
                     .RunAsync(async () =>
                     {
                         // Finely increase the volume and show the volume indicator.
-                        await _volumeManager.IncreaseVolumeAsync(fine: true).ConfigureAwait(false);
-                        await _volumeIndicator.DisplayCurrentVolumeAsync().ConfigureAwait(false);
+                        try
+                        {
+                            await _volumeManager
+                                .IncreaseVolumeAsync(fine: true)
+                                .ConfigureAwait(false);
+                            await _volumeIndicator
+                                .DisplayCurrentVolumeAsync()
+                                .ConfigureAwait(false);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error(
+                                e,
+                                "Unhandled exception caught while fine increasing volume."
+                            );
+                            throw;
+                        }
                     })
                     .Join(_taskCancellationTokenSource.Token)
         );
@@ -521,8 +585,23 @@ public partial class App : Application
                     .RunAsync(async () =>
                     {
                         // Finely decrease the volume and show the volume indicator.
-                        await _volumeManager.DecreaseVolumeAsync(fine: true).ConfigureAwait(false);
-                        await _volumeIndicator.DisplayCurrentVolumeAsync().ConfigureAwait(false);
+                        try
+                        {
+                            await _volumeManager
+                                .DecreaseVolumeAsync(fine: true)
+                                .ConfigureAwait(false);
+                            await _volumeIndicator
+                                .DisplayCurrentVolumeAsync()
+                                .ConfigureAwait(false);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error(
+                                e,
+                                "Unhandled exception caught while decreasing volume volume."
+                            );
+                            throw;
+                        }
                     })
                     .Join(_taskCancellationTokenSource.Token)
         );
@@ -533,8 +612,18 @@ public partial class App : Application
                 _joinableTaskFactory
                     .RunAsync(async () =>
                     {
-                        await _volumeManager.ToggloDimAsync().ConfigureAwait(false);
-                        await _volumeIndicator.DisplayCurrentVolumeAsync().ConfigureAwait(false);
+                        try
+                        {
+                            await _volumeManager.ToggloDimAsync().ConfigureAwait(false);
+                            await _volumeIndicator
+                                .DisplayCurrentVolumeAsync()
+                                .ConfigureAwait(false);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error(e, "Unhandled exception caught while toggling dim");
+                            throw;
+                        }
                     })
                     .Join(_taskCancellationTokenSource.Token)
         );
