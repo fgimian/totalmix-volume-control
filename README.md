@@ -20,7 +20,7 @@ for a discussion about the tool.
 ### Downloading the Installer
 
 You may download the latest release from the
-[releases page](https://github.com/fgimian/totalmix-volume-control/releases).  Simply expand the
+[releases page](https://github.com/fgimian/totalmix-volume-control/releases). Simply expand the
 **Assets** item under the latest release and download the release installer.
 
 ### Usage
@@ -50,7 +50,7 @@ with your device.
 ### Configuring TotalMixFX
 
 The following instructions will be provided when you hover over the tray icon in the case that
-there is a communication issue with your device.  However, I provide them here for your convenience
+there is a communication issue with your device. However, I provide them here for your convenience
 also:
 
 1. Open TotalMixFX
@@ -61,6 +61,28 @@ also:
 6. Ensure that **Port incoming** is set to **7001**
 7. Ensure that **Port outgoing** is set to **9001**
 8. Ensure that **IP or Host Name** is set to **127.0.0.1**
+
+### Configuring TotalMix Volume Control
+
+If you wish to dig deeper, you can configure almost every aspect of TotalMix Volume Control via
+a configuration file.
+
+Start by browsing to `%APPDATA%` in Windows Explorer and creating a directory named
+"TotalMix Volume Control". Now download the
+[sample configuration file](https://github.com/fgimian/totalmix-volume-control/blob/main/config.sample.json),
+rename it to "config.json" and place it in the directory you created.
+
+You may open this file in any text editor and read the included instructions to configure the
+application. All the pre-filled values you see in the sample configuration are optional and
+represent the application defaults.
+
+Despite being a JSON file, TotalMix Volume Control supports comments and trailing commas in the
+configuration (as per the sample).
+
+You may live-reload your updated configuration by right-clicking on the TotalMix Volume Control
+tray icon and selecting "Reload config" which will update all settings except those related to
+OSC (i.e. hostnames and ports). You will need to restart the application if you wish to change
+OSC settings.
 
 ## Building from Source
 
@@ -79,7 +101,7 @@ After cloning the source code from GitHub, follow the steps below:
 
 ## Building the Icon
 
-The icon is built from an SVG.  Install [Scoop](https://scoop.sh/) and built it as follows:
+The icon is built from an SVG. Install [Scoop](https://scoop.sh/) and built it as follows:
 
 ```powershell
 # Install required tools.
