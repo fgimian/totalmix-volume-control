@@ -36,12 +36,33 @@ public class Listener : IListener, IDisposable
     /// <summary>
     /// Receives an OSC packet from the endpoint configured.
     /// </summary>
+    /// <param name="cancellationTokenSource">
+    /// An optional cancellation source that will cancel any receive requests which are in progress.
+    /// </param>
     /// <returns>
     /// An OSC packet which may be either a <see cref="OscBundle"/> or <see cref="OscMessage"/>.
     /// </returns>
-    public async Task<OscPacket> ReceiveAsync()
+    [SuppressMessage(
+        "Usage",
+        "MA0040:Forward the CancellationToken parameter to methods that take one",
+        Justification = "The token is optional and is being forwarded when provided."
+    )]
+    public async Task<OscPacket> ReceiveAsync(
+        CancellationTokenSource? cancellationTokenSource = null
+    )
     {
-        UdpReceiveResult result = await _client.ReceiveAsync().ConfigureAwait(false);
+        UdpReceiveResult result;
+        if (cancellationTokenSource is not null)
+        {
+            result = await _client
+                .ReceiveAsync(cancellationTokenSource.Token)
+                .ConfigureAwait(false);
+        }
+        else
+        {
+            result = await _client.ReceiveAsync().ConfigureAwait(false);
+        }
+
         return OscPacket.Read(result.Buffer, 0, result.Buffer.Length);
     }
 

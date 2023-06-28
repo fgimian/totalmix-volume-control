@@ -211,10 +211,11 @@ public class VolumeManager
         // receive request.  This ensures that the receiver can detect a device which was
         // previous offline.
         OscPacket packet;
+        CancellationTokenSource receiveCancellationTokenSource = new();
         try
         {
             packet = await _listener
-                .ReceiveAsync()
+                .ReceiveAsync(receiveCancellationTokenSource)
                 .TimeoutAfter(timeout, cancellationTokenSource)
                 .ConfigureAwait(false);
         }
@@ -226,6 +227,9 @@ public class VolumeManager
         }
         catch (TimeoutException)
         {
+            // Cancel the receive task since it timed out.
+            receiveCancellationTokenSource.Cancel();
+
             // Reset the volume back to an initial state so that the caller is forced to
             // request device volume before continuing as this may have changed while the
             // device was offline.

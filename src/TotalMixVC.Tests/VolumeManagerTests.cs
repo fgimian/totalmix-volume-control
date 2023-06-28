@@ -1,4 +1,5 @@
 ﻿using NSubstitute;
+using NSubstitute.Extensions;
 using OscCore;
 using TotalMixVC.Communicator;
 using Xunit;
@@ -149,8 +150,8 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
             listener
-                .ReceiveAsync()
-                .Returns(
+                .ReceiveAsync(default)
+                .ReturnsForAnyArgs(
                     Task.FromResult<OscPacket>(
                         new OscBundle(
                             OscTimeTag.Now,
@@ -181,8 +182,8 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
             listener
-                .ReceiveAsync()
-                .Returns(
+                .ReceiveAsync(default)
+                .ReturnsForAnyArgs(
                     Task.FromResult<OscPacket>(
                         new OscBundle(
                             OscTimeTag.Now,
@@ -213,8 +214,8 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
             listener
-                .ReceiveAsync()
-                .Returns(
+                .ReceiveAsync(default)
+                .ReturnsForAnyArgs(
                     Task.FromResult<OscPacket>(
                         new OscBundle(
                             OscTimeTag.Now,
@@ -242,8 +243,8 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
             listener
-                .ReceiveAsync()
-                .Returns(
+                .ReceiveAsync(default)
+                .ReturnsForAnyArgs(
                     Task.FromResult<OscPacket>(
                         new OscBundle(
                             OscTimeTag.Now,
@@ -283,8 +284,8 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
             listener
-                .ReceiveAsync()
-                .Returns(
+                .ReceiveAsync(default)
+                .ReturnsForAnyArgs(
                     Task.FromResult<OscPacket>(
                         new OscBundle(OscTimeTag.Now, new OscMessage("/1/mastervolumeVal", -1.0f))
                     )
@@ -307,8 +308,8 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
             listener
-                .ReceiveAsync()
-                .Returns(
+                .ReceiveAsync(default)
+                .ReturnsForAnyArgs(
                     Task.FromResult<OscPacket>(
                         new OscBundle(
                             OscTimeTag.Now,
@@ -335,8 +336,10 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
             listener
-                .ReceiveAsync()
-                .Returns(Task.FromResult<OscPacket>(new OscMessage("/1/mastervolume", 0.20f)));
+                .ReceiveAsync(default)
+                .ReturnsForAnyArgs(
+                    Task.FromResult<OscPacket>(new OscMessage("/1/mastervolume", 0.20f))
+                );
 
             VolumeManager volumeManager = new(sender, listener);
 
@@ -355,8 +358,8 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
             listener
-                .ReceiveAsync()
-                .Returns(
+                .ReceiveAsync(default)
+                .ReturnsForAnyArgs(
                     Task.FromException<OscPacket>(new OscException(OscError.MissingComma, "weov"))
                 );
 
@@ -377,8 +380,8 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
             listener
-                .ReceiveAsync()
-                .Returns(
+                .ReceiveAsync(default)
+                .ReturnsForAnyArgs(
                     Task.FromResult<OscPacket>(
                         new OscBundle(
                             OscTimeTag.Now,
@@ -433,8 +436,8 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
             listener
-                .ReceiveAsync()
-                .Returns(
+                .ReceiveAsync(default)
+                .ReturnsForAnyArgs(
                     Task.FromResult<OscPacket>(
                         new OscBundle(
                             OscTimeTag.Now,
@@ -474,8 +477,8 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
             listener
-                .ReceiveAsync()
-                .Returns(
+                .ReceiveAsync(default)
+                .ReturnsForAnyArgs(
                     Task.FromResult<OscPacket>(
                         new OscBundle(
                             OscTimeTag.Now,
@@ -516,8 +519,8 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
             listener
-                .ReceiveAsync()
-                .Returns(
+                .ReceiveAsync(default)
+                .ReturnsForAnyArgs(
                     Task.FromResult<OscPacket>(
                         new OscBundle(
                             OscTimeTag.Now,
@@ -564,8 +567,8 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
             listener
-                .ReceiveAsync()
-                .Returns(
+                .ReceiveAsync(default)
+                .ReturnsForAnyArgs(
                     Task.FromResult<OscPacket>(
                         new OscBundle(
                             OscTimeTag.Now,
@@ -626,8 +629,8 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
             listener
-                .ReceiveAsync()
-                .Returns(
+                .ReceiveAsync(default)
+                .ReturnsForAnyArgs(
                     Task.FromResult<OscPacket>(
                         new OscBundle(
                             OscTimeTag.Now,
@@ -667,8 +670,8 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
             listener
-                .ReceiveAsync()
-                .Returns(
+                .ReceiveAsync(default)
+                .ReturnsForAnyArgs(
                     Task.FromResult<OscPacket>(
                         new OscBundle(
                             OscTimeTag.Now,
@@ -708,8 +711,8 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
             listener
-                .ReceiveAsync()
-                .Returns(
+                .ReceiveAsync(default)
+                .ReturnsForAnyArgs(
                     Task.FromResult<OscPacket>(
                         new OscBundle(
                             OscTimeTag.Now,
@@ -756,8 +759,8 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
             listener
-                .ReceiveAsync()
-                .Returns(
+                .ReceiveAsync(default)
+                .ReturnsForAnyArgs(
                     Task.FromResult<OscPacket>(
                         new OscBundle(
                             OscTimeTag.Now,
@@ -818,8 +821,8 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
             listener
-                .ReceiveAsync()
-                .Returns(
+                .ReceiveAsync(default)
+                .ReturnsForAnyArgs(
                     Task.FromResult<OscPacket>(
                         new OscBundle(
                             OscTimeTag.Now,
@@ -857,8 +860,8 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
             listener
-                .ReceiveAsync()
-                .Returns(
+                .ReceiveAsync(default)
+                .ReturnsForAnyArgs(
                     Task.FromResult<OscPacket>(
                         new OscBundle(
                             OscTimeTag.Now,
