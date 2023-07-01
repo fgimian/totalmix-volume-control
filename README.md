@@ -93,20 +93,20 @@ After cloning the source code from GitHub, follow the steps below:
 3. Open a PowerShell prompt and build the project
 
     ```powershell
-    cd totalmix-volume-control
     just configuration=Release distribute
     ```
 
 4. You'll now find an installer under the **artifacts** sub-directory
 
+You may find various other build targets by simply typing `just` with no arguments.
+
 ## Building the Icon
 
-The icon is built from an SVG. Install [Scoop](https://scoop.sh/) and built it as follows:
+The icon is built from an SVG. You may install [Scoop](https://scoop.sh/) and build it as follows:
 
 ```powershell
 scoop bucket add extras
-scoop install imagemagick
-scoop install inkscape
+scoop install imagemagick inkscape
 just icon
 ```
 
