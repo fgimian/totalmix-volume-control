@@ -104,22 +104,10 @@ After cloning the source code from GitHub, follow the steps below:
 The icon is built from an SVG. Install [Scoop](https://scoop.sh/) and built it as follows:
 
 ```powershell
-# Install required tools.
+scoop bucket add extras
 scoop install imagemagick
 scoop install inkscape
-
-# Browse to the icon path.
-cd src/TotalMixVC/Icons
-
-# Build PNGs of different sizes using Inkscape.
-~/scoop/shims/inkscape.exe -w 16 -h 16 -o 16.png TotalMixVC.svg
-~/scoop/shims/inkscape.exe -w 32 -h 32 -o 32.png TotalMixVC.svg
-~/scoop/shims/inkscape.exe -w 48 -h 48 -o 48.png TotalMixVC.svg
-~/scoop/shims/inkscape.exe -w 128 -h 128 -o 128.png TotalMixVC.svg
-~/scoop/shims/inkscape.exe -w 256 -h 256 -o 256.png TotalMixVC.svg
-
-# Convert the multiple PNGs to an ICO file using ImageMagick.
-~/scoop/shims/convert.exe 16.png 32.png 48.png 128.png 256.png TotalMixVC.ico
+just icon
 ```
 
 ## License
