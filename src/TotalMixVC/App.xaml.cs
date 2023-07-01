@@ -76,19 +76,9 @@ public partial class App : Application
         Assembly assembly = Assembly.GetExecutingAssembly();
         FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
 
-        StringBuilder message = new();
-        message.Append($"TotalMix Volume Control v{versionInfo.FileVersion}");
-
-        if (versionInfo.FileVersion != versionInfo.ProductVersion)
-        {
-            message.Append($" (Build Version: v{versionInfo.ProductVersion})");
-        }
-
-        message.Append('.');
-
         MessageBox.Show(
             owner: _volumeIndicator,
-            messageBoxText: message.ToString(),
+            messageBoxText: $"TotalMix Volume Control v{versionInfo.ProductVersion}.",
             caption: "About TotalMix Volume Control",
             button: MessageBoxButton.OK,
             icon: MessageBoxImage.Information
