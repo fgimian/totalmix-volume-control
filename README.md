@@ -94,7 +94,7 @@ After cloning the source code from GitHub, follow the steps below:
 
     ```powershell
     cd totalmix-volume-control
-    just distribute Release
+    just configuration=Release distribute
     ```
 
 4. You'll now find an installer under the **artifacts** sub-directory
