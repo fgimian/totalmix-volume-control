@@ -1,5 +1,4 @@
 ﻿using NSubstitute;
-using NSubstitute.Extensions;
 using OscCore;
 using TotalMixVC.Communicator;
 using Xunit;
