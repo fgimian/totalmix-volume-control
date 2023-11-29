@@ -27,7 +27,7 @@ public partial class GlobalHotKeyManager : IDisposable
     /// </summary>
     public GlobalHotKeyManager()
     {
-        _actions = new Dictionary<Hotkey, Action>();
+        _actions = [];
 
         // Please note that the message loop pumper calls ThreadFilterMessage and then
         // ThreadPreprocessMessage every time it receives a key stroke.  Thus, either of these

@@ -5,19 +5,13 @@ namespace TotalMixVC;
 /// <summary>
 /// Implements the ICommand interface for system tray commands.
 /// </summary>
-public class DelegateCommand : ICommand
+/// <remarks>
+/// Initializes a new instance of the <see cref="DelegateCommand"/> class.
+/// </remarks>
+/// <param name="commandAction">Action to perform for the command.</param>
+/// <param name="canExecuteFunc">Whether the command can execute.</param>
+public class DelegateCommand(Action commandAction, Func<bool>? canExecuteFunc = null) : ICommand
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DelegateCommand"/> class.
-    /// </summary>
-    /// <param name="commandAction">Action to perform for the command.</param>
-    /// <param name="canExecuteFunc">Whether the command can execute.</param>
-    public DelegateCommand(Action commandAction, Func<bool>? canExecuteFunc = null)
-    {
-        CommandAction = commandAction;
-        CanExecuteFunc = canExecuteFunc;
-    }
-
     /// <summary>
     /// Event which is triggered when the possible execute state changes.
     /// </summary>
@@ -30,12 +24,12 @@ public class DelegateCommand : ICommand
     /// <summary>
     /// Gets or sets the action to perform for the command.
     /// </summary>
-    public Action CommandAction { get; set; }
+    public Action CommandAction { get; set; } = commandAction;
 
     /// <summary>
     /// Gets or sets whether the command can execute.
     /// </summary>
-    public Func<bool>? CanExecuteFunc { get; set; }
+    public Func<bool>? CanExecuteFunc { get; set; } = canExecuteFunc;
 
     /// <summary>
     /// Execute the command.

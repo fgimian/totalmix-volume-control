@@ -8,24 +8,18 @@ namespace TotalMixVC.Communicator;
 /// <summary>
 /// Provides a UDP packet sender for Open Source Control (OSC).
 /// </summary>
+/// <remarks>
+/// Initializes a new instance of the <see cref="Sender"/> class.
+/// </remarks>
+/// <param name="localEP">The endpoint to receive OSC data from.</param>
 [ExcludeFromCodeCoverage]
-public class Sender : ISender, IDisposable
+public class Sender(IPEndPoint localEP) : ISender, IDisposable
 {
-    private readonly UdpClient _client;
+    private readonly UdpClient _client = new();
 
-    private readonly IPEndPoint _localEP;
+    private readonly IPEndPoint _localEP = localEP;
 
     private bool _disposed;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Sender"/> class.
-    /// </summary>
-    /// <param name="localEP">The endpoint to receive OSC data from.</param>
-    public Sender(IPEndPoint localEP)
-    {
-        _localEP = localEP;
-        _client = new UdpClient();
-    }
 
     /// <summary>
     /// Disposes the current sender.

@@ -124,7 +124,7 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener);
 
             // Act
-            await volumeManager.RequestVolumeAsync().ConfigureAwait(false);
+            await volumeManager.RequestVolumeAsync();
 
             // Assert
             await sender
@@ -135,8 +135,7 @@ public static class VolumeManagerTests
                             m.Address == "/1/mastervolume"
                             && m.SequenceEqual(new object[] { -1.0f })
                     )
-                )
-                .ConfigureAwait(false);
+                );
         }
     }
 
@@ -164,7 +163,7 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener);
 
             // Act
-            bool received = await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
+            bool received = await volumeManager.ReceiveVolumeAsync();
 
             // Assert
             Assert.True(received);
@@ -196,7 +195,7 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener);
 
             // Act
-            bool received = await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
+            bool received = await volumeManager.ReceiveVolumeAsync();
 
             // Assert
             Assert.True(received);
@@ -228,7 +227,7 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener);
 
             // Act
-            bool received = await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
+            bool received = await volumeManager.ReceiveVolumeAsync();
 
             // Assert
             Assert.False(received);
@@ -263,10 +262,8 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener);
 
             // Act
-            bool receivedAll = await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
-            bool receivedDecibelsOnly = await volumeManager
-                .ReceiveVolumeAsync()
-                .ConfigureAwait(false);
+            bool receivedAll = await volumeManager.ReceiveVolumeAsync();
+            bool receivedDecibelsOnly = await volumeManager.ReceiveVolumeAsync();
 
             // Assert
             Assert.True(receivedAll);
@@ -293,7 +290,7 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener);
 
             // Act
-            bool received = await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
+            bool received = await volumeManager.ReceiveVolumeAsync();
 
             // Assert
             Assert.False(received);
@@ -321,7 +318,7 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener);
 
             // Act
-            bool received = await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
+            bool received = await volumeManager.ReceiveVolumeAsync();
 
             // Assert
             Assert.False(received);
@@ -343,7 +340,7 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener);
 
             // Act
-            bool received = await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
+            bool received = await volumeManager.ReceiveVolumeAsync();
 
             // Assert
             Assert.False(received);
@@ -365,7 +362,7 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener);
 
             // Act
-            bool received = await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
+            bool received = await volumeManager.ReceiveVolumeAsync();
 
             // Assert
             Assert.False(received);
@@ -395,17 +392,16 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener);
 
             // Act
-            bool received = await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
+            bool received = await volumeManager.ReceiveVolumeAsync();
             bool initializedAfterVolumeReceived = volumeManager.IsVolumeInitialized;
 
-            Func<Task> task = async () =>
-                await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
+            Func<Task> task = async () => await volumeManager.ReceiveVolumeAsync();
 
             // Assert
             Assert.True(received);
             Assert.True(initializedAfterVolumeReceived);
 
-            await Assert.ThrowsAsync<TimeoutException>(task).ConfigureAwait(false);
+            await Assert.ThrowsAsync<TimeoutException>(task);
             Assert.False(volumeManager.IsVolumeInitialized);
         }
     }
@@ -422,7 +418,7 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.02f, };
 
             // Act
-            bool updated = await volumeManager.IncreaseVolumeAsync().ConfigureAwait(false);
+            bool updated = await volumeManager.IncreaseVolumeAsync();
 
             // Assert
             Assert.False(updated);
@@ -450,8 +446,8 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.02f, };
 
             // Act
-            await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
-            bool updated = await volumeManager.IncreaseVolumeAsync().ConfigureAwait(false);
+            await volumeManager.ReceiveVolumeAsync();
+            bool updated = await volumeManager.IncreaseVolumeAsync();
 
             // Assert
             await sender
@@ -462,8 +458,7 @@ public static class VolumeManagerTests
                             m.Address == "/1/mastervolume"
                             && m.SequenceEqual(new object[] { 0.22f })
                     )
-                )
-                .ConfigureAwait(false);
+                );
 
             Assert.True(updated);
             Assert.Equal(0.22f, volumeManager.Volume);
@@ -492,8 +487,8 @@ public static class VolumeManagerTests
                 new(sender, listener) { VolumeRegularIncrement = 0.05f, VolumeMax = 0.50f, };
 
             // Act
-            await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
-            bool updated = await volumeManager.IncreaseVolumeAsync().ConfigureAwait(false);
+            await volumeManager.ReceiveVolumeAsync();
+            bool updated = await volumeManager.IncreaseVolumeAsync();
 
             // Assert
             await sender
@@ -504,8 +499,7 @@ public static class VolumeManagerTests
                             m.Address == "/1/mastervolume"
                             && m.SequenceEqual(new object[] { 0.50f })
                     )
-                )
-                .ConfigureAwait(false);
+                );
 
             Assert.True(updated);
             Assert.Equal(0.50f, volumeManager.Volume);
@@ -534,8 +528,8 @@ public static class VolumeManagerTests
                 new(sender, listener) { VolumeRegularIncrement = 0.05f, VolumeMax = 0.50f, };
 
             // Act
-            await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
-            bool updated = await volumeManager.IncreaseVolumeAsync().ConfigureAwait(false);
+            await volumeManager.ReceiveVolumeAsync();
+            bool updated = await volumeManager.IncreaseVolumeAsync();
 
             // Assert
             Assert.False(updated);
@@ -551,9 +545,7 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener) { VolumeFineIncrement = 0.01f, };
 
             // Act
-            bool updated = await volumeManager
-                .IncreaseVolumeAsync(fine: true)
-                .ConfigureAwait(false);
+            bool updated = await volumeManager.IncreaseVolumeAsync(fine: true);
 
             // Assert
             Assert.False(updated);
@@ -581,10 +573,8 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener) { VolumeFineIncrement = 0.01f, };
 
             // Act
-            await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
-            bool updated = await volumeManager
-                .IncreaseVolumeAsync(fine: true)
-                .ConfigureAwait(false);
+            await volumeManager.ReceiveVolumeAsync();
+            bool updated = await volumeManager.IncreaseVolumeAsync(fine: true);
 
             // Assert
             await sender
@@ -595,8 +585,7 @@ public static class VolumeManagerTests
                             m.Address == "/1/mastervolume"
                             && m.SequenceEqual(new object[] { 0.21000001f })
                     )
-                )
-                .ConfigureAwait(false);
+                );
 
             Assert.True(updated);
             Assert.Equal(0.21000001f, volumeManager.Volume);
@@ -615,7 +604,7 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.02f, };
 
             // Act
-            bool updated = await volumeManager.DecreaseVolumeAsync().ConfigureAwait(false);
+            bool updated = await volumeManager.DecreaseVolumeAsync();
 
             // Assert
             Assert.False(updated);
@@ -643,8 +632,8 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.02f, };
 
             // Act
-            await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
-            bool updated = await volumeManager.DecreaseVolumeAsync().ConfigureAwait(false);
+            await volumeManager.ReceiveVolumeAsync();
+            bool updated = await volumeManager.DecreaseVolumeAsync();
 
             // Assert
             await sender
@@ -655,8 +644,7 @@ public static class VolumeManagerTests
                             m.Address == "/1/mastervolume"
                             && m.SequenceEqual(new object[] { 0.18f })
                     )
-                )
-                .ConfigureAwait(false);
+                );
 
             Assert.True(updated);
             Assert.Equal(0.18f, volumeManager.Volume);
@@ -684,8 +672,8 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.05f, };
 
             // Act
-            await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
-            bool updated = await volumeManager.DecreaseVolumeAsync().ConfigureAwait(false);
+            await volumeManager.ReceiveVolumeAsync();
+            bool updated = await volumeManager.DecreaseVolumeAsync();
 
             // Assert
             await sender
@@ -696,8 +684,7 @@ public static class VolumeManagerTests
                             m.Address == "/1/mastervolume"
                             && m.SequenceEqual(new object[] { 0.00f })
                     )
-                )
-                .ConfigureAwait(false);
+                );
 
             Assert.True(updated);
             Assert.Equal(0.00f, volumeManager.Volume);
@@ -726,8 +713,8 @@ public static class VolumeManagerTests
                 new(sender, listener) { VolumeRegularIncrement = 0.05f, VolumeMax = 0.50f, };
 
             // Act
-            await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
-            bool updated = await volumeManager.DecreaseVolumeAsync().ConfigureAwait(false);
+            await volumeManager.ReceiveVolumeAsync();
+            bool updated = await volumeManager.DecreaseVolumeAsync();
 
             // Assert
             Assert.False(updated);
@@ -743,9 +730,7 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener) { VolumeFineIncrement = 0.01f, };
 
             // Act
-            bool updated = await volumeManager
-                .DecreaseVolumeAsync(fine: true)
-                .ConfigureAwait(false);
+            bool updated = await volumeManager.DecreaseVolumeAsync(fine: true);
 
             // Assert
             Assert.False(updated);
@@ -773,10 +758,8 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener) { VolumeFineIncrement = 0.01f, };
 
             // Act
-            await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
-            bool updated = await volumeManager
-                .DecreaseVolumeAsync(fine: true)
-                .ConfigureAwait(false);
+            await volumeManager.ReceiveVolumeAsync();
+            bool updated = await volumeManager.DecreaseVolumeAsync(fine: true);
 
             // Assert
             await sender
@@ -787,8 +770,7 @@ public static class VolumeManagerTests
                             m.Address == "/1/mastervolume"
                             && m.SequenceEqual(new object[] { 0.19f })
                     )
-                )
-                .ConfigureAwait(false);
+                );
 
             Assert.True(updated);
             Assert.Equal(0.19f, volumeManager.Volume);
@@ -807,7 +789,7 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener);
 
             // Act
-            bool updated = await volumeManager.ToggloDimAsync().ConfigureAwait(false);
+            bool updated = await volumeManager.ToggloDimAsync();
 
             // Assert
             Assert.False(updated);
@@ -835,8 +817,8 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener);
 
             // Act
-            await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
-            bool updated = await volumeManager.ToggloDimAsync().ConfigureAwait(false);
+            await volumeManager.ReceiveVolumeAsync();
+            bool updated = await volumeManager.ToggloDimAsync();
 
             // Assert
             await sender
@@ -845,8 +827,7 @@ public static class VolumeManagerTests
                     Arg.Is<OscMessage>(
                         m => m.Address == "/1/mainDim" && m.SequenceEqual(new object[] { 1.0f })
                     )
-                )
-                .ConfigureAwait(false);
+                );
 
             Assert.True(updated);
             Assert.Equal(1f, volumeManager.Dim);
@@ -874,8 +855,8 @@ public static class VolumeManagerTests
             VolumeManager volumeManager = new(sender, listener);
 
             // Act
-            await volumeManager.ReceiveVolumeAsync().ConfigureAwait(false);
-            bool updated = await volumeManager.ToggloDimAsync().ConfigureAwait(false);
+            await volumeManager.ReceiveVolumeAsync();
+            bool updated = await volumeManager.ToggloDimAsync();
 
             // Assert
             await sender
@@ -884,8 +865,7 @@ public static class VolumeManagerTests
                     Arg.Is<OscMessage>(
                         m => m.Address == "/1/mainDim" && m.SequenceEqual(new object[] { 1.0f })
                     )
-                )
-                .ConfigureAwait(false);
+                );
 
             Assert.True(updated);
             Assert.Equal(0f, volumeManager.Dim);

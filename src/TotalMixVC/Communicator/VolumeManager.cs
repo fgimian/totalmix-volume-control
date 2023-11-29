@@ -228,7 +228,7 @@ public class VolumeManager
         catch (TimeoutException)
         {
             // Cancel the receive task since it timed out.
-            receiveCancellationTokenSource.Cancel();
+            await receiveCancellationTokenSource.CancelAsync().ConfigureAwait(false);
 
             // Reset the volume back to an initial state so that the caller is forced to
             // request device volume before continuing as this may have changed while the
@@ -254,7 +254,7 @@ public class VolumeManager
         if (packet is OscBundle bundle)
         {
             // Build a list of messages from the bundle.
-            List<OscMessage> messages = new();
+            List<OscMessage> messages = [];
             IEnumerator<OscMessage> messageEnumerator = bundle.Messages();
             while (messageEnumerator.MoveNext())
             {
@@ -384,12 +384,12 @@ public class VolumeManager
         }
     }
 
-    private Task SendVolumeAsync(float volume)
+    private Task<int> SendVolumeAsync(float volume)
     {
         return _sender.SendAsync(new OscMessage(VolumeAddress, volume));
     }
 
-    private Task SendDimAsync(float dim)
+    private Task<int> SendDimAsync(float dim)
     {
         return _sender.SendAsync(new OscMessage(DimAddress, dim));
     }

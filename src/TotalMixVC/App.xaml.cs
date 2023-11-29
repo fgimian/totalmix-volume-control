@@ -15,7 +15,6 @@ using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.VisualStudio.Threading;
 using TotalMixVC.Communicator;
 using TotalMixVC.Configuration;
-using TotalMixVC.Configuration.NamingPolicies;
 using TotalMixVC.Hotkeys;
 
 namespace TotalMixVC;
@@ -45,6 +44,14 @@ public partial class App : Application
         "TotalMix Volume Control",
         "config.json"
     );
+
+    private static readonly JsonSerializerOptions JsonConfigSerializerOptions =
+        new()
+        {
+            AllowTrailingCommas = true,
+            ReadCommentHandling = JsonCommentHandling.Skip,
+            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+        };
 
     // Disable non-nullable field must contain a non-null value when exiting constructor. These
     // fields are initialized in OnStartup which is called by the constructor.
@@ -97,17 +104,7 @@ public partial class App : Application
         try
         {
             string configText = File.ReadAllText(ConfigPath);
-
-            JsonSerializerOptions options =
-                new()
-                {
-                    AllowTrailingCommas = true,
-                    ReadCommentHandling = JsonCommentHandling.Skip,
-                    PropertyNamingPolicy = new JsonSnakeCaseLowerNamingPolicy(),
-                };
-
-            _config = JsonSerializer.Deserialize<Config>(configText, options)!;
-
+            _config = JsonSerializer.Deserialize<Config>(configText, JsonConfigSerializerOptions)!;
             return true;
         }
         catch (JsonException e)
@@ -346,7 +343,7 @@ public partial class App : Application
         base.OnExit(e);
 
         // Cancel all running tasks.
-        _taskCancellationTokenSource.Cancel();
+        await _taskCancellationTokenSource.CancelAsync().ConfigureAwait(false);
 
         // Wait for running tasks to complete.
         if (_volumeReceiveTask is not null)

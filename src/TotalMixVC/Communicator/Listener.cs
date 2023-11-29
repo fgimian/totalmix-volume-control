@@ -8,21 +8,16 @@ namespace TotalMixVC.Communicator;
 /// <summary>
 /// Provides a UDP receiver for Open Source Control (OSC) traffic.
 /// </summary>
+/// <remarks>
+/// Initializes a new instance of the <see cref="Listener"/> class.
+/// </remarks>
+/// <param name="localEP">The endpoint to receive OSC data from.</param>
 [ExcludeFromCodeCoverage]
-public class Listener : IListener, IDisposable
+public class Listener(IPEndPoint localEP) : IListener, IDisposable
 {
-    private readonly UdpClient _client;
+    private readonly UdpClient _client = new(localEP);
 
     private bool _disposed;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Listener"/> class.
-    /// </summary>
-    /// <param name="localEP">The endpoint to receive OSC data from.</param>
-    public Listener(IPEndPoint localEP)
-    {
-        _client = new UdpClient(localEP);
-    }
 
     /// <summary>
     /// Disposes the current listener.

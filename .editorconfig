@@ -70,6 +70,10 @@ dotnet_diagnostic.SA1504.severity = none
 dotnet_diagnostic.SA1515.severity = none
 dotnet_diagnostic.SA1516.severity = none
 
+# Disable checking of square bracket spacing due to incompatibility with .NET 8.
+# See https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3687
+dotnet_diagnostic.SA1010.severity = none
+
 # --------------------------------------------------------------------------------------------------
 # Sonar
 # --------------------------------------------------------------------------------------------------
@@ -302,6 +306,10 @@ csharp_style_prefer_local_over_anonymous_function = false
 
 # Do not force short-hand object initialisers in tests so properties may be set in the Act stage.
 dotnet_diagnostic.IDE0017.severity = none
+
+# Disable checking for ConfigureAwait calls in tests as this may cause parallelization issues.
+# See https://xunit.net/xunit.analyzers/rules/xUnit1030
+dotnet_diagnostic.MA0004.severity = none
 
 # Disable documentation requirements for unit tests.
 dotnet_diagnostic.SA0001.severity = none

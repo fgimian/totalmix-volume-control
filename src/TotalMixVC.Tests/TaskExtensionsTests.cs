@@ -17,12 +17,12 @@ public class TaskExtensionsTests
         bool completed = false;
         Func<Task> task = async () =>
         {
-            await Task.Delay(1).ConfigureAwait(false);
+            await Task.Delay(1);
             completed = true;
         };
 
         // Act
-        await Task.Run(task).TimeoutAfter(1000).ConfigureAwait(false);
+        await Task.Run(task).TimeoutAfter(1000);
 
         // Assert
         Assert.True(completed);
@@ -35,7 +35,7 @@ public class TaskExtensionsTests
         bool completed = false;
         Func<Task> task = async () =>
         {
-            await Task.Delay(1000).ConfigureAwait(false);
+            await Task.Delay(1000);
             completed = true;
         };
 
@@ -43,7 +43,7 @@ public class TaskExtensionsTests
         Func<Task> timeoutTask = () => Task.Run(task).TimeoutAfter(1);
 
         // Assert
-        await Assert.ThrowsAsync<TimeoutException>(timeoutTask).ConfigureAwait(false);
+        await Assert.ThrowsAsync<TimeoutException>(timeoutTask);
         Assert.False(completed);
     }
 
@@ -56,28 +56,23 @@ public class TaskExtensionsTests
         bool completed = false;
         Func<Task> task = async () =>
         {
-            await Task.Delay(1000).ConfigureAwait(false);
+            await Task.Delay(1000);
             completed = true;
         };
 
         // Act
         Task cancelTask = Task.Run(async () =>
         {
-            await Task.Delay(100).ConfigureAwait(false);
-            cancellationTokenSource.Cancel();
+            await Task.Delay(100);
+            await cancellationTokenSource.CancelAsync();
         });
 
         // Assert
-        await Assert
-            .ThrowsAsync<OperationCanceledException>(
-                async () =>
-                    await Task.Run(task)
-                        .TimeoutAfter(1000, cancellationTokenSource)
-                        .ConfigureAwait(false)
-            )
-            .ConfigureAwait(false);
+        await Assert.ThrowsAsync<OperationCanceledException>(
+            async () => await Task.Run(task).TimeoutAfter(1000, cancellationTokenSource)
+        );
         Assert.False(completed);
-        await cancelTask.ConfigureAwait(false);
+        await cancelTask;
     }
 
     [Fact]
@@ -87,13 +82,13 @@ public class TaskExtensionsTests
         bool completed = false;
         Func<Task<string>> task = async () =>
         {
-            await Task.Delay(1).ConfigureAwait(false);
+            await Task.Delay(1);
             completed = true;
             return "Hello";
         };
 
         // Act
-        string result = await Task.Run(task).TimeoutAfter(1000).ConfigureAwait(false);
+        string result = await Task.Run(task).TimeoutAfter(1000);
 
         // Assert
         Assert.True(completed);
@@ -107,7 +102,7 @@ public class TaskExtensionsTests
         bool completed = false;
         Func<Task<string>> task = async () =>
         {
-            await Task.Delay(1000).ConfigureAwait(false);
+            await Task.Delay(1000);
             completed = true;
             return "Hello";
         };
@@ -116,7 +111,7 @@ public class TaskExtensionsTests
         Func<Task<string>> timeoutTask = () => Task.Run(task).TimeoutAfter(1);
 
         // Assert
-        await Assert.ThrowsAsync<TimeoutException>(timeoutTask).ConfigureAwait(false);
+        await Assert.ThrowsAsync<TimeoutException>(timeoutTask);
         Assert.False(completed);
     }
 
@@ -129,7 +124,7 @@ public class TaskExtensionsTests
         bool completed = false;
         Func<Task<string>> task = async () =>
         {
-            await Task.Delay(1000).ConfigureAwait(false);
+            await Task.Delay(1000);
             completed = true;
             return "Hello";
         };
@@ -137,20 +132,15 @@ public class TaskExtensionsTests
         // Act
         Task cancelTask = Task.Run(async () =>
         {
-            await Task.Delay(100).ConfigureAwait(false);
-            cancellationTokenSource.Cancel();
+            await Task.Delay(100);
+            await cancellationTokenSource.CancelAsync();
         });
 
         // Assert
-        await Assert
-            .ThrowsAsync<OperationCanceledException>(
-                async () =>
-                    await Task.Run(task)
-                        .TimeoutAfter(1000, cancellationTokenSource)
-                        .ConfigureAwait(false)
-            )
-            .ConfigureAwait(false);
+        await Assert.ThrowsAsync<OperationCanceledException>(
+            async () => await Task.Run(task).TimeoutAfter(1000, cancellationTokenSource)
+        );
         Assert.False(completed);
-        await cancelTask.ConfigureAwait(false);
+        await cancelTask;
     }
 }

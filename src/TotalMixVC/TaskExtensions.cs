@@ -37,6 +37,11 @@ public static class TaskExtensions
     /// Thrown if the task is cancelled using the provided cancellation token source.
     /// </exception>
     /// <exception cref="TimeoutException">Thrown if the task times out.</exception>
+    [SuppressMessage(
+        "Minor Code Smell",
+        "S3878:Arrays should not be created for params parameters",
+        Justification = "This check doesn't understand the collection expression syntax in .NET 8."
+    )]
     public static async Task TimeoutAfter(
         this Task task,
         int millisecondsTimeout,
@@ -47,8 +52,7 @@ public static class TaskExtensions
 
         // Create a list of cancellation tokens containing the timout token and optionally
         // a cancellation token provided by the caller.
-        List<CancellationToken> cancellationTokens =
-            new() { timeoutCancellationTokenSource.Token, };
+        List<CancellationToken> cancellationTokens = [timeoutCancellationTokenSource.Token];
 
         if (cancellationTokenSource is not null)
         {
@@ -57,8 +61,8 @@ public static class TaskExtensions
 
         // Create a combined cancellation token source with all cancellation tokens and
         // build a task that will be cancelled when any of the tokens are.
-        CancellationTokenSource combinedCancellationTokenSource =
-            CancellationTokenSource.CreateLinkedTokenSource(cancellationTokens.ToArray());
+        using CancellationTokenSource combinedCancellationTokenSource =
+            CancellationTokenSource.CreateLinkedTokenSource([.. cancellationTokens]);
 
         Task cancellationTask = Task.Delay(
             millisecondsTimeout,
@@ -79,7 +83,7 @@ public static class TaskExtensions
             throw new TimeoutException();
         }
 
-        combinedCancellationTokenSource.Cancel();
+        await combinedCancellationTokenSource.CancelAsync().ConfigureAwait(false);
         await task.ConfigureAwait(false);
     }
 
@@ -102,6 +106,11 @@ public static class TaskExtensions
     /// Thrown if the task is cancelled using the provided cancellation token source.
     /// </exception>
     /// <exception cref="TimeoutException">Thrown if the task times out.</exception>
+    [SuppressMessage(
+        "Minor Code Smell",
+        "S3878:Arrays should not be created for params parameters",
+        Justification = "This check doesn't understand the collection expression syntax in .NET 8."
+    )]
     public static async Task<TResult> TimeoutAfter<TResult>(
         this Task<TResult> task,
         int millisecondsTimeout,
@@ -112,8 +121,7 @@ public static class TaskExtensions
 
         // Create a list of cancellation tokens containing the timout token and optionally
         // a cancellation token provided by the caller.
-        List<CancellationToken> cancellationTokens =
-            new() { timeoutCancellationTokenSource.Token, };
+        List<CancellationToken> cancellationTokens = [timeoutCancellationTokenSource.Token];
 
         if (cancellationTokenSource is not null)
         {
@@ -122,8 +130,8 @@ public static class TaskExtensions
 
         // Create a combined cancellation token source with all cancellation tokens and
         // build a task that will be cancelled when any of the tokens are.
-        CancellationTokenSource combinedCancellationTokenSource =
-            CancellationTokenSource.CreateLinkedTokenSource(cancellationTokens.ToArray());
+        using CancellationTokenSource combinedCancellationTokenSource =
+            CancellationTokenSource.CreateLinkedTokenSource([.. cancellationTokens]);
 
         Task cancellationTask = Task.Delay(
             millisecondsTimeout,
@@ -144,7 +152,7 @@ public static class TaskExtensions
             throw new TimeoutException();
         }
 
-        combinedCancellationTokenSource.Cancel();
+        await combinedCancellationTokenSource.CancelAsync().ConfigureAwait(false);
         return await task.ConfigureAwait(false);
     }
 }
