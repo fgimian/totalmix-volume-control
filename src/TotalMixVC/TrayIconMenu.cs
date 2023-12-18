@@ -37,17 +37,18 @@ public static class TrayIconMenu
     {
         get
         {
-            using RegistryKey? runKey = Registry
-                .CurrentUser
-                .OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run");
+            using RegistryKey? runKey = Registry.CurrentUser.OpenSubKey(
+                @"Software\Microsoft\Windows\CurrentVersion\Run"
+            );
 
             return runKey?.GetValue("TotalMix Volume Control") is not null;
         }
         set
         {
-            using RegistryKey? runKey = Registry
-                .CurrentUser
-                .OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", writable: true);
+            using RegistryKey? runKey = Registry.CurrentUser.OpenSubKey(
+                @"Software\Microsoft\Windows\CurrentVersion\Run",
+                writable: true
+            );
 
             if (value)
             {
