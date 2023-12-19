@@ -264,9 +264,6 @@ dotnet_diagnostic.RCS0051.severity = warning
 dotnet_diagnostic.RCS0052.severity = warning
 roslynator.RCS0052.invert = true
 
-# Ensure chained calls are formatted and indented correctly.
-dotnet_diagnostic.RCS0054.severity = warning
-
 # Ensure that long lines are flagged.
 dotnet_diagnostic.RCS0056.severity = warning
 roslynator_max_line_length = 100
