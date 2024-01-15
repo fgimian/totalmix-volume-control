@@ -1,5 +1,9 @@
 # TotalMix Volume Control Changelog
 
+## 0.6.0 (2023-12-02)
+
+This is a maintenance release of TotalMix Volume Control which updates .NET to version 8 which is the latest LTS release. This release of .NET brings various performance improvements and optimisations.
+
 ## 0.5.0 (2023-07-01)
 
 This marks the next major release and milestone for TotalMix Volume Control with various major new features and some important bug fixes:
