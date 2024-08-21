@@ -399,10 +399,8 @@ public class VolumeManager
         bool received = false;
 
         foreach (
-            OscMessage message in messages.Where(
-                m =>
-                    m.Address is VolumeDecibelsAddress or VolumeAddress or DimAddress
-                    && m.Count is 1
+            OscMessage message in messages.Where(m =>
+                m.Address is VolumeDecibelsAddress or VolumeAddress or DimAddress && m.Count is 1
             )
         )
         {

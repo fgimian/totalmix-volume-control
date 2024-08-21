@@ -130,10 +130,8 @@ public static class VolumeManagerTests
             await sender
                 .Received()
                 .SendAsync(
-                    Arg.Is<OscMessage>(
-                        m =>
-                            m.Address == "/1/mastervolume"
-                            && m.SequenceEqual(new object[] { -1.0f })
+                    Arg.Is<OscMessage>(m =>
+                        m.Address == "/1/mastervolume" && m.SequenceEqual(new object[] { -1.0f })
                     )
                 );
         }
@@ -415,7 +413,7 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
 
-            VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.02f, };
+            VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.02f };
 
             // Act
             bool updated = await volumeManager.IncreaseVolumeAsync();
@@ -443,7 +441,7 @@ public static class VolumeManagerTests
                     )
                 );
 
-            VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.02f, };
+            VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.02f };
 
             // Act
             await volumeManager.ReceiveVolumeAsync();
@@ -453,10 +451,8 @@ public static class VolumeManagerTests
             await sender
                 .Received()
                 .SendAsync(
-                    Arg.Is<OscMessage>(
-                        m =>
-                            m.Address == "/1/mastervolume"
-                            && m.SequenceEqual(new object[] { 0.22f })
+                    Arg.Is<OscMessage>(m =>
+                        m.Address == "/1/mastervolume" && m.SequenceEqual(new object[] { 0.22f })
                     )
                 );
 
@@ -484,7 +480,7 @@ public static class VolumeManagerTests
                 );
 
             VolumeManager volumeManager =
-                new(sender, listener) { VolumeRegularIncrement = 0.05f, VolumeMax = 0.50f, };
+                new(sender, listener) { VolumeRegularIncrement = 0.05f, VolumeMax = 0.50f };
 
             // Act
             await volumeManager.ReceiveVolumeAsync();
@@ -494,10 +490,8 @@ public static class VolumeManagerTests
             await sender
                 .Received()
                 .SendAsync(
-                    Arg.Is<OscMessage>(
-                        m =>
-                            m.Address == "/1/mastervolume"
-                            && m.SequenceEqual(new object[] { 0.50f })
+                    Arg.Is<OscMessage>(m =>
+                        m.Address == "/1/mastervolume" && m.SequenceEqual(new object[] { 0.50f })
                     )
                 );
 
@@ -525,7 +519,7 @@ public static class VolumeManagerTests
                 );
 
             VolumeManager volumeManager =
-                new(sender, listener) { VolumeRegularIncrement = 0.05f, VolumeMax = 0.50f, };
+                new(sender, listener) { VolumeRegularIncrement = 0.05f, VolumeMax = 0.50f };
 
             // Act
             await volumeManager.ReceiveVolumeAsync();
@@ -542,7 +536,7 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
 
-            VolumeManager volumeManager = new(sender, listener) { VolumeFineIncrement = 0.01f, };
+            VolumeManager volumeManager = new(sender, listener) { VolumeFineIncrement = 0.01f };
 
             // Act
             bool updated = await volumeManager.IncreaseVolumeAsync(fine: true);
@@ -570,7 +564,7 @@ public static class VolumeManagerTests
                     )
                 );
 
-            VolumeManager volumeManager = new(sender, listener) { VolumeFineIncrement = 0.01f, };
+            VolumeManager volumeManager = new(sender, listener) { VolumeFineIncrement = 0.01f };
 
             // Act
             await volumeManager.ReceiveVolumeAsync();
@@ -580,10 +574,9 @@ public static class VolumeManagerTests
             await sender
                 .Received()
                 .SendAsync(
-                    Arg.Is<OscMessage>(
-                        m =>
-                            m.Address == "/1/mastervolume"
-                            && m.SequenceEqual(new object[] { 0.21000001f })
+                    Arg.Is<OscMessage>(m =>
+                        m.Address == "/1/mastervolume"
+                        && m.SequenceEqual(new object[] { 0.21000001f })
                     )
                 );
 
@@ -601,7 +594,7 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
 
-            VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.02f, };
+            VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.02f };
 
             // Act
             bool updated = await volumeManager.DecreaseVolumeAsync();
@@ -629,7 +622,7 @@ public static class VolumeManagerTests
                     )
                 );
 
-            VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.02f, };
+            VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.02f };
 
             // Act
             await volumeManager.ReceiveVolumeAsync();
@@ -639,10 +632,8 @@ public static class VolumeManagerTests
             await sender
                 .Received()
                 .SendAsync(
-                    Arg.Is<OscMessage>(
-                        m =>
-                            m.Address == "/1/mastervolume"
-                            && m.SequenceEqual(new object[] { 0.18f })
+                    Arg.Is<OscMessage>(m =>
+                        m.Address == "/1/mastervolume" && m.SequenceEqual(new object[] { 0.18f })
                     )
                 );
 
@@ -669,7 +660,7 @@ public static class VolumeManagerTests
                     )
                 );
 
-            VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.05f, };
+            VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.05f };
 
             // Act
             await volumeManager.ReceiveVolumeAsync();
@@ -679,10 +670,8 @@ public static class VolumeManagerTests
             await sender
                 .Received()
                 .SendAsync(
-                    Arg.Is<OscMessage>(
-                        m =>
-                            m.Address == "/1/mastervolume"
-                            && m.SequenceEqual(new object[] { 0.00f })
+                    Arg.Is<OscMessage>(m =>
+                        m.Address == "/1/mastervolume" && m.SequenceEqual(new object[] { 0.00f })
                     )
                 );
 
@@ -710,7 +699,7 @@ public static class VolumeManagerTests
                 );
 
             VolumeManager volumeManager =
-                new(sender, listener) { VolumeRegularIncrement = 0.05f, VolumeMax = 0.50f, };
+                new(sender, listener) { VolumeRegularIncrement = 0.05f, VolumeMax = 0.50f };
 
             // Act
             await volumeManager.ReceiveVolumeAsync();
@@ -727,7 +716,7 @@ public static class VolumeManagerTests
             ISender sender = Substitute.For<ISender>();
             IListener listener = Substitute.For<IListener>();
 
-            VolumeManager volumeManager = new(sender, listener) { VolumeFineIncrement = 0.01f, };
+            VolumeManager volumeManager = new(sender, listener) { VolumeFineIncrement = 0.01f };
 
             // Act
             bool updated = await volumeManager.DecreaseVolumeAsync(fine: true);
@@ -755,7 +744,7 @@ public static class VolumeManagerTests
                     )
                 );
 
-            VolumeManager volumeManager = new(sender, listener) { VolumeFineIncrement = 0.01f, };
+            VolumeManager volumeManager = new(sender, listener) { VolumeFineIncrement = 0.01f };
 
             // Act
             await volumeManager.ReceiveVolumeAsync();
@@ -765,10 +754,8 @@ public static class VolumeManagerTests
             await sender
                 .Received()
                 .SendAsync(
-                    Arg.Is<OscMessage>(
-                        m =>
-                            m.Address == "/1/mastervolume"
-                            && m.SequenceEqual(new object[] { 0.19f })
+                    Arg.Is<OscMessage>(m =>
+                        m.Address == "/1/mastervolume" && m.SequenceEqual(new object[] { 0.19f })
                     )
                 );
 
@@ -824,8 +811,8 @@ public static class VolumeManagerTests
             await sender
                 .Received()
                 .SendAsync(
-                    Arg.Is<OscMessage>(
-                        m => m.Address == "/1/mainDim" && m.SequenceEqual(new object[] { 1.0f })
+                    Arg.Is<OscMessage>(m =>
+                        m.Address == "/1/mainDim" && m.SequenceEqual(new object[] { 1.0f })
                     )
                 );
 
@@ -862,8 +849,8 @@ public static class VolumeManagerTests
             await sender
                 .Received()
                 .SendAsync(
-                    Arg.Is<OscMessage>(
-                        m => m.Address == "/1/mainDim" && m.SequenceEqual(new object[] { 1.0f })
+                    Arg.Is<OscMessage>(m =>
+                        m.Address == "/1/mainDim" && m.SequenceEqual(new object[] { 1.0f })
                     )
                 );
 
