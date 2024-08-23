@@ -21,23 +21,25 @@ jobs:
         fetch-depth: 0
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
 
     - name: Setup Just
-      uses: extractions/setup-just@v1
+      uses: extractions/setup-just@v2
 
     - name: Restore dependencies, build, test & distribute using Just
       run: just configuration=${{ matrix.configuration }} distribute
 
     - name: Upload coverage
       if: ${{ matrix.configuration == 'Release' }}
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         directory: ./.coverage
         files: Cobertura.xml
         fail_ci_if_error: true
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
