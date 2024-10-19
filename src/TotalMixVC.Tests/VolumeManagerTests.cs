@@ -14,7 +14,7 @@ public static class VolumeManagerTests
         var sender = Substitute.For<ISender>();
         var listener = Substitute.For<IListener>();
 
-        VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.03f };
+        var volumeManager = new VolumeManager(sender, listener) { VolumeRegularIncrement = 0.03f };
 
         // Assert
         Assert.Equal(0.03f, volumeManager.VolumeRegularIncrement);
@@ -31,7 +31,7 @@ public static class VolumeManagerTests
         var sender = Substitute.For<ISender>();
         var listener = Substitute.For<IListener>();
 
-        VolumeManager volumeManager = new(sender, listener);
+        var volumeManager = new VolumeManager(sender, listener);
 
         // Act
         Action action = () => volumeManager.VolumeRegularIncrement = volumeRegularIncrement;
@@ -47,7 +47,7 @@ public static class VolumeManagerTests
         var sender = Substitute.For<ISender>();
         var listener = Substitute.For<IListener>();
 
-        VolumeManager volumeManager = new(sender, listener) { VolumeFineIncrement = 0.01f };
+        var volumeManager = new VolumeManager(sender, listener) { VolumeFineIncrement = 0.01f };
 
         // Assert
         Assert.Equal(0.01f, volumeManager.VolumeFineIncrement);
@@ -64,7 +64,7 @@ public static class VolumeManagerTests
         var sender = Substitute.For<ISender>();
         var listener = Substitute.For<IListener>();
 
-        VolumeManager volumeManager = new(sender, listener);
+        var volumeManager = new VolumeManager(sender, listener);
 
         // Act
         Action action = () => volumeManager.VolumeFineIncrement = volumeFineIncrement;
@@ -80,7 +80,7 @@ public static class VolumeManagerTests
         var sender = Substitute.For<ISender>();
         var listener = Substitute.For<IListener>();
 
-        VolumeManager volumeManager = new(sender, listener) { VolumeMax = 0.90f };
+        var volumeManager = new VolumeManager(sender, listener) { VolumeMax = 0.90f };
 
         // Assert
         Assert.Equal(0.90f, volumeManager.VolumeMax);
@@ -95,7 +95,7 @@ public static class VolumeManagerTests
         var sender = Substitute.For<ISender>();
         var listener = Substitute.For<IListener>();
 
-        VolumeManager volumeManager = new(sender, listener);
+        var volumeManager = new VolumeManager(sender, listener);
 
         // Act
         Action action = () => volumeManager.VolumeMax = volumeMax;
@@ -111,7 +111,7 @@ public static class VolumeManagerTests
         var sender = Substitute.For<ISender>();
         var listener = Substitute.For<IListener>();
 
-        VolumeManager volumeManager = new(sender, listener);
+        var volumeManager = new VolumeManager(sender, listener);
 
         // Act
         await volumeManager.RequestVolumeAsync();
@@ -145,7 +145,7 @@ public static class VolumeManagerTests
                 )
             );
 
-        VolumeManager volumeManager = new(sender, listener);
+        var volumeManager = new VolumeManager(sender, listener);
 
         // Act
         var received = await volumeManager.ReceiveVolumeAsync();
@@ -177,7 +177,7 @@ public static class VolumeManagerTests
                 )
             );
 
-        VolumeManager volumeManager = new(sender, listener);
+        var volumeManager = new VolumeManager(sender, listener);
 
         // Act
         var received = await volumeManager.ReceiveVolumeAsync();
@@ -209,7 +209,7 @@ public static class VolumeManagerTests
                 )
             );
 
-        VolumeManager volumeManager = new(sender, listener);
+        var volumeManager = new VolumeManager(sender, listener);
 
         // Act
         var received = await volumeManager.ReceiveVolumeAsync();
@@ -241,7 +241,7 @@ public static class VolumeManagerTests
                 )
             );
 
-        VolumeManager volumeManager = new(sender, listener);
+        var volumeManager = new VolumeManager(sender, listener);
 
         // Act
         var receivedAll = await volumeManager.ReceiveVolumeAsync();
@@ -269,7 +269,7 @@ public static class VolumeManagerTests
                 )
             );
 
-        VolumeManager volumeManager = new(sender, listener);
+        var volumeManager = new VolumeManager(sender, listener);
 
         // Act
         var received = await volumeManager.ReceiveVolumeAsync();
@@ -297,7 +297,7 @@ public static class VolumeManagerTests
                 )
             );
 
-        VolumeManager volumeManager = new(sender, listener);
+        var volumeManager = new VolumeManager(sender, listener);
 
         // Act
         var received = await volumeManager.ReceiveVolumeAsync();
@@ -319,7 +319,7 @@ public static class VolumeManagerTests
                 Task.FromResult<OscPacket>(new OscMessage("/1/mastervolume", 0.20f))
             );
 
-        VolumeManager volumeManager = new(sender, listener);
+        var volumeManager = new VolumeManager(sender, listener);
 
         // Act
         var received = await volumeManager.ReceiveVolumeAsync();
@@ -341,7 +341,7 @@ public static class VolumeManagerTests
                 Task.FromException<OscPacket>(new OscException(OscError.MissingComma, "weov"))
             );
 
-        VolumeManager volumeManager = new(sender, listener);
+        var volumeManager = new VolumeManager(sender, listener);
 
         // Act
         var received = await volumeManager.ReceiveVolumeAsync();
@@ -371,7 +371,7 @@ public static class VolumeManagerTests
                 Task.FromException<OscPacket>(new TimeoutException("weov"))
             );
 
-        VolumeManager volumeManager = new(sender, listener);
+        var volumeManager = new VolumeManager(sender, listener);
 
         // Act
         var received = await volumeManager.ReceiveVolumeAsync();
@@ -394,7 +394,7 @@ public static class VolumeManagerTests
         var sender = Substitute.For<ISender>();
         var listener = Substitute.For<IListener>();
 
-        VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.02f };
+        var volumeManager = new VolumeManager(sender, listener) { VolumeRegularIncrement = 0.02f };
 
         // Act
         var updated = await volumeManager.IncreaseVolumeAsync();
@@ -422,7 +422,7 @@ public static class VolumeManagerTests
                 )
             );
 
-        VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.02f };
+        var volumeManager = new VolumeManager(sender, listener) { VolumeRegularIncrement = 0.02f };
 
         // Act
         await volumeManager.ReceiveVolumeAsync();
@@ -460,8 +460,11 @@ public static class VolumeManagerTests
                 )
             );
 
-        VolumeManager volumeManager =
-            new(sender, listener) { VolumeRegularIncrement = 0.05f, VolumeMax = 0.50f };
+        var volumeManager = new VolumeManager(sender, listener)
+        {
+            VolumeRegularIncrement = 0.05f,
+            VolumeMax = 0.50f,
+        };
 
         // Act
         await volumeManager.ReceiveVolumeAsync();
@@ -499,8 +502,11 @@ public static class VolumeManagerTests
                 )
             );
 
-        VolumeManager volumeManager =
-            new(sender, listener) { VolumeRegularIncrement = 0.05f, VolumeMax = 0.50f };
+        var volumeManager = new VolumeManager(sender, listener)
+        {
+            VolumeRegularIncrement = 0.05f,
+            VolumeMax = 0.50f,
+        };
 
         // Act
         await volumeManager.ReceiveVolumeAsync();
@@ -517,7 +523,7 @@ public static class VolumeManagerTests
         var sender = Substitute.For<ISender>();
         var listener = Substitute.For<IListener>();
 
-        VolumeManager volumeManager = new(sender, listener) { VolumeFineIncrement = 0.01f };
+        var volumeManager = new VolumeManager(sender, listener) { VolumeFineIncrement = 0.01f };
 
         // Act
         var updated = await volumeManager.IncreaseVolumeAsync(fine: true);
@@ -545,7 +551,7 @@ public static class VolumeManagerTests
                 )
             );
 
-        VolumeManager volumeManager = new(sender, listener) { VolumeFineIncrement = 0.01f };
+        var volumeManager = new VolumeManager(sender, listener) { VolumeFineIncrement = 0.01f };
 
         // Act
         await volumeManager.ReceiveVolumeAsync();
@@ -571,7 +577,7 @@ public static class VolumeManagerTests
         var sender = Substitute.For<ISender>();
         var listener = Substitute.For<IListener>();
 
-        VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.02f };
+        var volumeManager = new VolumeManager(sender, listener) { VolumeRegularIncrement = 0.02f };
 
         // Act
         var updated = await volumeManager.DecreaseVolumeAsync();
@@ -599,7 +605,7 @@ public static class VolumeManagerTests
                 )
             );
 
-        VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.02f };
+        var volumeManager = new VolumeManager(sender, listener) { VolumeRegularIncrement = 0.02f };
 
         // Act
         await volumeManager.ReceiveVolumeAsync();
@@ -637,7 +643,7 @@ public static class VolumeManagerTests
                 )
             );
 
-        VolumeManager volumeManager = new(sender, listener) { VolumeRegularIncrement = 0.05f };
+        var volumeManager = new VolumeManager(sender, listener) { VolumeRegularIncrement = 0.05f };
 
         // Act
         await volumeManager.ReceiveVolumeAsync();
@@ -675,8 +681,11 @@ public static class VolumeManagerTests
                 )
             );
 
-        VolumeManager volumeManager =
-            new(sender, listener) { VolumeRegularIncrement = 0.05f, VolumeMax = 0.50f };
+        var volumeManager = new VolumeManager(sender, listener)
+        {
+            VolumeRegularIncrement = 0.05f,
+            VolumeMax = 0.50f,
+        };
 
         // Act
         await volumeManager.ReceiveVolumeAsync();
@@ -693,7 +702,7 @@ public static class VolumeManagerTests
         var sender = Substitute.For<ISender>();
         var listener = Substitute.For<IListener>();
 
-        VolumeManager volumeManager = new(sender, listener) { VolumeFineIncrement = 0.01f };
+        var volumeManager = new VolumeManager(sender, listener) { VolumeFineIncrement = 0.01f };
 
         // Act
         var updated = await volumeManager.DecreaseVolumeAsync(fine: true);
@@ -721,7 +730,7 @@ public static class VolumeManagerTests
                 )
             );
 
-        VolumeManager volumeManager = new(sender, listener) { VolumeFineIncrement = 0.01f };
+        var volumeManager = new VolumeManager(sender, listener) { VolumeFineIncrement = 0.01f };
 
         // Act
         await volumeManager.ReceiveVolumeAsync();
@@ -747,7 +756,7 @@ public static class VolumeManagerTests
         var sender = Substitute.For<ISender>();
         var listener = Substitute.For<IListener>();
 
-        VolumeManager volumeManager = new(sender, listener);
+        var volumeManager = new VolumeManager(sender, listener);
 
         // Act
         var updated = await volumeManager.ToggloDimAsync();
@@ -775,7 +784,7 @@ public static class VolumeManagerTests
                 )
             );
 
-        VolumeManager volumeManager = new(sender, listener);
+        var volumeManager = new VolumeManager(sender, listener);
 
         // Act
         await volumeManager.ReceiveVolumeAsync();
@@ -813,7 +822,7 @@ public static class VolumeManagerTests
                 )
             );
 
-        VolumeManager volumeManager = new(sender, listener);
+        var volumeManager = new VolumeManager(sender, listener);
 
         // Act
         await volumeManager.ReceiveVolumeAsync();
