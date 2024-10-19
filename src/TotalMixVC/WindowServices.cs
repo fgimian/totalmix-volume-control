@@ -26,7 +26,7 @@ internal static partial class WindowServices
     /// </param>
     public static void SetWindowExTransparent(nint hwnd)
     {
-        int extendedStyle = GetWindowLongW(hwnd, GWL_EXSTYLE);
+        var extendedStyle = GetWindowLongW(hwnd, GWL_EXSTYLE);
         _ = SetWindowLongW(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_TRANSPARENT);
     }
 

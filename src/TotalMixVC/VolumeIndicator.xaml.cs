@@ -67,7 +67,7 @@ public partial class VolumeIndicator : Window
 
         // Display the volume indicator with the current volume details.  We use a dispatcher
         // to ensure that this work occurs in the UI thread.
-        Storyboard showStoryboard = (Storyboard)Resources["WindowStoryboardShow"];
+        var showStoryboard = (Storyboard)Resources["WindowStoryboardShow"];
         showStoryboard.Begin(this);
 
         // Switch to the background thread to avoid UI interruptions.
@@ -125,16 +125,16 @@ public partial class VolumeIndicator : Window
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);
-        nint hwnd = new WindowInteropHelper(this).Handle;
+        var hwnd = new WindowInteropHelper(this).Handle;
         WindowServices.SetWindowExTransparent(hwnd);
     }
 
     private void Hide(object? sender, EventArgs e)
     {
-        DispatcherTimer? timer = (DispatcherTimer?)sender;
+        var timer = (DispatcherTimer?)sender;
         timer?.Stop();
 
-        Storyboard hideStoryboard = (Storyboard)Resources["WindowStoryboardHide"];
+        var hideStoryboard = (Storyboard)Resources["WindowStoryboardHide"];
         hideStoryboard.Begin(this);
     }
 
@@ -142,17 +142,16 @@ public partial class VolumeIndicator : Window
     {
         _hideWindowTimer.Interval = TimeSpan.FromSeconds(_config.Interface.HideDelay);
 
-        ScaleTransform scaleTransform = (ScaleTransform)Resources["WindowScaleTransform"];
+        var scaleTransform = (ScaleTransform)Resources["WindowScaleTransform"];
         scaleTransform.ScaleX = _config.Interface.Scaling;
         scaleTransform.ScaleY = _config.Interface.Scaling;
 
-        Storyboard hideStoryboard = (Storyboard)Resources["WindowStoryboardHide"];
+        var hideStoryboard = (Storyboard)Resources["WindowStoryboardHide"];
 
-        DoubleAnimation opacityAnimation = (DoubleAnimation)hideStoryboard.Children[0];
-        ObjectAnimationUsingKeyFrames visibilityAnimation = (ObjectAnimationUsingKeyFrames)
-            hideStoryboard.Children[1];
+        var opacityAnimation = (DoubleAnimation)hideStoryboard.Children[0];
+        var visibilityAnimation = (ObjectAnimationUsingKeyFrames)hideStoryboard.Children[1];
 
-        TimeSpan animationTime = TimeSpan.FromSeconds(_config.Interface.FadeOutTime);
+        var animationTime = TimeSpan.FromSeconds(_config.Interface.FadeOutTime);
         opacityAnimation.Duration = new Duration(animationTime);
         visibilityAnimation.KeyFrames[0].KeyTime = KeyTime.FromTimeSpan(animationTime);
 

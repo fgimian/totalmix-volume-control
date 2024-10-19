@@ -15,10 +15,10 @@ public class VolumeMaxFloatConverterTests
     public void Read_Valid_ConvertsWithoutError(float volumeMax)
     {
         // Arrange
-        string json = $$"""{"VolumeMax": {{volumeMax}}}""";
+        var json = $$"""{"VolumeMax": {{volumeMax}}}""";
 
         // Act
-        Model? model = JsonSerializer.Deserialize<Model>(json);
+        var model = JsonSerializer.Deserialize<Model>(json);
 
         // Assert
         Assert.Equal(volumeMax, model?.VolumeMax);
@@ -32,7 +32,7 @@ public class VolumeMaxFloatConverterTests
     public void Read_Invalid_ThrowsException(float volumeMax)
     {
         // Arrange
-        string json = $$"""{"VolumeMax": {{volumeMax}}}""";
+        var json = $$"""{"VolumeMax": {{volumeMax}}}""";
 
         // Act
         Action action = () => JsonSerializer.Deserialize<Model>(json);
@@ -49,10 +49,10 @@ public class VolumeMaxFloatConverterTests
     public void Write_Valid_ConvertsWithoutError(float volumeMax)
     {
         // Arrange
-        Model model = new() { VolumeMax = volumeMax };
+        var model = new Model() { VolumeMax = volumeMax };
 
         // Act
-        string json = JsonSerializer.Serialize(model);
+        var json = JsonSerializer.Serialize(model);
 
         // Assert
         Assert.Equal($$"""{"VolumeMax":{{volumeMax}}}""", json);
@@ -66,7 +66,7 @@ public class VolumeMaxFloatConverterTests
     public void Write_Invalid_ThrowsException(float volumeMax)
     {
         // Arrange
-        Model model = new() { VolumeMax = volumeMax };
+        var model = new Model() { VolumeMax = volumeMax };
 
         // Act
         Action action = () => JsonSerializer.Serialize(model);

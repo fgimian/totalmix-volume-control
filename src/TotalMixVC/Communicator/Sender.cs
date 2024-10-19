@@ -39,7 +39,7 @@ public class Sender(IPEndPoint localEP) : ISender, IDisposable
     /// <returns>The number of bytes sent to the endpoint.</returns>
     public Task<int> SendAsync(OscPacket message)
     {
-        byte[] datagram = message.ToByteArray();
+        var datagram = message.ToByteArray();
         return _client.SendAsync(datagram, datagram.Length, _localEP);
     }
 

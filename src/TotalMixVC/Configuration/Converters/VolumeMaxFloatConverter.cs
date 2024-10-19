@@ -20,7 +20,7 @@ public class VolumeMaxFloatConverter : JsonConverter<float>
         JsonSerializerOptions options
     )
     {
-        float value = (float)reader.GetDouble();
+        var value = (float)reader.GetDouble();
         Validate(value);
         return value;
     }

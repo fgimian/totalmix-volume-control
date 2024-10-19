@@ -15,10 +15,10 @@ public class PositiveDoubleConverterTests
     public void Read_Valid_ConvertsWithoutError(double value)
     {
         // Arrange
-        string json = $$"""{"Value": {{value}}}""";
+        var json = $$"""{"Value": {{value}}}""";
 
         // Act
-        Model? model = JsonSerializer.Deserialize<Model>(json);
+        var model = JsonSerializer.Deserialize<Model>(json);
 
         // Assert
         Assert.Equal(value, model?.Value);
@@ -32,7 +32,7 @@ public class PositiveDoubleConverterTests
     public void Read_Invalid_ThrowsException(double value)
     {
         // Arrange
-        string json = $$"""{"Value": {{value}}}""";
+        var json = $$"""{"Value": {{value}}}""";
 
         // Act
         Action action = () => JsonSerializer.Deserialize<Model>(json);
@@ -49,10 +49,10 @@ public class PositiveDoubleConverterTests
     public void Write_Valid_ConvertsWithoutError(double value)
     {
         // Arrange
-        Model model = new() { Value = value };
+        var model = new Model() { Value = value };
 
         // Act
-        string json = JsonSerializer.Serialize(model);
+        var json = JsonSerializer.Serialize(model);
 
         // Assert
         Assert.Equal($$"""{"Value":{{value}}}""", json);
@@ -66,7 +66,7 @@ public class PositiveDoubleConverterTests
     public void Write_Invalid_ThrowsException(double value)
     {
         // Arrange
-        Model model = new() { Value = value };
+        var model = new Model() { Value = value };
 
         // Act
         Action action = () => JsonSerializer.Serialize(model);

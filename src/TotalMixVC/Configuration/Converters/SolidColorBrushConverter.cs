@@ -22,7 +22,7 @@ public class SolidColorBrushConverter : JsonConverter<SolidColorBrush>
         JsonSerializerOptions options
     )
     {
-        BrushConverter converter = new();
+        var converter = new BrushConverter();
         try
         {
             return (SolidColorBrush?)converter.ConvertFromString(reader.GetString()!);
@@ -43,7 +43,7 @@ public class SolidColorBrushConverter : JsonConverter<SolidColorBrush>
         JsonSerializerOptions options
     )
     {
-        string hexColor = value.Color.ToString(CultureInfo.InvariantCulture);
+        var hexColor = value.Color.ToString(CultureInfo.InvariantCulture);
         if (hexColor.Length == 9 && hexColor.Substring(1, 2) == "FF")
         {
             hexColor = hexColor.Remove(1, 2);

@@ -21,7 +21,7 @@ public class PortIntegerConverter : JsonConverter<int>
         JsonSerializerOptions options
     )
     {
-        int value = reader.GetInt32();
+        var value = reader.GetInt32();
         Validate(value);
         return value;
     }

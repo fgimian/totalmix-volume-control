@@ -18,10 +18,10 @@ public class SolidColorBrushConverterTests
     public void Read_Valid_ConvertsWithoutError(string color, string expected)
     {
         // Arrange
-        string json = $$"""{"Color": "{{color}}"}""";
+        var json = $$"""{"Color": "{{color}}"}""";
 
         // Act
-        Model? model = JsonSerializer.Deserialize<Model>(json);
+        var model = JsonSerializer.Deserialize<Model>(json);
 
         // Assert
         Assert.Equal(expected, model?.Color.ToString(CultureInfo.InvariantCulture));
@@ -34,7 +34,7 @@ public class SolidColorBrushConverterTests
     public void Read_Invalid_ThrowsException(string color)
     {
         // Arrange
-        string json = $$"""{"Color": "{{color}}"}""";
+        var json = $$"""{"Color": "{{color}}"}""";
 
         // Act
         Action action = () => JsonSerializer.Deserialize<Model>(json);
@@ -50,11 +50,11 @@ public class SolidColorBrushConverterTests
     public void Write_Valid_ConvertsWithoutError(string color, string expected)
     {
         // Arrange
-        BrushConverter converter = new();
-        Model model = new() { Color = (SolidColorBrush)converter.ConvertFromString(color)! };
+        var converter = new BrushConverter();
+        var model = new Model() { Color = (SolidColorBrush)converter.ConvertFromString(color)! };
 
         // Act
-        string json = JsonSerializer.Serialize(model);
+        var json = JsonSerializer.Serialize(model);
 
         // Assert
         Assert.Equal($$"""{"Color":"{{expected}}"}""", json);

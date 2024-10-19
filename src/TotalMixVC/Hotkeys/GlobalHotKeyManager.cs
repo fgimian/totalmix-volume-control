@@ -48,8 +48,8 @@ public partial class GlobalHotKeyManager : IDisposable
     {
         _actions.Add(hotkey, action);
 
-        KeyModifier keyModifier = hotkey.KeyModifier;
-        int key = KeyInterop.VirtualKeyFromKey(hotkey.Key);
+        var keyModifier = hotkey.KeyModifier;
+        var key = KeyInterop.VirtualKeyFromKey(hotkey.Key);
 
         if (!RegisterHotKey(nint.Zero, hotkey.GetHashCode(), (uint)keyModifier, (uint)key))
         {
@@ -70,9 +70,9 @@ public partial class GlobalHotKeyManager : IDisposable
             return;
         }
 
-        Key key = KeyInterop.KeyFromVirtualKey(((int)msg.lParam >> 16) & 0xFFFF);
-        KeyModifier keyModifier = (KeyModifier)((int)msg.lParam & 0xFFFF);
-        Hotkey hotkey = new() { KeyModifier = keyModifier, Key = key };
+        var key = KeyInterop.KeyFromVirtualKey(((int)msg.lParam >> 16) & 0xFFFF);
+        var keyModifier = (KeyModifier)((int)msg.lParam & 0xFFFF);
+        var hotkey = new Hotkey() { KeyModifier = keyModifier, Key = key };
 
         _actions[hotkey]();
     }
@@ -99,7 +99,7 @@ public partial class GlobalHotKeyManager : IDisposable
 
         if (disposing)
         {
-            foreach (KeyValuePair<Hotkey, Action> kvp in _actions)
+            foreach (var kvp in _actions)
             {
                 UnregisterHotKey(nint.Zero, kvp.Key.GetHashCode());
             }

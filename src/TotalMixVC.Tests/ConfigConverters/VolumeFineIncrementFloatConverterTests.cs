@@ -14,10 +14,10 @@ public class VolumeFineIncrementFloatConverterTests
     public void Read_Valid_ConvertsWithoutError(float volumeFineIncrement)
     {
         // Arrange
-        string json = $$"""{"VolumeFineIncrement": {{volumeFineIncrement}}}""";
+        var json = $$"""{"VolumeFineIncrement": {{volumeFineIncrement}}}""";
 
         // Act
-        Model? model = JsonSerializer.Deserialize<Model>(json);
+        var model = JsonSerializer.Deserialize<Model>(json);
 
         // Assert
         Assert.Equal(volumeFineIncrement, model?.VolumeFineIncrement);
@@ -31,7 +31,7 @@ public class VolumeFineIncrementFloatConverterTests
     public void Read_Invalid_ThrowsException(float volumeFineIncrement)
     {
         // Arrange
-        string json = $$"""{"VolumeFineIncrement": {{volumeFineIncrement}}}""";
+        var json = $$"""{"VolumeFineIncrement": {{volumeFineIncrement}}}""";
 
         // Act
         Action action = () => JsonSerializer.Deserialize<Model>(json);
@@ -47,10 +47,10 @@ public class VolumeFineIncrementFloatConverterTests
     public void Write_Valid_ConvertsWithoutError(float volumeFineIncrement)
     {
         // Arrange
-        Model model = new() { VolumeFineIncrement = volumeFineIncrement };
+        var model = new Model() { VolumeFineIncrement = volumeFineIncrement };
 
         // Act
-        string json = JsonSerializer.Serialize(model);
+        var json = JsonSerializer.Serialize(model);
 
         // Assert
         Assert.Equal($$"""{"VolumeFineIncrement":{{volumeFineIncrement}}}""", json);
@@ -64,7 +64,7 @@ public class VolumeFineIncrementFloatConverterTests
     public void Write_Invalid_ThrowsException(float volumeFineIncrement)
     {
         // Arrange
-        Model model = new() { VolumeFineIncrement = volumeFineIncrement };
+        var model = new Model() { VolumeFineIncrement = volumeFineIncrement };
 
         // Act
         Action action = () => JsonSerializer.Serialize(model);

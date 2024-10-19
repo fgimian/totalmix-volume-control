@@ -20,7 +20,7 @@ public class NonNegativeDoubleConverter : JsonConverter<double>
         JsonSerializerOptions options
     )
     {
-        double value = reader.GetDouble();
+        var value = reader.GetDouble();
         Validate(value);
         return value;
     }

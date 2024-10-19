@@ -83,8 +83,8 @@ public partial class App : Application
     /// </summary>
     public void About()
     {
-        Assembly assembly = Assembly.GetExecutingAssembly();
-        FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+        var assembly = Assembly.GetExecutingAssembly();
+        var versionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
 
         MessageBox.Show(
             owner: _volumeIndicator,
@@ -106,7 +106,7 @@ public partial class App : Application
     {
         try
         {
-            string configText = File.ReadAllText(s_configPath);
+            var configText = File.ReadAllText(s_configPath);
             _config = JsonSerializer.Deserialize<Config>(
                 configText,
                 s_jsonConfigSerializerOptions
@@ -115,9 +115,9 @@ public partial class App : Application
         }
         catch (JsonException e)
         {
-            string configDescription = running ? "existing" : "default";
+            var configDescription = running ? "existing" : "default";
 
-            StringBuilder message = new();
+            var message = new StringBuilder();
 
             message.Append(
                 CultureInfo.InvariantCulture,
@@ -158,8 +158,8 @@ public partial class App : Application
         }
         catch (Exception e)
         {
-            string configDescription = running ? "existing" : "default";
-            string message =
+            var configDescription = running ? "existing" : "default";
+            var message =
                 $"Unable to load the config file at {s_configPath} "
                 + $"({e.InnerException?.Message ?? e.Message}).\n\nThe application will continue "
                 + $"with the {configDescription} configuration.";
@@ -248,7 +248,7 @@ public partial class App : Application
 
         // Obtain the tooltip text area so the text may be updated as required while the app
         // is running.
-        Border trayToolTipBorder = (Border)_trayIcon.TrayToolTip;
+        var trayToolTipBorder = (Border)_trayIcon.TrayToolTip;
         _trayToolTipStatus = (TextBlock)
             LogicalTreeHelper.FindLogicalNode(trayToolTipBorder, "TrayToolTipStatus");
 
@@ -266,16 +266,15 @@ public partial class App : Application
         _volumeIndicator = new(_config);
 
         // Create a parent window which is not visible in the taskbar or Alt+Tab.
-        Window hiddenParentWindow =
-            new()
-            {
-                Top = -100,
-                Left = -100,
-                Width = 0,
-                Height = 0,
-                WindowStyle = WindowStyle.ToolWindow,
-                ShowInTaskbar = false,
-            };
+        var hiddenParentWindow = new Window()
+        {
+            Top = -100,
+            Left = -100,
+            Width = 0,
+            Height = 0,
+            WindowStyle = WindowStyle.ToolWindow,
+            ShowInTaskbar = false,
+        };
 
         // Set the owner of the volume indicator window to the hidden parent.
         hiddenParentWindow.Show();
@@ -380,11 +379,11 @@ public partial class App : Application
                 await TaskScheduler.Default;
 
                 // Obtain the initialized state before setting the volume.
-                bool initializedBeforeReceive = _volumeManager.IsVolumeInitialized;
+                var initializedBeforeReceive = _volumeManager.IsVolumeInitialized;
 
                 // The device sends a ping roughly every 2 seconds (usually a pinch over
                 // 2 seconds), so we'll timeout at 3 seconds to be on the safe side.
-                bool received = await _volumeManager
+                var received = await _volumeManager
                     .ReceiveVolumeAsync(3000, _taskCancellationTokenSource)
                     .ConfigureAwait(false);
 
@@ -470,7 +469,7 @@ public partial class App : Application
 
     private void RegisterHotkeys()
     {
-        GlobalHotKeyManager hotKeyManager = new();
+        var hotKeyManager = new GlobalHotKeyManager();
 
         hotKeyManager.Register(
             hotkey: new Hotkey { KeyModifier = KeyModifier.None, Key = Key.VolumeUp },
@@ -546,27 +545,26 @@ public partial class App : Application
 
     private void ConfigureInterface()
     {
-        ScaleTransform scaleTransform = (ScaleTransform)
-            _trayIcon.Resources["TrayIconScaleTransform"];
+        var scaleTransform = (ScaleTransform)_trayIcon.Resources["TrayIconScaleTransform"];
         scaleTransform.ScaleX = _config.Interface.Scaling;
         scaleTransform.ScaleY = _config.Interface.Scaling;
     }
 
     private void ConfigureTheme()
     {
-        Border trayToolTipBorder = (Border)_trayIcon.TrayToolTip;
+        var trayToolTipBorder = (Border)_trayIcon.TrayToolTip;
 
         // TODO: Determine why binding this to border brush doesn't work.
-        StackPanel trayToolTipPanel = (StackPanel)
+        var trayToolTipPanel = (StackPanel)
             LogicalTreeHelper.FindLogicalNode(trayToolTipBorder, "TrayToolTipPanel");
 
-        TextBlock trayToolTipTitleTotalMix = (TextBlock)
+        var trayToolTipTitleTotalMix = (TextBlock)
             LogicalTreeHelper.FindLogicalNode(trayToolTipBorder, "TrayToolTipTitleTotalMix");
 
-        TextBlock trayToolTipTitleVolume = (TextBlock)
+        var trayToolTipTitleVolume = (TextBlock)
             LogicalTreeHelper.FindLogicalNode(trayToolTipBorder, "TrayToolTipTitleVolume");
 
-        TextBlock trayToolTipStatus = (TextBlock)
+        var trayToolTipStatus = (TextBlock)
             LogicalTreeHelper.FindLogicalNode(trayToolTipBorder, "TrayToolTipStatus");
 
         trayToolTipBorder.BorderBrush = _config.Theme.BackgroundColor;

@@ -8,7 +8,7 @@ public class TaskExtensionsTests
     public async Task TimeoutAfter_Completes_DoesNotThrowException_Async()
     {
         // Arrange
-        bool completed = false;
+        var completed = false;
         Func<Task> task = async () =>
         {
             await Task.Delay(1);
@@ -26,7 +26,7 @@ public class TaskExtensionsTests
     public async Task TimeoutAfter_TimesOut_ThrowsException_Async()
     {
         // Arrange
-        bool completed = false;
+        var completed = false;
         Func<Task> task = async () =>
         {
             await Task.Delay(1000);
@@ -45,9 +45,9 @@ public class TaskExtensionsTests
     public async Task TimeoutAfter_Cancellation_ThrowsException_Async()
     {
         // Arrange
-        using CancellationTokenSource cancellationTokenSource = new();
+        using var cancellationTokenSource = new CancellationTokenSource();
 
-        bool completed = false;
+        var completed = false;
         Func<Task> task = async () =>
         {
             await Task.Delay(1000);
@@ -55,7 +55,7 @@ public class TaskExtensionsTests
         };
 
         // Act
-        Task cancelTask = Task.Run(async () =>
+        var cancelTask = Task.Run(async () =>
         {
             await Task.Delay(100);
             await cancellationTokenSource.CancelAsync();
@@ -73,7 +73,7 @@ public class TaskExtensionsTests
     public async Task TimeoutAfter_CompletesWithReturn_ReturnsValue_Async()
     {
         // Arrange
-        bool completed = false;
+        var completed = false;
         Func<Task<string>> task = async () =>
         {
             await Task.Delay(1);
@@ -82,7 +82,7 @@ public class TaskExtensionsTests
         };
 
         // Act
-        string result = await Task.Run(task).TimeoutAfter(1000);
+        var result = await Task.Run(task).TimeoutAfter(1000);
 
         // Assert
         Assert.True(completed);
@@ -93,7 +93,7 @@ public class TaskExtensionsTests
     public async Task TimeoutAfter_TimesOutWithReturn_ThrowsException_Async()
     {
         // Arrange
-        bool completed = false;
+        var completed = false;
         Func<Task<string>> task = async () =>
         {
             await Task.Delay(1000);
@@ -113,9 +113,9 @@ public class TaskExtensionsTests
     public async Task TimeoutAfter_CancellationWithReturn_ThrowsException_Async()
     {
         // Arrange
-        using CancellationTokenSource cancellationTokenSource = new();
+        using var cancellationTokenSource = new CancellationTokenSource();
 
-        bool completed = false;
+        var completed = false;
         Func<Task<string>> task = async () =>
         {
             await Task.Delay(1000);
@@ -124,7 +124,7 @@ public class TaskExtensionsTests
         };
 
         // Act
-        Task cancelTask = Task.Run(async () =>
+        var cancelTask = Task.Run(async () =>
         {
             await Task.Delay(100);
             await cancellationTokenSource.CancelAsync();

@@ -16,10 +16,10 @@ public class PortIntegerConverterTests
     public void Read_Valid_ConvertsWithoutError(int port)
     {
         // Arrange
-        string json = $$"""{"Port": {{port}}}""";
+        var json = $$"""{"Port": {{port}}}""";
 
         // Act
-        Model? model = JsonSerializer.Deserialize<Model>(json);
+        var model = JsonSerializer.Deserialize<Model>(json);
 
         // Assert
         Assert.Equal(port, model?.Port);
@@ -33,7 +33,7 @@ public class PortIntegerConverterTests
     public void Read_Invalid_ThrowsException(int port)
     {
         // Arrange
-        string json = $$"""{"Port": {{port}}}""";
+        var json = $$"""{"Port": {{port}}}""";
 
         // Act
         Action action = () => JsonSerializer.Deserialize<Model>(json);
@@ -50,10 +50,10 @@ public class PortIntegerConverterTests
     public void Write_Valid_ConvertsWithoutError(int port)
     {
         // Arrange
-        Model model = new() { Port = port };
+        var model = new Model() { Port = port };
 
         // Act
-        string json = JsonSerializer.Serialize(model);
+        var json = JsonSerializer.Serialize(model);
 
         // Assert
         Assert.Equal($$"""{"Port":{{port}}}""", json);
@@ -67,7 +67,7 @@ public class PortIntegerConverterTests
     public void Write_Invalid_ThrowsException(int port)
     {
         // Arrange
-        Model model = new() { Port = port };
+        var model = new Model() { Port = port };
 
         // Act
         Action action = () => JsonSerializer.Serialize(model);

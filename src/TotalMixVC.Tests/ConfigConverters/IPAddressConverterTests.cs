@@ -15,10 +15,10 @@ public class IPAddressConverterTests
     public void Read_Valid_ConvertsWithoutError(string address)
     {
         // Arrange
-        string json = $$"""{"Address": "{{address}}"}""";
+        var json = $$"""{"Address": "{{address}}"}""";
 
         // Act
-        Model? model = JsonSerializer.Deserialize<Model>(json);
+        var model = JsonSerializer.Deserialize<Model>(json);
 
         // Assert
         Assert.Equal(address, model?.Address.ToString());
@@ -32,7 +32,7 @@ public class IPAddressConverterTests
     public void Read_Invalid_ThrowsException(string address)
     {
         // Arrange
-        string json = $$"""{"Address": "{{address}}"}""";
+        var json = $$"""{"Address": "{{address}}"}""";
 
         // Act
         Action action = () => JsonSerializer.Deserialize<Model>(json);
@@ -45,10 +45,10 @@ public class IPAddressConverterTests
     public void Write_Valid_ConvertsWithoutError()
     {
         // Arrange
-        Model model = new() { Address = IPAddress.Loopback };
+        var model = new Model() { Address = IPAddress.Loopback };
 
         // Act
-        string json = JsonSerializer.Serialize(model);
+        var json = JsonSerializer.Serialize(model);
 
         // Assert
         /*lang=json,strict*/

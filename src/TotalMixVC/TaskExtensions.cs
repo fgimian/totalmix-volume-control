@@ -38,7 +38,7 @@ public static class TaskExtensions
         CancellationTokenSource? cancellationTokenSource = null
     )
     {
-        using CancellationTokenSource timeoutCancellationTokenSource = new();
+        using var timeoutCancellationTokenSource = new CancellationTokenSource();
 
         // Create a list of cancellation tokens containing the timout token and optionally
         // a cancellation token provided by the caller.
@@ -51,17 +51,18 @@ public static class TaskExtensions
 
         // Create a combined cancellation token source with all cancellation tokens and
         // build a task that will be cancelled when any of the tokens are.
-        using CancellationTokenSource combinedCancellationTokenSource =
-            CancellationTokenSource.CreateLinkedTokenSource([.. cancellationTokens]);
+        using var combinedCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
+            [.. cancellationTokens]
+        );
 
-        Task cancellationTask = Task.Delay(
+        var cancellationTask = Task.Delay(
             millisecondsTimeout,
             combinedCancellationTokenSource.Token
         );
 
         // Wait until either the given task or the cancellation task completes and return
         // or throw exceptions appropriately.
-        Task completedTask = await Task.WhenAny(task, cancellationTask).ConfigureAwait(false);
+        var completedTask = await Task.WhenAny(task, cancellationTask).ConfigureAwait(false);
 
         if (completedTask == cancellationTask)
         {
@@ -102,7 +103,7 @@ public static class TaskExtensions
         CancellationTokenSource? cancellationTokenSource = null
     )
     {
-        using CancellationTokenSource timeoutCancellationTokenSource = new();
+        using var timeoutCancellationTokenSource = new CancellationTokenSource();
 
         // Create a list of cancellation tokens containing the timout token and optionally
         // a cancellation token provided by the caller.
@@ -115,17 +116,18 @@ public static class TaskExtensions
 
         // Create a combined cancellation token source with all cancellation tokens and
         // build a task that will be cancelled when any of the tokens are.
-        using CancellationTokenSource combinedCancellationTokenSource =
-            CancellationTokenSource.CreateLinkedTokenSource([.. cancellationTokens]);
+        using var combinedCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
+            [.. cancellationTokens]
+        );
 
-        Task cancellationTask = Task.Delay(
+        var cancellationTask = Task.Delay(
             millisecondsTimeout,
             combinedCancellationTokenSource.Token
         );
 
         // Wait until either the given task or the cancellation task completes and return
         // or throw exceptions appropriately.
-        Task completedTask = await Task.WhenAny(task, cancellationTask).ConfigureAwait(false);
+        var completedTask = await Task.WhenAny(task, cancellationTask).ConfigureAwait(false);
 
         if (completedTask == cancellationTask)
         {

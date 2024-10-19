@@ -215,7 +215,7 @@ public class VolumeManager
         // receive request.  This ensures that the receiver can detect a device which was
         // previous offline.
         OscPacket packet;
-        using CancellationTokenSource receiveCancellationTokenSource = new();
+        using var receiveCancellationTokenSource = new CancellationTokenSource();
         try
         {
             packet = await _listener
@@ -259,7 +259,7 @@ public class VolumeManager
         {
             // Build a list of messages from the bundle.
             List<OscMessage> messages = [];
-            IEnumerator<OscMessage> messageEnumerator = bundle.Messages();
+            var messageEnumerator = bundle.Messages();
             while (messageEnumerator.MoveNext())
             {
                 messages.Add(messageEnumerator.Current);
@@ -291,8 +291,8 @@ public class VolumeManager
         try
         {
             // Calculate the new volume.
-            float increment = fine ? _volumeFineIncrement : _volumeRegularIncrement;
-            float newVolume = Volume + increment;
+            var increment = fine ? _volumeFineIncrement : _volumeRegularIncrement;
+            var newVolume = Volume + increment;
 
             // Ensure it doesn't exceed the max.
             if (newVolume >= VolumeMax)
@@ -335,8 +335,8 @@ public class VolumeManager
         try
         {
             // Calculate the new volume.
-            float increment = fine ? VolumeFineIncrement : VolumeRegularIncrement;
-            float newVolume = Volume - increment;
+            var increment = fine ? VolumeFineIncrement : VolumeRegularIncrement;
+            var newVolume = Volume - increment;
 
             // Ensure it doesn't go below the minimum possible volume.
             if (newVolume < 0.0f)
@@ -400,10 +400,10 @@ public class VolumeManager
 
     private async Task<bool> UpdateVolumeFromMessagesAsync(List<OscMessage> messages)
     {
-        bool received = false;
+        var received = false;
 
         foreach (
-            OscMessage message in messages.Where(m =>
+            var message in messages.Where(m =>
                 m.Address is VolumeDecibelsAddress or VolumeAddress or DimAddress && m.Count is 1
             )
         )

@@ -15,7 +15,7 @@ public static class TrayIconMenu
     public static ICommand About =>
         new DelegateCommand(() =>
         {
-            App app = (App)Application.Current;
+            var app = (App)Application.Current;
             app.About();
         });
 
@@ -25,7 +25,7 @@ public static class TrayIconMenu
     public static ICommand ReloadConfig =>
         new DelegateCommand(() =>
         {
-            App app = (App)Application.Current;
+            var app = (App)Application.Current;
             app.ReloadConfig();
         });
 
@@ -37,7 +37,7 @@ public static class TrayIconMenu
     {
         get
         {
-            using RegistryKey? runKey = Registry.CurrentUser.OpenSubKey(
+            using var runKey = Registry.CurrentUser.OpenSubKey(
                 @"Software\Microsoft\Windows\CurrentVersion\Run"
             );
 
@@ -45,14 +45,14 @@ public static class TrayIconMenu
         }
         set
         {
-            using RegistryKey? runKey = Registry.CurrentUser.OpenSubKey(
+            using var runKey = Registry.CurrentUser.OpenSubKey(
                 @"Software\Microsoft\Windows\CurrentVersion\Run",
                 writable: true
             );
 
             if (value)
             {
-                string? appExecutablePath = Environment.ProcessPath;
+                var appExecutablePath = Environment.ProcessPath;
                 runKey?.SetValue("TotalMix Volume Control", appExecutablePath!);
             }
             else
