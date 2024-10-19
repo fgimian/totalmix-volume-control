@@ -109,10 +109,12 @@ public partial class GlobalHotKeyManager : IDisposable
     }
 
     [LibraryImport("user32.dll", SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool RegisterHotKey(nint hWnd, int id, uint fsModifiers, uint vlc);
 
     [LibraryImport("user32.dll", SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool UnregisterHotKey(nint hWnd, int id);
 }

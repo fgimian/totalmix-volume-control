@@ -76,7 +76,7 @@ public class PortIntegerConverterTests
         Assert.Throws<JsonException>(action);
     }
 
-    internal record Model
+    internal sealed record Model
     {
         [JsonConverter(typeof(PortIntegerConverter))]
         public required int Port { get; init; }

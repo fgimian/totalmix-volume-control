@@ -31,8 +31,10 @@ internal static partial class WindowServices
     }
 
     [LibraryImport("user32.dll")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial int GetWindowLongW(nint hwnd, int index);
 
     [LibraryImport("user32.dll")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     private static partial int SetWindowLongW(nint hwnd, int index, int newStyle);
 }

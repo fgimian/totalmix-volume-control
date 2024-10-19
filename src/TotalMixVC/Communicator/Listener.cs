@@ -37,11 +37,6 @@ public class Listener(IPEndPoint localEP) : IListener, IDisposable
     /// <returns>
     /// An OSC packet which may be either a <see cref="OscBundle"/> or <see cref="OscMessage"/>.
     /// </returns>
-    [SuppressMessage(
-        "Usage",
-        "MA0040:Forward the CancellationToken parameter to methods that take one",
-        Justification = "The token is optional and is being forwarded when provided."
-    )]
     public async Task<OscPacket> ReceiveAsync(
         CancellationTokenSource? cancellationTokenSource = null
     )

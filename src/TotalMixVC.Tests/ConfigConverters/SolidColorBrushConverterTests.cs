@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Globalization;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows.Media;
 using TotalMixVC.Configuration.Converters;
@@ -23,7 +24,7 @@ public class SolidColorBrushConverterTests
         Model? model = JsonSerializer.Deserialize<Model>(json);
 
         // Assert
-        Assert.Equal(expected, model?.Color.ToString());
+        Assert.Equal(expected, model?.Color.ToString(CultureInfo.InvariantCulture));
     }
 
     [Theory]
@@ -59,7 +60,7 @@ public class SolidColorBrushConverterTests
         Assert.Equal($$"""{"Color":"{{expected}}"}""", json);
     }
 
-    internal record Model
+    internal sealed record Model
     {
         [JsonConverter(typeof(SolidColorBrushConverter))]
         public required SolidColorBrush Color { get; init; }

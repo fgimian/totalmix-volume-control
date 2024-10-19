@@ -73,7 +73,7 @@ public class VolumeFineIncrementFloatConverterTests
         Assert.Throws<JsonException>(action);
     }
 
-    internal record Model
+    internal sealed record Model
     {
         [JsonConverter(typeof(VolumeFineIncrementFloatConverter))]
         public required float VolumeFineIncrement { get; init; }

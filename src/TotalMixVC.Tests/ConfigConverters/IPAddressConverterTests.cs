@@ -51,10 +51,11 @@ public class IPAddressConverterTests
         string json = JsonSerializer.Serialize(model);
 
         // Assert
+        /*lang=json,strict*/
         Assert.Equal("""{"Address":"127.0.0.1"}""", json);
     }
 
-    internal record Model
+    internal sealed record Model
     {
         [JsonConverter(typeof(IPAddressConverter))]
         public required IPAddress Address { get; init; }

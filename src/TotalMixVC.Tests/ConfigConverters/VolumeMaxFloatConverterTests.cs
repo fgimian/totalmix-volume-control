@@ -75,7 +75,7 @@ public class VolumeMaxFloatConverterTests
         Assert.Throws<JsonException>(action);
     }
 
-    internal record Model
+    internal sealed record Model
     {
         [JsonConverter(typeof(VolumeMaxFloatConverter))]
         public required float VolumeMax { get; init; }

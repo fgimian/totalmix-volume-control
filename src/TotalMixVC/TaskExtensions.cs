@@ -6,11 +6,6 @@ namespace TotalMixVC;
 /// Provides various useful extensions to async tasks.
 /// </summary>
 [SuppressMessage(
-    "Naming",
-    "RCS1046:Asynchronous method name should end with 'Async'.",
-    Justification = "The Async suffix is not added to conform to similar Task methods."
-)]
-[SuppressMessage(
     "Usage",
     "VSTHRD003:Avoid awaiting foreign Tasks",
     Justification = "This conflicts with the accepted pattern for such task extensions."
@@ -37,11 +32,6 @@ public static class TaskExtensions
     /// Thrown if the task is cancelled using the provided cancellation token source.
     /// </exception>
     /// <exception cref="TimeoutException">Thrown if the task times out.</exception>
-    [SuppressMessage(
-        "Minor Code Smell",
-        "S3878:Arrays should not be created for params parameters",
-        Justification = "This check doesn't understand the collection expression syntax in .NET 8."
-    )]
     public static async Task TimeoutAfter(
         this Task task,
         int millisecondsTimeout,
@@ -106,11 +96,6 @@ public static class TaskExtensions
     /// Thrown if the task is cancelled using the provided cancellation token source.
     /// </exception>
     /// <exception cref="TimeoutException">Thrown if the task times out.</exception>
-    [SuppressMessage(
-        "Minor Code Smell",
-        "S3878:Arrays should not be created for params parameters",
-        Justification = "This check doesn't understand the collection expression syntax in .NET 8."
-    )]
     public static async Task<TResult> TimeoutAfter<TResult>(
         this Task<TResult> task,
         int millisecondsTimeout,

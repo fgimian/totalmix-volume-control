@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -29,23 +30,25 @@ namespace TotalMixVC;
 )]
 public partial class App : Application
 {
-    private const string CommunicationErrorFormatString =
-        "Unable to communicate with your RME device.\n"
-        + "\n"
-        + "1. Open TotalMix\n"
-        + "2. Enable OSC under Options / Enable OSC Control\n"
-        + "3. Open Options / Settings and select the OSC tab\n"
-        + "4. Ensure one of the Remote Controller Select slots is In Use and is selected\n"
-        + "5. Ensure the incoming port is {0} and outgoing port is {1}\n"
-        + "6. Ensure the remote IP or Host Name is set to {2}";
+    private static readonly CompositeFormat s_communicationErrorFormatString =
+        CompositeFormat.Parse(
+            "Unable to communicate with your RME device.\n"
+                + "\n"
+                + "1. Open TotalMix\n"
+                + "2. Enable OSC under Options / Enable OSC Control\n"
+                + "3. Open Options / Settings and select the OSC tab\n"
+                + "4. Ensure one of the Remote Controller Select slots is In Use and is selected\n"
+                + "5. Ensure the incoming port is {0} and outgoing port is {1}\n"
+                + "6. Ensure the remote IP or Host Name is set to {2}"
+        );
 
-    private static readonly string ConfigPath = Path.Join(
+    private static readonly string s_configPath = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "TotalMix Volume Control",
         "config.json"
     );
 
-    private static readonly JsonSerializerOptions JsonConfigSerializerOptions =
+    private static readonly JsonSerializerOptions s_jsonConfigSerializerOptions =
         new()
         {
             AllowTrailingCommas = true,
@@ -103,8 +106,11 @@ public partial class App : Application
     {
         try
         {
-            string configText = File.ReadAllText(ConfigPath);
-            _config = JsonSerializer.Deserialize<Config>(configText, JsonConfigSerializerOptions)!;
+            string configText = File.ReadAllText(s_configPath);
+            _config = JsonSerializer.Deserialize<Config>(
+                configText,
+                s_jsonConfigSerializerOptions
+            )!;
             return true;
         }
         catch (JsonException e)
@@ -113,14 +119,18 @@ public partial class App : Application
 
             StringBuilder message = new();
 
-            message.Append($"Unable to parse the config file at {ConfigPath}.\n\n{e.Message}");
+            message.Append(
+                CultureInfo.InvariantCulture,
+                $"Unable to parse the config file at {s_configPath}.\n\n{e.Message}"
+            );
 
             if (e.InnerException is not null)
             {
-                message.Append($" {e.InnerException.Message}");
+                message.Append(CultureInfo.InvariantCulture, $" {e.InnerException.Message}");
             }
 
             message.Append(
+                CultureInfo.InvariantCulture,
                 $"\n\nThe application will continue with the {configDescription} configuration."
             );
 
@@ -150,7 +160,7 @@ public partial class App : Application
         {
             string configDescription = running ? "existing" : "default";
             string message =
-                $"Unable to load the config file at {ConfigPath} "
+                $"Unable to load the config file at {s_configPath} "
                 + $"({e.InnerException?.Message ?? e.Message}).\n\nThe application will continue "
                 + $"with the {configDescription} configuration.";
 
@@ -183,14 +193,14 @@ public partial class App : Application
     /// </summary>
     public void ReloadConfig()
     {
-        if (!File.Exists(ConfigPath))
+        if (!File.Exists(s_configPath))
         {
             // It is important to use specify the owner of the message box or it will be closed
             // when the context menu is closed.
             // See https://github.com/hardcodet/wpf-notifyicon/issues/74 for more information.
             MessageBox.Show(
                 _volumeIndicator,
-                $"A configuration file at {ConfigPath} could not be found.",
+                $"A configuration file at {s_configPath} could not be found.",
                 caption: "Configuration File Error",
                 button: MessageBoxButton.OK,
                 icon: MessageBoxImage.Exclamation
@@ -243,7 +253,7 @@ public partial class App : Application
             LogicalTreeHelper.FindLogicalNode(trayToolTipBorder, "TrayToolTipStatus");
 
         // Attempt to load the configuration if it exists.
-        if (File.Exists(ConfigPath))
+        if (File.Exists(s_configPath))
         {
             LoadConfig();
         }
@@ -325,7 +335,6 @@ public partial class App : Application
                 icon: MessageBoxImage.Exclamation
             );
             Shutdown();
-            return;
         }
     }
 
@@ -416,7 +425,8 @@ public partial class App : Application
                     _taskCancellationTokenSource.Token
                 );
                 _trayToolTipStatus.Text = string.Format(
-                    CommunicationErrorFormatString,
+                    CultureInfo.InvariantCulture,
+                    s_communicationErrorFormatString,
                     _config.Osc.OutgoingPort,
                     _config.Osc.IncomingPort,
                     _config.Osc.IncomingHostname

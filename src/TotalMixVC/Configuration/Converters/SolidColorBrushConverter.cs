@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Globalization;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows.Media;
 
@@ -42,12 +43,12 @@ public class SolidColorBrushConverter : JsonConverter<SolidColorBrush>
         JsonSerializerOptions options
     )
     {
-        string hexColor = value.Color.ToString();
+        string hexColor = value.Color.ToString(CultureInfo.InvariantCulture);
         if (hexColor.Length == 9 && hexColor.Substring(1, 2) == "FF")
         {
             hexColor = hexColor.Remove(1, 2);
         }
 
-        writer.WriteStringValue(hexColor.ToLower());
+        writer.WriteStringValue(hexColor.ToLowerInvariant());
     }
 }

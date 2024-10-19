@@ -1,13 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Xunit;
+﻿using Xunit;
 
 namespace TotalMixVC.Tests;
 
-[SuppressMessage(
-    "Usage",
-    "MA0040:Forward the CancellationToken parameter to methods that take one",
-    Justification = "Forwarding the cancellation token would invalidate these tests."
-)]
 public class TaskExtensionsTests
 {
     [Fact]

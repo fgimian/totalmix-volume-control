@@ -75,7 +75,7 @@ public class PositiveDoubleConverterTests
         Assert.Throws<JsonException>(action);
     }
 
-    internal record Model
+    internal sealed record Model
     {
         [JsonConverter(typeof(PositiveDoubleConverter))]
         public required double Value { get; init; }

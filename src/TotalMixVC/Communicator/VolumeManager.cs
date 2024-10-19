@@ -85,16 +85,16 @@ public class VolumeManager
     /// <summary>
     /// Gets a value indicating whether the device volume is dimmed.
     /// </summary>
-    public bool IsDimmed
-    {
-        get => Dim == 1.0f;
-    }
+    public bool IsDimmed => Dim == 1.0f;
 
     /// <summary>
     /// Gets or sets the increment to use when regularly increasing or decreasing the volume.
     /// </summary>
     /// <exception cref="ArgumentException">
     /// The regular volume increment is not within the required range.
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// When the regular increment specified is not in the supported range.
     /// </exception>
     public float VolumeRegularIncrement
     {
@@ -120,6 +120,9 @@ public class VolumeManager
     /// <exception cref="ArgumentException">
     /// The fine volume increment is not within the required range.
     /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// When the fine increment specified is not in the supported range.
+    /// </exception>
     public float VolumeFineIncrement
     {
         get => _volumeFineIncrement;
@@ -144,6 +147,9 @@ public class VolumeManager
     /// <exception cref="ArgumentException">
     /// The max volume increment not within the required range.
     /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// When the max volume specified is not in the supported range.
+    /// </exception>
     public float VolumeMax
     {
         get => _volumeMax;
@@ -165,10 +171,8 @@ public class VolumeManager
     /// Gets a value indicating whether the volume has been obtained from the device at least
     /// once.
     /// </summary>
-    public bool IsVolumeInitialized
-    {
-        get => Volume != -1.0f && VolumeDecibels is not null && Dim != -1.0f;
-    }
+    public bool IsVolumeInitialized =>
+        Volume != -1.0f && VolumeDecibels is not null && Dim != -1.0f;
 
     /// <summary>
     /// Requests the current device volume by sending an invalid value (-1.0) for volume and
@@ -211,7 +215,7 @@ public class VolumeManager
         // receive request.  This ensures that the receiver can detect a device which was
         // previous offline.
         OscPacket packet;
-        CancellationTokenSource receiveCancellationTokenSource = new();
+        using CancellationTokenSource receiveCancellationTokenSource = new();
         try
         {
             packet = await _listener

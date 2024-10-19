@@ -75,7 +75,7 @@ public class NonNegativeDoubleConverterTests
         Assert.Throws<JsonException>(action);
     }
 
-    internal record Model
+    internal sealed record Model
     {
         [JsonConverter(typeof(NonNegativeDoubleConverter))]
         public required double Value { get; init; }
