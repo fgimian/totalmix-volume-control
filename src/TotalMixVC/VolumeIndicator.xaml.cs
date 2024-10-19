@@ -12,8 +12,10 @@ namespace TotalMixVC;
 /// <summary>
 /// Interaction logic for VolumeIndicator.xaml.
 /// </summary>
-public partial class VolumeIndicator : Window
+public partial class VolumeIndicator : Window, IDisposable
 {
+    private readonly JoinableTaskContext _joinableTaskContext;
+
     private readonly JoinableTaskFactory _joinableTaskFactory;
 
     private readonly DispatcherTimer _hideWindowTimer;
@@ -31,7 +33,8 @@ public partial class VolumeIndicator : Window
         _config = config;
 
         // Create a task factory for the current thread (which is the UI thread).
-        _joinableTaskFactory = new(new JoinableTaskContext());
+        _joinableTaskContext = new();
+        _joinableTaskFactory = new(_joinableTaskContext);
 
         // Create the timer that will hide the window after not used for a little while.
         _hideWindowTimer = new();
@@ -108,6 +111,13 @@ public partial class VolumeIndicator : Window
         VolumeWidgetReadout.Text = volumeDecibels;
     }
 
+    /// <summary>Disposes the current volume indicator.</summary>
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
     /// <summary>
     /// Ensures that it is impossible to close the volume indicator window.
     /// </summary>
@@ -127,6 +137,16 @@ public partial class VolumeIndicator : Window
         base.OnSourceInitialized(e);
         var hwnd = new WindowInteropHelper(this).Handle;
         WindowServices.SetWindowExTransparent(hwnd);
+    }
+
+    /// <summary>Disposes the current volume indicator.</summary>
+    /// <param name="disposing">Whether managed resources should be disposed.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _joinableTaskContext.Dispose();
+        }
     }
 
     private void Hide(object? sender, EventArgs e)

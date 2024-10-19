@@ -7,7 +7,7 @@ namespace TotalMixVC.Communicator;
 /// <summary>
 /// Tracks the volume of the device and provides a way to send volume updates.
 /// </summary>
-public class VolumeManager
+public class VolumeManager : IDisposable
 {
     /// <summary>
     /// The address to be used to sending and receiving volume as a float.
@@ -385,6 +385,23 @@ public class VolumeManager
         finally
         {
             _volumeMutex.Release();
+        }
+    }
+
+    /// <summary>Disposes the current volume manager.</summary>
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>Disposes the current volume manager.</summary>
+    /// <param name="disposing">Whether managed resources should be disposed.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _volumeMutex.Dispose();
         }
     }
 

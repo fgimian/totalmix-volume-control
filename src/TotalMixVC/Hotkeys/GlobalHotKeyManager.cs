@@ -77,18 +77,14 @@ public partial class GlobalHotKeyManager : IDisposable
         _actions[hotkey]();
     }
 
-    /// <summary>
-    /// Disposes the current hotkey manager.
-    /// </summary>
+    /// <summary>Disposes the current hotkey manager.</summary>
     public void Dispose()
     {
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 
-    /// <summary>
-    /// Disposes the current hotkey manager.
-    /// </summary>
+    /// <summary>Disposes the current hotkey manager.</summary>
     /// <param name="disposing">Whether managed resources should be disposed.</param>
     protected virtual void Dispose(bool disposing)
     {

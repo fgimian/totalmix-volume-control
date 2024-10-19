@@ -19,9 +19,7 @@ public class Listener(IPEndPoint localEP) : IListener, IDisposable
 
     private bool _disposed;
 
-    /// <summary>
-    /// Disposes the current listener.
-    /// </summary>
+    /// <summary>Disposes the current listener.</summary>
     public void Dispose()
     {
         Dispose(disposing: true);
@@ -56,9 +54,7 @@ public class Listener(IPEndPoint localEP) : IListener, IDisposable
         return OscPacket.Read(result.Buffer, 0, result.Buffer.Length);
     }
 
-    /// <summary>
-    /// Disposes the current listener.
-    /// </summary>
+    /// <summary>Disposes the current listener.</summary>
     /// <param name="disposing">Whether managed resources should be disposed.</param>
     protected virtual void Dispose(bool disposing)
     {

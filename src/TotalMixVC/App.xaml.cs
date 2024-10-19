@@ -25,10 +25,10 @@ namespace TotalMixVC;
 /// </summary>
 [SuppressMessage(
     "Roslynator",
-    "RCS1197:Optimize StringBuilder.Append/AppendLine call.",
-    Justification = "Disabled due to https://github.com/JosefPihrt/Roslynator/issues/899."
+    "RCS1043:Remove 'partial' modifier from type with a single part",
+    Justification = "WPF Application classes must be partial."
 )]
-public partial class App : Application
+public partial class App : Application, IDisposable
 {
     private static readonly CompositeFormat s_communicationErrorFormatString =
         CompositeFormat.Parse(
@@ -56,10 +56,14 @@ public partial class App : Application
             PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
         };
 
+    private readonly GlobalHotKeyManager _hotKeyManager = new();
+
     // Disable non-nullable field must contain a non-null value when exiting constructor. These
     // fields are initialized in OnStartup which is called by the constructor.
 #pragma warning disable CS8618
     private CancellationTokenSource _taskCancellationTokenSource;
+
+    private JoinableTaskContext _joinableTaskContext;
 
     private JoinableTaskFactory _joinableTaskFactory;
 
@@ -102,6 +106,11 @@ public partial class App : Application
     /// Whether the application is already running with a previous loaded configuration.
     /// </param>
     /// <returns>Whether or not the config was loaded successfully.</returns>
+    [SuppressMessage(
+        "Design",
+        "CA1031:Do not catch general exception types",
+        Justification = "ReadAllText throws many exception types and this function can't fail."
+    )]
     public bool LoadConfig(bool running = false)
     {
         try
@@ -229,6 +238,13 @@ public partial class App : Application
         );
     }
 
+    /// <summary>Disposes the current app.</summary>
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
     /// <summary>
     /// Starts the various required components after the application startup event is fired.
     /// </summary>
@@ -241,7 +257,8 @@ public partial class App : Application
         _taskCancellationTokenSource = new();
 
         // Create a task factory for the current thread (which is the UI thread).
-        _joinableTaskFactory = new(new JoinableTaskContext());
+        _joinableTaskContext = new();
+        _joinableTaskFactory = new(_joinableTaskContext);
 
         // Create the system tray icon.
         _trayIcon = (TaskbarIcon)Resources["TrayIcon"];
@@ -365,8 +382,22 @@ public partial class App : Application
         }
 
         // Dispose any objects which implement the IDisposable interface.
-        _taskCancellationTokenSource.Dispose();
-        _trayIcon.Dispose();
+        Dispose();
+    }
+
+    /// <summary>Disposes the current app.</summary>
+    /// <param name="disposing">Whether managed resources should be disposed.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _taskCancellationTokenSource.Dispose();
+            _joinableTaskContext.Dispose();
+            _hotKeyManager.Dispose();
+            _volumeManager.Dispose();
+            _volumeIndicator.Dispose();
+            _trayIcon.Dispose();
+        }
     }
 
     private async Task ReceiveVolumeAsync()
@@ -469,9 +500,7 @@ public partial class App : Application
 
     private void RegisterHotkeys()
     {
-        var hotKeyManager = new GlobalHotKeyManager();
-
-        hotKeyManager.Register(
+        _hotKeyManager.Register(
             hotkey: new Hotkey { KeyModifier = KeyModifier.None, Key = Key.VolumeUp },
             action: () =>
                 _joinableTaskFactory
@@ -484,7 +513,7 @@ public partial class App : Application
                     .Join(_taskCancellationTokenSource.Token)
         );
 
-        hotKeyManager.Register(
+        _hotKeyManager.Register(
             hotkey: new Hotkey { KeyModifier = KeyModifier.None, Key = Key.VolumeDown },
             action: () =>
                 _joinableTaskFactory
@@ -497,7 +526,7 @@ public partial class App : Application
                     .Join(_taskCancellationTokenSource.Token)
         );
 
-        hotKeyManager.Register(
+        _hotKeyManager.Register(
             hotkey: new Hotkey { KeyModifier = KeyModifier.Shift, Key = Key.VolumeUp },
             action: () =>
                 _joinableTaskFactory
@@ -510,7 +539,7 @@ public partial class App : Application
                     .Join(_taskCancellationTokenSource.Token)
         );
 
-        hotKeyManager.Register(
+        _hotKeyManager.Register(
             hotkey: new Hotkey { KeyModifier = KeyModifier.Shift, Key = Key.VolumeDown },
             action: () =>
                 _joinableTaskFactory
@@ -523,7 +552,7 @@ public partial class App : Application
                     .Join(_taskCancellationTokenSource.Token)
         );
 
-        hotKeyManager.Register(
+        _hotKeyManager.Register(
             hotkey: new Hotkey { KeyModifier = KeyModifier.None, Key = Key.VolumeMute },
             action: () =>
                 _joinableTaskFactory

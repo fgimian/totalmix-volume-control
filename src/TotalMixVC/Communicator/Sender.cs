@@ -21,9 +21,7 @@ public class Sender(IPEndPoint localEP) : ISender, IDisposable
 
     private bool _disposed;
 
-    /// <summary>
-    /// Disposes the current sender.
-    /// </summary>
+    /// <summary>Disposes the current sender.</summary>
     public void Dispose()
     {
         Dispose(disposing: true);
@@ -43,9 +41,7 @@ public class Sender(IPEndPoint localEP) : ISender, IDisposable
         return _client.SendAsync(datagram, datagram.Length, _localEP);
     }
 
-    /// <summary>
-    /// Disposes the current sender.
-    /// </summary>
+    /// <summary>Disposes the current sender.</summary>
     /// <param name="disposing">Whether managed resources should be disposed.</param>
     protected virtual void Dispose(bool disposing)
     {

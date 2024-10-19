@@ -269,12 +269,6 @@ dotnet_diagnostic.SA1309.severity = none
 # The name of a static readonly field does not begin with an upper-case letter.
 dotnet_diagnostic.SA1311.severity = none
 
-# Elements should be documented.
-dotnet_diagnostic.SA1600.severity = none
-
-# Partial elements should be documented.
-dotnet_diagnostic.SA1601.severity = none
-
 # The file header is missing or not located at the top of the file.
 dotnet_diagnostic.SA1633.severity = none
 
@@ -306,3 +300,9 @@ dotnet_diagnostic.CA2007.severity = none
 # Add .ConfigureAwait(bool) to your await expression.
 # Test methods should not call ConfigureAwait(false), as it may bypass parallelization limits.
 dotnet_diagnostic.VSTHRD111.severity = none
+
+# XML comment analysis is disabled due to project configuration.
+dotnet_diagnostic.SA0001.severity = none
+
+# Elements should be documented.
+dotnet_diagnostic.SA1600.severity = none
