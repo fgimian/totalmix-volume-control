@@ -290,6 +290,9 @@ dotnet_diagnostic.SA1516.severity = none
 # Prefer anonymous functions in tests to allow for mocked functions to be defined within tests.
 csharp_style_prefer_local_over_anonymous_function = false:warning
 
+# Enumeration items should be documented.
+dotnet_diagnostic.SA1602.severity = none
+
 # Identifiers should not contain underscores.
 dotnet_diagnostic.CA1707.severity = none
 
