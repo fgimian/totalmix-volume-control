@@ -48,13 +48,12 @@ public partial class App : Application, IDisposable
         "config.json"
     );
 
-    private static readonly JsonSerializerOptions s_jsonConfigSerializerOptions =
-        new()
-        {
-            AllowTrailingCommas = true,
-            ReadCommentHandling = JsonCommentHandling.Skip,
-            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-        };
+    private static readonly JsonSerializerOptions s_jsonConfigSerializerOptions = new()
+    {
+        AllowTrailingCommas = true,
+        ReadCommentHandling = JsonCommentHandling.Skip,
+        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+    };
 
     private readonly GlobalHotKeyManager _hotKeyManager = new();
 
