@@ -33,7 +33,7 @@ jobs:
 
     - name: Upload coverage
       if: ${{ matrix.configuration == 'Release' }}
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         directory: ./.coverage
         files: Cobertura.xml
@@ -42,7 +42,7 @@ jobs:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: TotalMixVC ${{ matrix.configuration }} Setup
         path: artifacts/*.exe
