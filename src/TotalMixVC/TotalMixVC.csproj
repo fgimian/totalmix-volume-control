@@ -9,6 +9,7 @@
     <AnalysisLevel>latest-all</AnalysisLevel>
     <UseWPF>true</UseWPF>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup>
