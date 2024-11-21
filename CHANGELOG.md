@@ -1,5 +1,10 @@
 # TotalMix Volume Control Changelog
 
+## 0.7.0 (2024-11-21)
+
+This is a maintenance release of TotalMix Volume Control which updates .NET to version 9 and
+provides various minor code improvements made to the codebase since the last release.
+
 ## 0.6.0 (2023-12-02)
 
 This is a maintenance release of TotalMix Volume Control which updates .NET to version 8 which is
