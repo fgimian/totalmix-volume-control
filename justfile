@@ -9,15 +9,13 @@ clean:
     rm -rf .coverage src/*/TestResults src/*/bin/{{ configuration }} src/*/obj/{{ configuration }}
 
 # create the application icon
-# TODO: Re-enable the following line after just 1.38.0 is released.
-# [working-directory('src/TotalMixVC/Icons')]
 icon:
     inkscape -w 16 -h 16 -o 16.png TotalMixVC.svg
     inkscape -w 32 -h 32 -o 32.png TotalMixVC.svg
     inkscape -w 48 -h 48 -o 48.png TotalMixVC.svg
     inkscape -w 128 -h 128 -o 128.png TotalMixVC.svg
     inkscape -w 256 -h 256 -o 256.png TotalMixVC.svg
-    magick 16.png 32.png 48.png 128.png 256.png -compress none TotalMixVC.ico
+    magick 16.png 32.png 48.png 128.png 256.png -compress none src/TotalMixVC/Icons/TotalMixVC.ico
     rm *.png
 
 # restore the required tools and project dependencies
