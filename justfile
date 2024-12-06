@@ -1,7 +1,3 @@
-set shell := ["pwsh", "-nop", "-c"]
-
-coverage_path := ".coverage"
-installer_path := "artifacts"
 configuration := "Debug"
 
 [private]
@@ -10,30 +6,19 @@ default:
 
 # clean all object and binary files along with test output
 clean:
-    #!pwsh -nop
-    foreach ($path in @(
-        '.coverage'
-        'src/*/TestResults'
-        'src/*/bin/{{ configuration }}'
-        'src/*/obj/{{ configuration }}'
-    )) {
-        if (Test-Path -Path $path) {
-            Remove-Item -Path $path -Recurse -Force
-        }
-    }
+    rm -rf .coverage src/*/TestResults src/*/bin/{{ configuration }} src/*/obj/{{ configuration }}
 
 # create the application icon
+# TODO: Re-enable the following line after just 1.38.0 is released.
+# [working-directory('src/TotalMixVC/Icons')]
 icon:
-    #!pwsh -nop
-    Set-Location -Path src/TotalMixVC/Icons
-    foreach ($size in @(16, 32, 48, 128, 256)) {
-        Write-Host "Rendering icon as PNG with dimensions ${size}x${size} using Inkscape"
-        inkscape -w $size -h $size -o "${size}.png" TotalMixVC.svg
-    }
-    Write-Host 'Converting the PNGs to an ICO file using ImageMagick'
+    inkscape -w 16 -h 16 -o 16.png TotalMixVC.svg
+    inkscape -w 32 -h 32 -o 32.png TotalMixVC.svg
+    inkscape -w 48 -h 48 -o 48.png TotalMixVC.svg
+    inkscape -w 128 -h 128 -o 128.png TotalMixVC.svg
+    inkscape -w 256 -h 256 -o 256.png TotalMixVC.svg
     magick 16.png 32.png 48.png 128.png 256.png -compress none TotalMixVC.ico
-    Write-Host 'Cleaning up rendered PNG files'
-    Remove-Item -Path *.png
+    rm *.png
 
 # restore the required tools and project dependencies
 restore:
@@ -48,10 +33,10 @@ build: restore
 test: build
     dotnet test \
         --configuration {{ configuration }} --logger xunit --verbosity normal --no-build \
-        /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+        //p:CollectCoverage=true //p:CoverletOutputFormat=opencover
     dotnet reportgenerator \
         -reports:src/*/coverage.opencover.xml \
-        "-targetdir:{{ coverage_path }}" \
+        -targetdir:.coverage \
         "-reporttypes:Cobertura;lcov;Html" \
         -filefilters:-*.g.cs
 
@@ -62,4 +47,4 @@ publish: test
 
 # create an installer for distribution
 distribute: publish
-    iscc "/O{{ installer_path }}" /DAppBuildConfiguration={{ configuration }} TotalMixVC.iss
+    iscc //Oartifacts //DAppBuildConfiguration={{ configuration }} TotalMixVC.iss
