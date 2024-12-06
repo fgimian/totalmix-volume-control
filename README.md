@@ -102,11 +102,16 @@ You may find various other build targets by simply typing `just` with no argumen
 
 ## Building the Icon
 
-The icon is built from an SVG. You may install [Scoop](https://scoop.sh/) and build it as follows:
+The icon is built from an SVG. Start by installing ImageMagick and Inkscape using WinGet.
 
 ```powershell
-scoop bucket add extras
-scoop install imagemagick inkscape
+winget install ImageMagick.ImageMagick Inkscape.Inkscape
+```
+
+Then ensure you add **C:\Program Files\Inkscape\bin** to your **Path** environment variable
+and build the icon as follows:
+
+```powershell
 just icon
 ```
 

@@ -31,7 +31,7 @@ icon:
         inkscape -w $size -h $size -o "${size}.png" TotalMixVC.svg
     }
     Write-Host 'Converting the PNGs to an ICO file using ImageMagick'
-    magick convert 16.png 32.png 48.png 128.png 256.png TotalMixVC.ico
+    magick 16.png 32.png 48.png 128.png 256.png -compress none TotalMixVC.ico
     Write-Host 'Cleaning up rendered PNG files'
     Remove-Item -Path *.png
 
