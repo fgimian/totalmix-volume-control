@@ -90,9 +90,9 @@ After cloning the source code from GitHub, follow the steps below:
 
 1. Install the [.NET 7.0 SDK](https://dotnet.microsoft.com/download).
 2. Install [Just](https://github.com/casey/just)
-3. Open a PowerShell prompt and build the project
+3. Open a terminal and build the project
 
-    ```powershell
+    ```bash
     just configuration=Release distribute
     ```
 
@@ -104,14 +104,14 @@ You may find various other build targets by simply typing `just` with no argumen
 
 The icon is built from an SVG. Start by installing ImageMagick and Inkscape using WinGet.
 
-```powershell
+```bash
 winget install ImageMagick.ImageMagick Inkscape.Inkscape
 ```
 
 Then ensure you add **C:\Program Files\Inkscape\bin** to your **Path** environment variable
 and build the icon as follows:
 
-```powershell
+```bash
 just icon
 ```
 
