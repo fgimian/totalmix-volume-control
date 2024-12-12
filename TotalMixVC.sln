@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0AB5B004-71B4-4822-B782-73D062223653}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TotalMixVC", "src\TotalMixVC\TotalMixVC.csproj", "{3B831D6E-98CD-44D7-BFC7-0AE0221EFA8A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TotalMixVC.Tests", "src\TotalMixVC.Tests\TotalMixVC.Tests.csproj", "{4DF96FB1-0699-44A8-A7C7-FDB5457C666D}"
@@ -51,10 +49,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{3B831D6E-98CD-44D7-BFC7-0AE0221EFA8A} = {0AB5B004-71B4-4822-B782-73D062223653}
-		{4DF96FB1-0699-44A8-A7C7-FDB5457C666D} = {0AB5B004-71B4-4822-B782-73D062223653}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2F923153-088E-47B5-B82F-E8A697F12DFE}
