@@ -31,9 +31,9 @@ build: restore
 test: build
     dotnet test \
         --configuration {{ configuration }} --logger xunit --verbosity normal --no-build \
-        //p:CollectCoverage=true //p:CoverletOutputFormat=opencover
+        --collect:"XPlat Code Coverage"
     dotnet reportgenerator \
-        -reports:src/*/coverage.opencover.xml \
+        -reports:src/**/coverage.cobertura.xml \
         -targetdir:.coverage \
         "-reporttypes:Cobertura;lcov;Html" \
         -filefilters:-*.g.cs
