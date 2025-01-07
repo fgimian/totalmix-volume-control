@@ -21,11 +21,15 @@ jobs:
       with:
         dotnet-version: 9.0.x
 
-    - name: Setup Just
-      uses: extractions/setup-just@v2
+    - name: Setup Task
+      uses: arduino/setup-task@v2
+      with:
+        version: 3.x
 
-    - name: Restore dependencies, build, test & distribute using Just
-      run: just configuration=${{ matrix.configuration }} distribute
+    - name: Restore dependencies, build, test & distribute
+      run: task distribute
+      env:
+        CONFIGURATION: ${{ matrix.configuration }}
 
     - name: Upload coverage
       if: ${{ matrix.configuration == 'Release' }}

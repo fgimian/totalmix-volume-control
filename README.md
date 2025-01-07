@@ -89,31 +89,41 @@ OSC settings.
 After cloning the source code from GitHub, follow the steps below:
 
 1. Install the [.NET 7.0 SDK](https://dotnet.microsoft.com/download).
-2. Install [Just](https://github.com/casey/just)
-3. Open a terminal and build the project
+2. Install Task and the cross-platform coreutils using WinGet
 
     ```
-    just configuration=Release distribute
+    winget install Task.Task uutils.coreutils
     ```
 
-4. You'll now find an installer under the **artifacts** sub-directory
+3. Build the project using the default **Debug** configuration and create the installer
 
-You may find various other build targets by simply typing `just` with no arguments.
+    ```
+    task distribute
+    ```
+
+    You may set the **CONFIGURATION** environment variable to **Release** to create a release
+    build.
+
+You'll now find an installer under the **artifacts** sub-directory.
+
+You may find various other build targets by simply typing `task` with no arguments.
 
 ## Building the Icon
 
-The icon is built from an SVG. Start by installing ImageMagick and Inkscape using WinGet.
+You may follow the steps below to build the icon from the provided SVG:
 
-```
-winget install ImageMagick.ImageMagick Inkscape.Inkscape
-```
+1. Install ImageMagick and Inkscape using WinGet
 
-Then ensure you add **C:\Program Files\Inkscape\bin** to your **Path** environment variable
-and build the icon as follows:
+    ```
+    winget install ImageMagick.ImageMagick Inkscape.Inkscape
+    ```
 
-```
-just icon
-```
+2. Add **C:\Program Files\Inkscape\bin** to your **Path** environment variable
+3. Build the icon
+
+    ```
+    task icon
+    ```
 
 ## License
 

@@ -1,0 +1,66 @@
+version: '3'
+
+vars:
+  CONFIGURATION: '{{default "Debug" .CONFIGURATION}}'
+tasks:
+  clean:
+    desc: Clean all object and binary files along with test output.
+    cmd: coreutils rm -rf .coverage src/*/TestResults src/*/bin/{{.CONFIGURATION}} src/*/obj/{{.CONFIGURATION}}
+
+  icon:
+    desc: Create the application icon.
+    vars:
+      SIZES: [16, 32, 48, 128, 256]
+    cmds:
+      - for:
+          var: SIZES
+        cmd: inkscape -w {{.ITEM}} -h {{.ITEM}} -o {{.ITEM}}.png TotalMixVC.svg
+      - magick {{range .SIZES}}{{.}}.png {{end}}-compress none src/TotalMixVC/Icons/TotalMixVC.ico
+      - coreutils rm *.png
+
+  restore:
+    desc: Restore the required tools and project dependencies.
+    cmds:
+      - dotnet tool restore
+      - dotnet restore
+
+  build:
+    desc: Build the application.
+    cmd: dotnet build --configuration {{.CONFIGURATION}} --no-restore
+    deps:
+      - restore
+
+  test:
+    desc: Test the application and produce a coverage report.
+    cmds:
+      - >-
+        dotnet test
+        --configuration {{.CONFIGURATION}}
+        --logger xunit
+        --verbosity normal
+        --no-build
+        --collect:"XPlat Code Coverage"
+      - >-
+        dotnet reportgenerator
+        -reports:src/**/coverage.cobertura.xml
+        -targetdir:.coverage
+        "-reporttypes:Cobertura;lcov;Html"
+        -filefilters:-*.g.cs
+    deps:
+      - build
+
+  publish:
+    desc: Publish the application ready for distribution.
+    cmd: >-
+      dotnet publish src/TotalMixVC
+      --configuration {{.CONFIGURATION}}
+      --runtime win-x64
+      --self-contained
+    deps:
+      - test
+
+  distribute:
+    desc: Create an installer for distribution.
+    cmd: iscc /Oartifacts /DAppBuildConfiguration={{.CONFIGURATION}} TotalMixVC.iss
+    deps:
+      - publish
