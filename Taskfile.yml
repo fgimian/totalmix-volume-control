@@ -3,6 +3,9 @@ version: '3'
 vars:
   CONFIGURATION: '{{default "Debug" .CONFIGURATION}}'
 tasks:
+  default:
+    cmd: task --list
+
   clean:
     desc: Clean all object and binary files along with test output.
     cmd: coreutils rm -rf .coverage src/*/TestResults src/*/bin/{{.CONFIGURATION}} src/*/obj/{{.CONFIGURATION}}
