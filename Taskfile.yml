@@ -64,7 +64,7 @@ tasks:
       --runtime win-x64
       --self-contained
     deps:
-      - test
+      - restore
 
   distribute:
     desc: Create an installer for distribution.

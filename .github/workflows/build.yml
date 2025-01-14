@@ -26,7 +26,12 @@ jobs:
       with:
         version: 3.x
 
-    - name: Restore dependencies, build, test & distribute
+    - name: Run unit tests and produce a coverage report
+      run: task cover
+      env:
+        CONFIGURATION: ${{ matrix.configuration }}
+
+    - name: Publish a self-container version of the app and create the installer
       run: task distribute
       env:
         CONFIGURATION: ${{ matrix.configuration }}

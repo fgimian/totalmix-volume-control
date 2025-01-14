@@ -98,11 +98,21 @@ After cloning the source code from GitHub, follow the steps below:
 3. Build the project using the default **Debug** configuration and create the installer
 
     ```
-    task distribute
+    task build
     ```
 
-    You may set the **CONFIGURATION** environment variable to **Release** to create a release
-    build.
+    You may create a release build by passing the **CONFIGURATION** variable to the task:
+
+    ```
+    task build CONFIGURATION=Release
+    ```
+
+4. Once you're ready, you can publish a self-container version of the application and create the
+   installer using the **distribute** target
+
+    ```
+    task distribute CONFIGURATION=Release
+    ```
 
 You'll now find an installer under the **artifacts** sub-directory.
 
