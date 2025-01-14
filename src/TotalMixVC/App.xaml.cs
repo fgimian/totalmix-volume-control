@@ -240,7 +240,7 @@ public partial class App : Application, IDisposable
     /// <summary>Disposes the current app.</summary>
     public void Dispose()
     {
-        Dispose(true);
+        Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 

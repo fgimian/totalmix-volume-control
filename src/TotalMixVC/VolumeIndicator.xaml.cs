@@ -114,7 +114,7 @@ public partial class VolumeIndicator : Window, IDisposable
     /// <summary>Disposes the current volume indicator.</summary>
     public void Dispose()
     {
-        Dispose(true);
+        Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 

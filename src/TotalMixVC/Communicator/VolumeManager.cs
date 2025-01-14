@@ -391,7 +391,7 @@ public class VolumeManager : IDisposable
     /// <summary>Disposes the current volume manager.</summary>
     public void Dispose()
     {
-        Dispose(true);
+        Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 
