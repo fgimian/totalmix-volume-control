@@ -14,7 +14,7 @@ public class TaskExtensionsTests
             completed = true;
         };
 
-        await Task.Run(task).TimeoutAfter(1000);
+        await Task.Run(task, TestContext.Current.CancellationToken).TimeoutAfter(1000);
 
         Assert.True(completed);
     }
@@ -47,14 +47,19 @@ public class TaskExtensionsTests
             completed = true;
         };
 
-        var cancelTask = Task.Run(async () =>
-        {
-            await Task.Delay(100);
-            await cancellationTokenSource.CancelAsync();
-        });
+        var cancelTask = Task.Run(
+            async () =>
+            {
+                await Task.Delay(100);
+                await cancellationTokenSource.CancelAsync();
+            },
+            TestContext.Current.CancellationToken
+        );
 
         await Assert.ThrowsAsync<OperationCanceledException>(
-            async () => await Task.Run(task).TimeoutAfter(1000, cancellationTokenSource)
+            async () =>
+                await Task.Run(task, TestContext.Current.CancellationToken)
+                    .TimeoutAfter(1000, cancellationTokenSource)
         );
         Assert.False(completed);
         await cancelTask;
@@ -107,11 +112,14 @@ public class TaskExtensionsTests
             return "Hello";
         };
 
-        var cancelTask = Task.Run(async () =>
-        {
-            await Task.Delay(100);
-            await cancellationTokenSource.CancelAsync();
-        });
+        var cancelTask = Task.Run(
+            async () =>
+            {
+                await Task.Delay(100);
+                await cancellationTokenSource.CancelAsync();
+            },
+            TestContext.Current.CancellationToken
+        );
 
         await Assert.ThrowsAsync<OperationCanceledException>(
             async () => await Task.Run(task).TimeoutAfter(1000, cancellationTokenSource)
