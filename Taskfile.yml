@@ -34,23 +34,27 @@ tasks:
       - restore
 
   test:
-    desc: Test the application and produce a coverage report.
-    cmds:
-      - >-
-        dotnet test
-        --configuration {{.CONFIGURATION}}
-        --logger xunit
-        --verbosity normal
-        --no-build
-        --collect:"XPlat Code Coverage"
-      - >-
-        dotnet reportgenerator
-        -reports:src/**/coverage.cobertura.xml
-        -targetdir:.coverage
-        "-reporttypes:Cobertura;lcov;Html"
-        -filefilters:-*.g.cs
+    desc: Run the unit tests.
+    cmd: >-
+      dotnet test
+      --configuration {{.CONFIGURATION}}
+      --logger xunit
+      --verbosity normal
+      --no-build
+      --collect:"XPlat Code Coverage"
     deps:
       - build
+
+  cover:
+    desc: Produce a coverage report for unit tests.
+    cmd: >-
+      dotnet reportgenerator
+      -reports:src/**/coverage.cobertura.xml
+      -targetdir:.coverage
+      "-reporttypes:Cobertura;lcov;Html"
+      -filefilters:-*.g.cs
+    deps:
+      - test
 
   publish:
     desc: Publish the application ready for distribution.

@@ -15,13 +15,8 @@ public class PortIntegerConverterTests
     [InlineData(7000)]
     public void Read_Valid_ConvertsWithoutError(int port)
     {
-        // Arrange
         var json = $$"""{"Port": {{port}}}""";
-
-        // Act
         var model = JsonSerializer.Deserialize<Model>(json);
-
-        // Assert
         Assert.Equal(port, model?.Port);
     }
 
@@ -32,14 +27,8 @@ public class PortIntegerConverterTests
     [InlineData(-50)]
     public void Read_Invalid_ThrowsException(int port)
     {
-        // Arrange
         var json = $$"""{"Port": {{port}}}""";
-
-        // Act
-        Action action = () => JsonSerializer.Deserialize<Model>(json);
-
-        // Assert
-        Assert.Throws<JsonException>(action);
+        Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Model>(json));
     }
 
     [Theory]
@@ -49,13 +38,8 @@ public class PortIntegerConverterTests
     [InlineData(7000)]
     public void Write_Valid_ConvertsWithoutError(int port)
     {
-        // Arrange
         var model = new Model() { Port = port };
-
-        // Act
         var json = JsonSerializer.Serialize(model);
-
-        // Assert
         Assert.Equal($$"""{"Port":{{port}}}""", json);
     }
 
@@ -66,14 +50,8 @@ public class PortIntegerConverterTests
     [InlineData(-50)]
     public void Write_Invalid_ThrowsException(int port)
     {
-        // Arrange
         var model = new Model() { Port = port };
-
-        // Act
-        Action action = () => JsonSerializer.Serialize(model);
-
-        // Assert
-        Assert.Throws<JsonException>(action);
+        Assert.Throws<JsonException>(() => JsonSerializer.Serialize(model));
     }
 
     internal sealed record Model

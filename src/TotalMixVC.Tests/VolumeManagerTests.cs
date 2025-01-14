@@ -5,125 +5,86 @@ using Xunit;
 
 namespace TotalMixVC.Tests;
 
-public static class VolumeManagerTests
+public class VolumeManagerTests
 {
-    [Fact]
-    public static void Constructor_ValidVolumeRegularIncrement_SetsProperty()
-    {
-        // Arrange & Act
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
+    private readonly ISender _sender = Substitute.For<ISender>();
 
-        using var volumeManager = new VolumeManager(sender, listener)
+    private readonly IListener _listener = Substitute.For<IListener>();
+
+    public VolumeManagerTests()
+    {
+        _sender = Substitute.For<ISender>();
+        _listener = Substitute.For<IListener>();
+    }
+
+    [Fact]
+    public void Constructor_ValidVolumeRegularIncrement_SetsProperty()
+    {
+        using var volumeManager = new VolumeManager(_sender, _listener)
         {
             VolumeRegularIncrement = 0.03f,
         };
 
-        // Assert
         Assert.Equal(0.03f, volumeManager.VolumeRegularIncrement);
     }
 
     [Theory]
     [InlineData(0.30f)]
     [InlineData(-0.01f)]
-    public static void Constructor_InvalidVolumeRegularIncrement_ThrowsException(
+    public void Constructor_InvalidVolumeRegularIncrement_ThrowsException(
         float volumeRegularIncrement
     )
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-
-        using var volumeManager = new VolumeManager(sender, listener);
-
-        // Act
-        Action action = () => volumeManager.VolumeRegularIncrement = volumeRegularIncrement;
-
-        // Assert
-        Assert.Throws<ArgumentOutOfRangeException>(action);
+        using var volumeManager = new VolumeManager(_sender, _listener);
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => volumeManager.VolumeRegularIncrement = volumeRegularIncrement
+        );
     }
 
     [Fact]
-    public static void Constructor_ValidVolumeFineIncrement_SetsProperty()
+    public void Constructor_ValidVolumeFineIncrement_SetsProperty()
     {
-        // Arrange & Act
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-
-        using var volumeManager = new VolumeManager(sender, listener)
+        using var volumeManager = new VolumeManager(_sender, _listener)
         {
             VolumeFineIncrement = 0.01f,
         };
 
-        // Assert
         Assert.Equal(0.01f, volumeManager.VolumeFineIncrement);
     }
 
     [Theory]
     [InlineData(0.10f)]
     [InlineData(-0.03f)]
-    public static void Constructor_InvalidVolumeFineIncrement_ThrowsException(
-        float volumeFineIncrement
-    )
+    public void Constructor_InvalidVolumeFineIncrement_ThrowsException(float volumeFineIncrement)
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-
-        using var volumeManager = new VolumeManager(sender, listener);
-
-        // Act
-        Action action = () => volumeManager.VolumeFineIncrement = volumeFineIncrement;
-
-        // Assert
-        Assert.Throws<ArgumentOutOfRangeException>(action);
+        using var volumeManager = new VolumeManager(_sender, _listener);
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => volumeManager.VolumeFineIncrement = volumeFineIncrement
+        );
     }
 
     [Fact]
-    public static void Constructor_ValidVolumeMax_SetsProperty()
+    public void Constructor_ValidVolumeMax_SetsProperty()
     {
-        // Arrange & Act
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-
-        using var volumeManager = new VolumeManager(sender, listener) { VolumeMax = 0.90f };
-
-        // Assert
+        using var volumeManager = new VolumeManager(_sender, _listener) { VolumeMax = 0.90f };
         Assert.Equal(0.90f, volumeManager.VolumeMax);
     }
 
     [Theory]
     [InlineData(1.10f)]
     [InlineData(-0.15f)]
-    public static void Constructor_InvalidVolumeMax_ThrowsException(float volumeMax)
+    public void Constructor_InvalidVolumeMax_ThrowsException(float volumeMax)
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-
-        using var volumeManager = new VolumeManager(sender, listener);
-
-        // Act
-        Action action = () => volumeManager.VolumeMax = volumeMax;
-
-        // Assert
-        Assert.Throws<ArgumentOutOfRangeException>(action);
+        using var volumeManager = new VolumeManager(_sender, _listener);
+        Assert.Throws<ArgumentOutOfRangeException>(() => volumeManager.VolumeMax = volumeMax);
     }
 
     [Fact]
-    public static async Task RequestVolumeAsync_RegularRequest_RequestsVolume_Async()
+    public async Task RequestVolumeAsync_RegularRequest_RequestsVolume_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-
-        using var volumeManager = new VolumeManager(sender, listener);
-
-        // Act
+        using var volumeManager = new VolumeManager(_sender, _listener);
         await volumeManager.RequestVolumeAsync();
-
-        // Assert
-        await sender
+        await _sender
             .Received()
             .SendAsync(
                 Arg.Is<OscMessage>(m =>
@@ -133,12 +94,9 @@ public static class VolumeManagerTests
     }
 
     [Fact]
-    public static async Task ReceiveVolumeAsync_ReceivesAllNormal_UpdatesVolume_Async()
+    public async Task ReceiveVolumeAsync_ReceivesAllNormal_UpdatesVolume_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-        listener
+        _listener
             .ReceiveAsync(default)
             .ReturnsForAnyArgs(
                 Task.FromResult<OscPacket>(
@@ -151,12 +109,9 @@ public static class VolumeManagerTests
                 )
             );
 
-        using var volumeManager = new VolumeManager(sender, listener);
-
-        // Act
+        using var volumeManager = new VolumeManager(_sender, _listener);
         var received = await volumeManager.ReceiveVolumeAsync();
 
-        // Assert
         Assert.True(received);
         Assert.Equal(0.20f, volumeManager.Volume);
         Assert.Equal("-38.2 dB", volumeManager.VolumeDecibels);
@@ -165,12 +120,9 @@ public static class VolumeManagerTests
     }
 
     [Fact]
-    public static async Task ReceiveVolumeAsync_ReceivesAllDimmed_UpdatesVolume_Async()
+    public async Task ReceiveVolumeAsync_ReceivesAllDimmed_UpdatesVolume_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-        listener
+        _listener
             .ReceiveAsync(default)
             .ReturnsForAnyArgs(
                 Task.FromResult<OscPacket>(
@@ -183,12 +135,9 @@ public static class VolumeManagerTests
                 )
             );
 
-        using var volumeManager = new VolumeManager(sender, listener);
-
-        // Act
+        using var volumeManager = new VolumeManager(_sender, _listener);
         var received = await volumeManager.ReceiveVolumeAsync();
 
-        // Assert
         Assert.True(received);
         Assert.Equal(0.20f, volumeManager.Volume);
         Assert.Equal("-38.2 dB", volumeManager.VolumeDecibels);
@@ -197,12 +146,9 @@ public static class VolumeManagerTests
     }
 
     [Fact]
-    public static async Task ReceiveVolumeAsync_ReceivesInvalidTypes_DoesNotReceiveResult_Async()
+    public async Task ReceiveVolumeAsync_ReceivesInvalidTypes_DoesNotReceiveResult_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-        listener
+        _listener
             .ReceiveAsync(default)
             .ReturnsForAnyArgs(
                 Task.FromResult<OscPacket>(
@@ -215,23 +161,17 @@ public static class VolumeManagerTests
                 )
             );
 
-        using var volumeManager = new VolumeManager(sender, listener);
-
-        // Act
+        using var volumeManager = new VolumeManager(_sender, _listener);
         var received = await volumeManager.ReceiveVolumeAsync();
 
-        // Assert
         Assert.False(received);
         Assert.False(volumeManager.IsVolumeInitialized);
     }
 
     [Fact]
-    public static async Task ReceiveVolumeAsync_ReceivesDecibelsOnly_UpdatesVolume_Async()
+    public async Task ReceiveVolumeAsync_ReceivesDecibelsOnly_UpdatesVolume_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-        listener
+        _listener
             .ReceiveAsync(default)
             .ReturnsForAnyArgs(
                 Task.FromResult<OscPacket>(
@@ -247,13 +187,10 @@ public static class VolumeManagerTests
                 )
             );
 
-        using var volumeManager = new VolumeManager(sender, listener);
-
-        // Act
+        using var volumeManager = new VolumeManager(_sender, _listener);
         var receivedAll = await volumeManager.ReceiveVolumeAsync();
         var receivedDecibelsOnly = await volumeManager.ReceiveVolumeAsync();
 
-        // Assert
         Assert.True(receivedAll);
         Assert.True(receivedDecibelsOnly);
         Assert.Equal(0.20f, volumeManager.Volume);
@@ -262,12 +199,9 @@ public static class VolumeManagerTests
     }
 
     [Fact]
-    public static async Task ReceiveVolumeAsync_ReceivesDecibelsOnlyInvalid_DoesNotReceiveResult_Async()
+    public async Task ReceiveVolumeAsync_ReceivesDecibelsOnlyInvalid_DoesNotReceiveResult_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-        listener
+        _listener
             .ReceiveAsync(default)
             .ReturnsForAnyArgs(
                 Task.FromResult<OscPacket>(
@@ -275,23 +209,17 @@ public static class VolumeManagerTests
                 )
             );
 
-        using var volumeManager = new VolumeManager(sender, listener);
-
-        // Act
+        using var volumeManager = new VolumeManager(_sender, _listener);
         var received = await volumeManager.ReceiveVolumeAsync();
 
-        // Assert
         Assert.False(received);
         Assert.False(volumeManager.IsVolumeInitialized);
     }
 
     [Fact]
-    public static async Task ReceiveVolumeAsync_ReceivesOtherVolume_DoesNotReceiveResult_Async()
+    public async Task ReceiveVolumeAsync_ReceivesOtherVolume_DoesNotReceiveResult_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-        listener
+        _listener
             .ReceiveAsync(default)
             .ReturnsForAnyArgs(
                 Task.FromResult<OscPacket>(
@@ -303,67 +231,49 @@ public static class VolumeManagerTests
                 )
             );
 
-        using var volumeManager = new VolumeManager(sender, listener);
-
-        // Act
+        using var volumeManager = new VolumeManager(_sender, _listener);
         var received = await volumeManager.ReceiveVolumeAsync();
 
-        // Assert
         Assert.False(received);
         Assert.False(volumeManager.IsVolumeInitialized);
     }
 
     [Fact]
-    public static async Task ReceiveVolumeAsync_IncorrectPacketType_DoesNotReceiveResult_Async()
+    public async Task ReceiveVolumeAsync_IncorrectPacketType_DoesNotReceiveResult_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-        listener
+        _listener
             .ReceiveAsync(default)
             .ReturnsForAnyArgs(
                 Task.FromResult<OscPacket>(new OscMessage("/1/mastervolume", 0.20f))
             );
 
-        using var volumeManager = new VolumeManager(sender, listener);
-
-        // Act
+        using var volumeManager = new VolumeManager(_sender, _listener);
         var received = await volumeManager.ReceiveVolumeAsync();
 
-        // Assert
         Assert.False(received);
         Assert.False(volumeManager.IsVolumeInitialized);
     }
 
     [Fact]
-    public static async Task ReceiveVolumeAsync_PacketMalformed_DoesNotReceiveResult_Async()
+    public async Task ReceiveVolumeAsync_PacketMalformed_DoesNotReceiveResult_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-        listener
+        _listener
             .ReceiveAsync(default)
             .ReturnsForAnyArgs(
                 Task.FromException<OscPacket>(new OscException(OscError.MissingComma, "weov"))
             );
 
-        using var volumeManager = new VolumeManager(sender, listener);
-
-        // Act
+        using var volumeManager = new VolumeManager(_sender, _listener);
         var received = await volumeManager.ReceiveVolumeAsync();
 
-        // Assert
         Assert.False(received);
         Assert.False(volumeManager.IsVolumeInitialized);
     }
 
     [Fact]
-    public static async Task ReceiveVolumeAsync_Timeout_ThrowsExceptionAndResetsVolume_Async()
+    public async Task ReceiveVolumeAsync_Timeout_ThrowsExceptionAndResetsVolume_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-        listener
+        _listener
             .ReceiveAsync(default)
             .ReturnsForAnyArgs(
                 Task.FromResult<OscPacket>(
@@ -377,48 +287,37 @@ public static class VolumeManagerTests
                 Task.FromException<OscPacket>(new TimeoutException("weov"))
             );
 
-        using var volumeManager = new VolumeManager(sender, listener);
+        using var volumeManager = new VolumeManager(_sender, _listener);
 
-        // Act
         var received = await volumeManager.ReceiveVolumeAsync();
         var initializedAfterVolumeReceived = volumeManager.IsVolumeInitialized;
 
-        Func<Task> task = async () => await volumeManager.ReceiveVolumeAsync();
-
-        // Assert
         Assert.True(received);
         Assert.True(initializedAfterVolumeReceived);
 
-        await Assert.ThrowsAsync<TimeoutException>(task);
+        await Assert.ThrowsAsync<TimeoutException>(
+            async () => await volumeManager.ReceiveVolumeAsync()
+        );
         Assert.False(volumeManager.IsVolumeInitialized);
     }
 
     [Fact]
-    public static async Task IncreaseVolumeAsync_RegularVolumeNotInitialized_DoesNotUpdateVolume_Async()
+    public async Task IncreaseVolumeAsync_RegularVolumeNotInitialized_DoesNotUpdateVolume_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-
-        using var volumeManager = new VolumeManager(sender, listener)
+        using var volumeManager = new VolumeManager(_sender, _listener)
         {
             VolumeRegularIncrement = 0.02f,
         };
 
-        // Act
         var updated = await volumeManager.IncreaseVolumeAsync();
 
-        // Assert
         Assert.False(updated);
     }
 
     [Fact]
-    public static async Task IncreaseVolumeAsync_RegularAfterVolumeInitialized_UpdatesVolume_Async()
+    public async Task IncreaseVolumeAsync_RegularAfterVolumeInitialized_UpdatesVolume_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-        listener
+        _listener
             .ReceiveAsync(default)
             .ReturnsForAnyArgs(
                 Task.FromResult<OscPacket>(
@@ -431,17 +330,15 @@ public static class VolumeManagerTests
                 )
             );
 
-        using var volumeManager = new VolumeManager(sender, listener)
+        using var volumeManager = new VolumeManager(_sender, _listener)
         {
             VolumeRegularIncrement = 0.02f,
         };
 
-        // Act
         await volumeManager.ReceiveVolumeAsync();
         var updated = await volumeManager.IncreaseVolumeAsync();
 
-        // Assert
-        await sender
+        await _sender
             .Received()
             .SendAsync(
                 Arg.Is<OscMessage>(m =>
@@ -454,12 +351,9 @@ public static class VolumeManagerTests
     }
 
     [Fact]
-    public static async Task IncreaseVolumeAsync_RegularExceedsMax_IsCappedAndUpdatesVolume_Async()
+    public async Task IncreaseVolumeAsync_RegularExceedsMax_IsCappedAndUpdatesVolume_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-        listener
+        _listener
             .ReceiveAsync(default)
             .ReturnsForAnyArgs(
                 Task.FromResult<OscPacket>(
@@ -472,18 +366,16 @@ public static class VolumeManagerTests
                 )
             );
 
-        using var volumeManager = new VolumeManager(sender, listener)
+        using var volumeManager = new VolumeManager(_sender, _listener)
         {
             VolumeRegularIncrement = 0.05f,
             VolumeMax = 0.50f,
         };
 
-        // Act
         await volumeManager.ReceiveVolumeAsync();
         var updated = await volumeManager.IncreaseVolumeAsync();
 
-        // Assert
-        await sender
+        await _sender
             .Received()
             .SendAsync(
                 Arg.Is<OscMessage>(m =>
@@ -496,12 +388,9 @@ public static class VolumeManagerTests
     }
 
     [Fact]
-    public static async Task IncreaseVolumeAsync_RegularAlreadyMax_DoesNotUpdateVolume_Async()
+    public async Task IncreaseVolumeAsync_RegularAlreadyMax_DoesNotUpdateVolume_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-        listener
+        _listener
             .ReceiveAsync(default)
             .ReturnsForAnyArgs(
                 Task.FromResult<OscPacket>(
@@ -514,46 +403,35 @@ public static class VolumeManagerTests
                 )
             );
 
-        using var volumeManager = new VolumeManager(sender, listener)
+        using var volumeManager = new VolumeManager(_sender, _listener)
         {
             VolumeRegularIncrement = 0.05f,
             VolumeMax = 0.50f,
         };
 
-        // Act
         await volumeManager.ReceiveVolumeAsync();
         var updated = await volumeManager.IncreaseVolumeAsync();
 
-        // Assert
         Assert.False(updated);
     }
 
     [Fact]
-    public static async Task IncreaseVolumeAsync_FineVolumeNotInitialized_DoesNotUpdateVolume_Async()
+    public async Task IncreaseVolumeAsync_FineVolumeNotInitialized_DoesNotUpdateVolume_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-
-        using var volumeManager = new VolumeManager(sender, listener)
+        using var volumeManager = new VolumeManager(_sender, _listener)
         {
             VolumeFineIncrement = 0.01f,
         };
 
-        // Act
         var updated = await volumeManager.IncreaseVolumeAsync(fine: true);
 
-        // Assert
         Assert.False(updated);
     }
 
     [Fact]
-    public static async Task FineAfterVolumeInitialized_UpdatesVolume_Async()
+    public async Task FineAfterVolumeInitialized_UpdatesVolume_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-        listener
+        _listener
             .ReceiveAsync(default)
             .ReturnsForAnyArgs(
                 Task.FromResult<OscPacket>(
@@ -566,17 +444,15 @@ public static class VolumeManagerTests
                 )
             );
 
-        using var volumeManager = new VolumeManager(sender, listener)
+        using var volumeManager = new VolumeManager(_sender, _listener)
         {
             VolumeFineIncrement = 0.01f,
         };
 
-        // Act
         await volumeManager.ReceiveVolumeAsync();
         var updated = await volumeManager.IncreaseVolumeAsync(fine: true);
 
-        // Assert
-        await sender
+        await _sender
             .Received()
             .SendAsync(
                 Arg.Is<OscMessage>(m =>
@@ -589,31 +465,22 @@ public static class VolumeManagerTests
     }
 
     [Fact]
-    public static async Task DecreaseVolumeAsync_RegularVolumeNotInitialized_DoesNotUpdateVolume_Async()
+    public async Task DecreaseVolumeAsync_RegularVolumeNotInitialized_DoesNotUpdateVolume_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-
-        using var volumeManager = new VolumeManager(sender, listener)
+        using var volumeManager = new VolumeManager(_sender, _listener)
         {
             VolumeRegularIncrement = 0.02f,
         };
 
-        // Act
         var updated = await volumeManager.DecreaseVolumeAsync();
 
-        // Assert
         Assert.False(updated);
     }
 
     [Fact]
-    public static async Task DecreaseVolumeAsync_RegularAfterVolumeInitialized_UpdatesVolume_Async()
+    public async Task DecreaseVolumeAsync_RegularAfterVolumeInitialized_UpdatesVolume_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-        listener
+        _listener
             .ReceiveAsync(default)
             .ReturnsForAnyArgs(
                 Task.FromResult<OscPacket>(
@@ -626,17 +493,15 @@ public static class VolumeManagerTests
                 )
             );
 
-        using var volumeManager = new VolumeManager(sender, listener)
+        using var volumeManager = new VolumeManager(_sender, _listener)
         {
             VolumeRegularIncrement = 0.02f,
         };
 
-        // Act
         await volumeManager.ReceiveVolumeAsync();
         var updated = await volumeManager.DecreaseVolumeAsync();
 
-        // Assert
-        await sender
+        await _sender
             .Received()
             .SendAsync(
                 Arg.Is<OscMessage>(m =>
@@ -649,12 +514,9 @@ public static class VolumeManagerTests
     }
 
     [Fact]
-    public static async Task DecreaseVolumeAsync_RegularBelowSilent_IsSetToSilentAndUpdatesVolume_Async()
+    public async Task DecreaseVolumeAsync_RegularBelowSilent_IsSetToSilentAndUpdatesVolume_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-        listener
+        _listener
             .ReceiveAsync(default)
             .ReturnsForAnyArgs(
                 Task.FromResult<OscPacket>(
@@ -667,17 +529,15 @@ public static class VolumeManagerTests
                 )
             );
 
-        using var volumeManager = new VolumeManager(sender, listener)
+        using var volumeManager = new VolumeManager(_sender, _listener)
         {
             VolumeRegularIncrement = 0.05f,
         };
 
-        // Act
         await volumeManager.ReceiveVolumeAsync();
         var updated = await volumeManager.DecreaseVolumeAsync();
 
-        // Assert
-        await sender
+        await _sender
             .Received()
             .SendAsync(
                 Arg.Is<OscMessage>(m =>
@@ -690,12 +550,9 @@ public static class VolumeManagerTests
     }
 
     [Fact]
-    public static async Task DecreaseVolumeAsync_RegularAlreadySilent_DoesNotUpdateVolume_Async()
+    public async Task DecreaseVolumeAsync_RegularAlreadySilent_DoesNotUpdateVolume_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-        listener
+        _listener
             .ReceiveAsync(default)
             .ReturnsForAnyArgs(
                 Task.FromResult<OscPacket>(
@@ -708,46 +565,35 @@ public static class VolumeManagerTests
                 )
             );
 
-        using var volumeManager = new VolumeManager(sender, listener)
+        using var volumeManager = new VolumeManager(_sender, _listener)
         {
             VolumeRegularIncrement = 0.05f,
             VolumeMax = 0.50f,
         };
 
-        // Act
         await volumeManager.ReceiveVolumeAsync();
         var updated = await volumeManager.DecreaseVolumeAsync();
 
-        // Assert
         Assert.False(updated);
     }
 
     [Fact]
-    public static async Task DecreaseVolumeAsync_FineVolumeNotInitialized_DoesNotUpdateVolume_Async()
+    public async Task DecreaseVolumeAsync_FineVolumeNotInitialized_DoesNotUpdateVolume_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-
-        using var volumeManager = new VolumeManager(sender, listener)
+        using var volumeManager = new VolumeManager(_sender, _listener)
         {
             VolumeFineIncrement = 0.01f,
         };
 
-        // Act
         var updated = await volumeManager.DecreaseVolumeAsync(fine: true);
 
-        // Assert
         Assert.False(updated);
     }
 
     [Fact]
-    public static async Task DecreaseVolumeAsync_FineAfterVolumeInitialized_UpdatesVolume_Async()
+    public async Task DecreaseVolumeAsync_FineAfterVolumeInitialized_UpdatesVolume_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-        listener
+        _listener
             .ReceiveAsync(default)
             .ReturnsForAnyArgs(
                 Task.FromResult<OscPacket>(
@@ -760,17 +606,15 @@ public static class VolumeManagerTests
                 )
             );
 
-        using var volumeManager = new VolumeManager(sender, listener)
+        using var volumeManager = new VolumeManager(_sender, _listener)
         {
             VolumeFineIncrement = 0.01f,
         };
 
-        // Act
         await volumeManager.ReceiveVolumeAsync();
         var updated = await volumeManager.DecreaseVolumeAsync(fine: true);
 
-        // Assert
-        await sender
+        await _sender
             .Received()
             .SendAsync(
                 Arg.Is<OscMessage>(m =>
@@ -783,28 +627,17 @@ public static class VolumeManagerTests
     }
 
     [Fact]
-    public static async Task ToggloDimAsync_VolumeNotInitialized_DoesNotUpdateDim_Async()
+    public async Task ToggloDimAsync_VolumeNotInitialized_DoesNotUpdateDim_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-
-        using var volumeManager = new VolumeManager(sender, listener);
-
-        // Act
+        using var volumeManager = new VolumeManager(_sender, _listener);
         var updated = await volumeManager.ToggloDimAsync();
-
-        // Assert
         Assert.False(updated);
     }
 
     [Fact]
-    public static async Task ToggloDimAsync_AfterVolumeInitialized_EnableDim_Async()
+    public async Task ToggloDimAsync_AfterVolumeInitialized_EnableDim_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-        listener
+        _listener
             .ReceiveAsync(default)
             .ReturnsForAnyArgs(
                 Task.FromResult<OscPacket>(
@@ -817,14 +650,11 @@ public static class VolumeManagerTests
                 )
             );
 
-        using var volumeManager = new VolumeManager(sender, listener);
-
-        // Act
+        using var volumeManager = new VolumeManager(_sender, _listener);
         await volumeManager.ReceiveVolumeAsync();
         var updated = await volumeManager.ToggloDimAsync();
 
-        // Assert
-        await sender
+        await _sender
             .Received()
             .SendAsync(
                 Arg.Is<OscMessage>(m =>
@@ -837,12 +667,9 @@ public static class VolumeManagerTests
     }
 
     [Fact]
-    public static async Task ToggloDimAsync_AfterVolumeInitialized_DisableDim_Async()
+    public async Task ToggloDimAsync_AfterVolumeInitialized_DisableDim_Async()
     {
-        // Arrange
-        var sender = Substitute.For<ISender>();
-        var listener = Substitute.For<IListener>();
-        listener
+        _listener
             .ReceiveAsync(default)
             .ReturnsForAnyArgs(
                 Task.FromResult<OscPacket>(
@@ -855,14 +682,11 @@ public static class VolumeManagerTests
                 )
             );
 
-        using var volumeManager = new VolumeManager(sender, listener);
-
-        // Act
+        using var volumeManager = new VolumeManager(_sender, _listener);
         await volumeManager.ReceiveVolumeAsync();
         var updated = await volumeManager.ToggloDimAsync();
 
-        // Assert
-        await sender
+        await _sender
             .Received()
             .SendAsync(
                 Arg.Is<OscMessage>(m =>

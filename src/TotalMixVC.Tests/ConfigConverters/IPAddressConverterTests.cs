@@ -14,13 +14,8 @@ public class IPAddressConverterTests
     [InlineData("192.168.0.1")]
     public void Read_Valid_ConvertsWithoutError(string address)
     {
-        // Arrange
         var json = $$"""{"Address": "{{address}}"}""";
-
-        // Act
         var model = JsonSerializer.Deserialize<Model>(json);
-
-        // Assert
         Assert.Equal(address, model?.Address.ToString());
     }
 
@@ -31,26 +26,15 @@ public class IPAddressConverterTests
     [InlineData("osc.example.com")]
     public void Read_Invalid_ThrowsException(string address)
     {
-        // Arrange
         var json = $$"""{"Address": "{{address}}"}""";
-
-        // Act
-        Action action = () => JsonSerializer.Deserialize<Model>(json);
-
-        // Assert
-        Assert.Throws<JsonException>(action);
+        Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Model>(json));
     }
 
     [Fact]
     public void Write_Valid_ConvertsWithoutError()
     {
-        // Arrange
         var model = new Model() { Address = IPAddress.Loopback };
-
-        // Act
         var json = JsonSerializer.Serialize(model);
-
-        // Assert
         /*lang=json,strict*/
         Assert.Equal("""{"Address":"127.0.0.1"}""", json);
     }

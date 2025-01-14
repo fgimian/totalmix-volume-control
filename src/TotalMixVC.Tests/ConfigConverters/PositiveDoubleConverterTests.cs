@@ -14,13 +14,8 @@ public class PositiveDoubleConverterTests
     [InlineData(10.0)]
     public void Read_Valid_ConvertsWithoutError(double value)
     {
-        // Arrange
         var json = $$"""{"Value": {{value}}}""";
-
-        // Act
         var model = JsonSerializer.Deserialize<Model>(json);
-
-        // Assert
         Assert.Equal(value, model?.Value);
     }
 
@@ -31,14 +26,8 @@ public class PositiveDoubleConverterTests
     [InlineData(-10.5)]
     public void Read_Invalid_ThrowsException(double value)
     {
-        // Arrange
         var json = $$"""{"Value": {{value}}}""";
-
-        // Act
-        Action action = () => JsonSerializer.Deserialize<Model>(json);
-
-        // Assert
-        Assert.Throws<JsonException>(action);
+        Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Model>(json));
     }
 
     [Theory]
@@ -48,13 +37,8 @@ public class PositiveDoubleConverterTests
     [InlineData(10.0)]
     public void Write_Valid_ConvertsWithoutError(double value)
     {
-        // Arrange
         var model = new Model() { Value = value };
-
-        // Act
         var json = JsonSerializer.Serialize(model);
-
-        // Assert
         Assert.Equal($$"""{"Value":{{value}}}""", json);
     }
 
@@ -65,14 +49,8 @@ public class PositiveDoubleConverterTests
     [InlineData(-10.5)]
     public void Write_Invalid_ThrowsException(double value)
     {
-        // Arrange
         var model = new Model() { Value = value };
-
-        // Act
-        Action action = () => JsonSerializer.Serialize(model);
-
-        // Assert
-        Assert.Throws<JsonException>(action);
+        Assert.Throws<JsonException>(() => JsonSerializer.Serialize(model));
     }
 
     internal sealed record Model
