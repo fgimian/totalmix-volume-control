@@ -27,7 +27,7 @@ jobs:
         version: 3.x
 
     - name: Run unit tests and produce a coverage report
-      run: task cover
+      run: task report
       env:
         CONFIGURATION: ${{ matrix.configuration }}
 

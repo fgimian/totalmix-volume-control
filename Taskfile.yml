@@ -45,7 +45,7 @@ tasks:
     deps:
       - build
 
-  cover:
+  report:
     desc: Produce a coverage report for unit tests.
     cmd: >-
       dotnet reportgenerator
