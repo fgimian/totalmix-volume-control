@@ -26,6 +26,11 @@ jobs:
       with:
         version: 3.x
 
+    - name: Setup coreutils
+      uses: baptiste0928/cargo-install@v3
+      with:
+        crate: coreutils
+
     - name: Run unit tests and produce a coverage report
       run: task report
       env:
