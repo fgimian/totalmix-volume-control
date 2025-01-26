@@ -108,10 +108,10 @@ After cloning the source code from GitHub, follow the steps below:
     ```
 
 4. Once you're ready, you can publish a self-container version of the application and create the
-   installer using the **distribute** target
+   installer using the **installer** target
 
     ```
-    task distribute CONFIGURATION=Release
+    task installer CONFIGURATION=Release
     ```
 
 You'll now find an installer under the **artifacts** sub-directory.

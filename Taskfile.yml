@@ -70,7 +70,7 @@ tasks:
     deps:
       - restore
 
-  distribute:
+  installer:
     desc: Create an installer for distribution.
     cmd: iscc /Oartifacts /DAppBuildConfiguration={{.CONFIGURATION}} TotalMixVC.iss
     deps:

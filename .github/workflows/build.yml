@@ -37,7 +37,7 @@ jobs:
         CONFIGURATION: ${{ matrix.configuration }}
 
     - name: Publish a self-container version of the app and create the installer
-      run: task distribute
+      run: task installer
       env:
         CONFIGURATION: ${{ matrix.configuration }}
 
