@@ -1,30 +1,31 @@
-﻿using System.Text.Json.Serialization;
-using TotalMixVC.Configuration.Converters;
-
-namespace TotalMixVC.Configuration;
+﻿namespace TotalMixVC.Configuration;
 
 /// <summary>Provides configuration related to volume changes on the device.</summary>
 public record Volume
 {
     /// <summary>
+    /// Gets a value indicating whether volume units are set in dB instead of percentages.
+    /// </summary>
+    public bool UseDecibels { get; init; }
+
+    /// <summary>
     /// Gets the increment that is to be used when adjusting the volume. The volume ranges from
-    /// 0.0 and 1.0 and thus the max allowed increment is 0.10 to avoid major jumps in volume.
+    /// 0.0 and 1.0 and thus the max allowed increment is 0.10 for percentages or 3.0 in decibels
+    /// to avoid major jumps in volume.
     /// </summary>
-    [JsonConverter(typeof(VolumeIncrementFloatConverter))]
-    public float Increment { get; init; } = 0.02f;
+    public float? Increment { get; init; }
 
     /// <summary>
-    /// Gets the fineincrement that is to be used when adjusting the volume and holding the Shift
-    /// key. The volume ranges from 0.0 and 1.0 and thus the max allowed fine increment is 0.05 to
-    /// avoid major jumps in volume.
+    /// Gets the fine increment that is to be used when adjusting the volume and holding the Shift
+    /// key. The volume ranges from 0.0 and 1.0 and thus the max allowed fine increment is 0.05
+    /// for percentages and 1.5 in decibels to avoid major jumps in volume. When using decibels,
+    /// it is generally a good idea to ensure the fine increment is a multiple of increment.
     /// </summary>
-    [JsonConverter(typeof(VolumeFineIncrementFloatConverter))]
-    public float FineIncrement { get; init; } = 0.01f;
+    public float? FineIncrement { get; init; }
 
     /// <summary>
-    /// Gets the maximum volume that will be sent by the application where 1.0 is the loudest
-    /// volume the device can receive.
+    /// Gets the maximum volume that will be sent by the application where 1.0 or 6.0 dB is the
+    /// loudest volume the device can receive.
     /// </summary>
-    [JsonConverter(typeof(VolumeMaxFloatConverter))]
-    public float Max { get; init; } = 1.0f;
+    public float? Max { get; init; }
 }

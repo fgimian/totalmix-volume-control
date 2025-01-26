@@ -121,7 +121,7 @@ public partial class App : Application, IDisposable
             )!;
             return true;
         }
-        catch (JsonException e)
+        catch (JsonException ex)
         {
             var configDescription = running ? "existing" : "default";
 
@@ -129,12 +129,12 @@ public partial class App : Application, IDisposable
 
             message.Append(
                 CultureInfo.InvariantCulture,
-                $"Unable to parse the config file at {s_configPath}.\n\n{e.Message}"
+                $"Unable to parse the config file at {s_configPath}.\n\n{ex.Message}"
             );
 
-            if (e.InnerException is not null)
+            if (ex.InnerException is not null)
             {
-                message.Append(CultureInfo.InvariantCulture, $" {e.InnerException.Message}");
+                message.Append(CultureInfo.InvariantCulture, $" {ex.InnerException.Message}");
             }
 
             message.Append(
@@ -164,12 +164,12 @@ public partial class App : Application, IDisposable
 
             return false;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
             var configDescription = running ? "existing" : "default";
             var message =
                 $"Unable to load the config file at {s_configPath} "
-                + $"({e.InnerException?.Message ?? e.Message}).\n\nThe application will continue "
+                + $"({ex.InnerException?.Message ?? ex.Message}).\n\nThe application will continue "
                 + $"with the {configDescription} configuration.";
 
             if (running)
@@ -221,7 +221,23 @@ public partial class App : Application, IDisposable
             return;
         }
 
-        ConfigureVolumeManager();
+        try
+        {
+            ConfigureVolumeManager();
+        }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            MessageBox.Show(
+                _volumeIndicator,
+                $"Unable to configure the volume based on the config file at {s_configPath} "
+                    + $"({ex.InnerException?.Message ?? ex.Message}).\n\nThe application will "
+                    + "continue with the existing configuration.",
+                caption: "Configuration File Error",
+                button: MessageBoxButton.OK,
+                icon: MessageBoxImage.Exclamation
+            );
+        }
+
         ConfigureInterface();
         ConfigureTheme();
 
@@ -327,7 +343,23 @@ public partial class App : Application, IDisposable
             return;
         }
 
-        ConfigureVolumeManager();
+        try
+        {
+            ConfigureVolumeManager();
+        }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            MessageBox.Show(
+                _volumeIndicator,
+                $"Unable to configure the volume based on the config file at {s_configPath} "
+                    + $"({ex.InnerException?.Message ?? ex.Message}).\n\nThe application will "
+                    + "continue with the default configuration.",
+                caption: "Configuration File Error",
+                button: MessageBoxButton.OK,
+                icon: MessageBoxImage.Exclamation
+            );
+            return;
+        }
 
         // Start a task that will receive and record volume changes.
         _volumeReceiveTask = _joinableTaskFactory.RunAsync(ReceiveVolumeAsync);
@@ -566,9 +598,22 @@ public partial class App : Application, IDisposable
 
     private void ConfigureVolumeManager()
     {
-        _volumeManager.VolumeRegularIncrement = _config.Volume.Increment;
-        _volumeManager.VolumeFineIncrement = _config.Volume.FineIncrement;
-        _volumeManager.VolumeMax = _config.Volume.Max;
+        _volumeManager.UseDecibels = _config.Volume.UseDecibels;
+
+        if (_config.Volume.Increment is float volumeIncrement)
+        {
+            _volumeManager.VolumeRegularIncrement = volumeIncrement;
+        }
+
+        if (_config.Volume.FineIncrement is float fineIncrement)
+        {
+            _volumeManager.VolumeFineIncrement = fineIncrement;
+        }
+
+        if (_config.Volume.Max is float volumeMax)
+        {
+            _volumeManager.VolumeMax = volumeMax;
+        }
     }
 
     private void ConfigureInterface()

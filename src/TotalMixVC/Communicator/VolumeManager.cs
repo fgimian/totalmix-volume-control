@@ -30,6 +30,8 @@ public class VolumeManager : IDisposable
 
     private readonly IListener _listener;
 
+    private bool _useDecibels;
+
     private float _volumeRegularIncrement = 0.02f;
 
     private float _volumeFineIncrement = 0.01f;
@@ -88,6 +90,34 @@ public class VolumeManager : IDisposable
     public bool IsDimmed => Dim == 1.0f;
 
     /// <summary>
+    /// Gets or sets a value indicating whether volume units are set in dB instead of percentages.
+    /// </summary>
+    public bool UseDecibels
+    {
+        get => _useDecibels;
+        set
+        {
+            if (_useDecibels != value)
+            {
+                if (value)
+                {
+                    _volumeRegularIncrement = 1.0f;
+                    _volumeFineIncrement = 0.5f;
+                    _volumeMax = 6.0f;
+                }
+                else
+                {
+                    _volumeRegularIncrement = 0.02f;
+                    _volumeFineIncrement = 0.01f;
+                    _volumeMax = 1.0f;
+                }
+            }
+
+            _useDecibels = value;
+        }
+    }
+
+    /// <summary>
     /// Gets or sets the increment to use when regularly increasing or decreasing the volume.
     /// </summary>
     /// <exception cref="ArgumentException">
@@ -101,7 +131,15 @@ public class VolumeManager : IDisposable
         get => _volumeRegularIncrement;
         set
         {
-            if (value is <= 0.0f or > 0.10f)
+            if (_useDecibels && !(value is 0.5f or 1.0f or 1.5f or 2.0f or 2.5f or 3.0f))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(value),
+                    "Specified dB volume increment must be a multiple of 0.5 while being greater "
+                        + "than 0 and less than or equal to 3.0."
+                );
+            }
+            else if (!_useDecibels && value is <= 0.0f or > 0.10f)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(value),
@@ -128,7 +166,15 @@ public class VolumeManager : IDisposable
         get => _volumeFineIncrement;
         set
         {
-            if (value is <= 0.0f or > 0.05f)
+            if (_useDecibels && !(value is 0.5f or 1.0f or 1.5f))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(value),
+                    "Specified fine dB volume increment must be a multiple of 0.5 while being "
+                        + "greater than 0 and less than or equal to 1.5."
+                );
+            }
+            else if (!_useDecibels && value is <= 0.0f or > 0.05f)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(value),
@@ -155,7 +201,14 @@ public class VolumeManager : IDisposable
         get => _volumeMax;
         set
         {
-            if (value is <= 0.0f or > 1.0f)
+            if (_useDecibels && value is > 6.0f)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(value),
+                    "Specified max dB volume must be less than or equal to 6.0."
+                );
+            }
+            else if (!_useDecibels && value is <= 0.0f or > 1.0f)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(value),
@@ -292,12 +345,31 @@ public class VolumeManager : IDisposable
         {
             // Calculate the new volume.
             var increment = fine ? _volumeFineIncrement : _volumeRegularIncrement;
-            var newVolume = Volume + increment;
 
-            // Ensure it doesn't exceed the max.
-            if (newVolume >= VolumeMax)
+            float newVolume;
+            if (UseDecibels)
             {
-                newVolume = VolumeMax;
+                var volumeDB =
+                    MathF.Floor(MathF.Round(ValueToDecibels(Volume) / increment, 1)) * increment;
+                volumeDB += increment;
+
+                // Ensure it doesn't exceed the max dB.
+                if (volumeDB >= VolumeMax)
+                {
+                    volumeDB = VolumeMax;
+                }
+
+                newVolume = DecibelsToValue(volumeDB);
+            }
+            else
+            {
+                newVolume = Volume + increment;
+
+                // Ensure it doesn't exceed the max.
+                if (newVolume >= VolumeMax)
+                {
+                    newVolume = VolumeMax;
+                }
             }
 
             // Only send an update via OSC if the value has changed.
@@ -336,7 +408,18 @@ public class VolumeManager : IDisposable
         {
             // Calculate the new volume.
             var increment = fine ? VolumeFineIncrement : VolumeRegularIncrement;
-            var newVolume = Volume - increment;
+            float newVolume;
+            if (UseDecibels)
+            {
+                var volumeDB =
+                    MathF.Ceiling(MathF.Round(ValueToDecibels(Volume) / increment, 1)) * increment;
+                volumeDB -= increment;
+                newVolume = DecibelsToValue(volumeDB);
+            }
+            else
+            {
+                newVolume = Volume - increment;
+            }
 
             // Ensure it doesn't go below the minimum possible volume.
             if (newVolume < 0.0f)
@@ -403,6 +486,27 @@ public class VolumeManager : IDisposable
         {
             _volumeMutex.Dispose();
         }
+    }
+
+    private static float DecibelsToValue(float dBValue)
+    {
+        var sendValue =
+            dBValue >= -6.0f
+                ? (dBValue + 26.8235294118f) * (1.0f / 0.0320855615f) / 1023.0f
+                : (826.0f - MathF.Sqrt(-34869.0f - (11033.0f * dBValue))) / 1023.0f;
+
+        return Math.Clamp(sendValue, 0.0f, 1.0f);
+    }
+
+    private static float ValueToDecibels(float receivedValue)
+    {
+        var faderPos = receivedValue * 1023.0f;
+        if (faderPos >= 649.0f)
+        {
+            return (faderPos * 0.0320855615f) - 26.8235294118f;
+        }
+
+        return (faderPos * faderPos * (-1.0f / 11033.0f)) + (faderPos * 0.1497326203f) - 65.0f;
     }
 
     private Task<int> SendVolumeAsync(float volume)
