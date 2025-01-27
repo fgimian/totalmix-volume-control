@@ -22,20 +22,24 @@ incoming_endpoint = "127.0.0.1:9001"
 use_decibels = false
 
 # The amount that the volume should be increased when using the volume keys.
-# - Percentage: Up to max of 0.10 which will increase the volume by 10%.
-# - Decibels: Up to max of 3.0 dB in multiples of 0.5 (e.g. 0.5, 1.0, 1.5, etc.).
+# Percentage: Up to max of 0.10 which will increase the volume by 10%.
 increment = 0.02
+# Decibels: Up to max of 6.0 dB in multiples of 0.25 (e.g. 0.25, 0.5, 0.75, etc.).
+# increment = 2.0
 
 # The amount that the volume should be increased when using the volume keys and holding shift down.
-# - Percentage: Up to a max of 0.05 which will increase the volume by 5%.
-# - Decibels: Up to max of 1.5 dB in multiples of 0.5 (i.e.. 0.5, 1.0 or 1.5). When using decibels,
-#             it is generally a good idea to ensure the fine increment is a multiple of increment.
+# Percentage: Up to a max of 0.05 which will increase the volume by 5%.
 fine_increment = 0.01
+# Decibels: Up to max of 3.0 dB in multiples of 0.25 (i.e.. 0.25, 0.5, 0.75, etc.). When using
+#           decibels, it is generally a good idea to ensure the fine increment is a multiple of
+#           increment.
+# fine_increment = 0.5
 
 # The maximum volume to send.
-# - Percentage: Up to a max of 1.0 which is 100% volume.
-# - Decibels: Up to max of 6.0 dB.
+# Percentage: Up to a max of 1.0 which is 100% volume.
 max = 1.0
+# Decibels: Up to max of 6.0 dB.
+# max = 6.0
 
 [theme]
 # The main widget and tray tooltip background corner rounding and color.

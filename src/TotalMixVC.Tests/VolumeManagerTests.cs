@@ -29,8 +29,8 @@ public sealed class VolumeManagerTests : IDisposable
     public void Constructor_EnablingUseDecibels_UpdatesDefaults()
     {
         _volumeManager.UseDecibels = true;
-        Assert.Equal(1.0f, _volumeManager.VolumeRegularIncrement);
-        Assert.Equal(0.5f, _volumeManager.VolumeFineIncrement);
+        Assert.Equal(2.0f, _volumeManager.VolumeRegularIncrement);
+        Assert.Equal(1.0f, _volumeManager.VolumeFineIncrement);
         Assert.Equal(6.0f, _volumeManager.VolumeMax);
     }
 
@@ -77,12 +77,19 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Theory]
+    [InlineData(0.25f)]
     [InlineData(0.5f)]
+    [InlineData(0.75f)]
     [InlineData(1.0f)]
+    [InlineData(1.25f)]
     [InlineData(1.5f)]
+    [InlineData(1.75f)]
     [InlineData(2.0f)]
     [InlineData(2.5f)]
-    [InlineData(3.0f)]
+    [InlineData(4.0f)]
+    [InlineData(5.0f)]
+    [InlineData(5.5f)]
+    [InlineData(5.75f)]
     public void Constructor_ValidVolumeRegularIncrementDecibels_SetsProperty(
         float volumeRegularIncrement
     )
@@ -110,7 +117,8 @@ public sealed class VolumeManagerTests : IDisposable
     [InlineData(1.1f)]
     [InlineData(2.7f)]
     [InlineData(3.1f)]
-    [InlineData(3.5f)]
+    [InlineData(6.25f)]
+    [InlineData(6.5f)]
     public void Constructor_InvalidVolumeRegularIncrementDecibels_ThrowsException(
         float volumeRegularIncrement
     )
@@ -129,9 +137,13 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Theory]
+    [InlineData(0.25f)]
     [InlineData(0.5f)]
     [InlineData(1.0f)]
+    [InlineData(1.25f)]
     [InlineData(1.5f)]
+    [InlineData(2.0f)]
+    [InlineData(2.75f)]
     public void Constructor_ValidVolumeFineIncrementDecibels_SetsProperty(float volumeFineIncrement)
     {
         _volumeManager.UseDecibels = true;
@@ -156,7 +168,8 @@ public sealed class VolumeManagerTests : IDisposable
     [InlineData(0.3f)]
     [InlineData(1.1f)]
     [InlineData(1.9f)]
-    [InlineData(2.0f)]
+    [InlineData(3.25f)]
+    [InlineData(3.5f)]
     public void Constructor_InvalidVolumeFineIncrementDecibels_ThrowsException(
         float volumeFineIncrement
     )

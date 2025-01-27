@@ -108,8 +108,8 @@ public class VolumeManager : IDisposable
             {
                 if (value)
                 {
-                    _volumeRegularIncrement = 1.0f;
-                    _volumeFineIncrement = 0.5f;
+                    _volumeRegularIncrement = 2.0f;
+                    _volumeFineIncrement = 1.0f;
                     _volumeMax = 6.0f;
                 }
                 else
@@ -138,12 +138,12 @@ public class VolumeManager : IDisposable
         get => _volumeRegularIncrement;
         set
         {
-            if (_useDecibels && !(value is 0.5f or 1.0f or 1.5f or 2.0f or 2.5f or 3.0f))
+            if (_useDecibels && (value <= 0.0 || value > 6.0 || value % 0.25f != 0.0f))
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(value),
-                    "Specified dB volume increment must be a multiple of 0.5 while being greater "
-                        + "than 0 and less than or equal to 3.0."
+                    "Specified dB volume increment must be a multiple of 0.25 while being greater "
+                        + "than 0 and less than or equal to 6.0."
                 );
             }
             else if (!_useDecibels && value is <= 0.0f or > 0.10f)
@@ -173,12 +173,12 @@ public class VolumeManager : IDisposable
         get => _volumeFineIncrement;
         set
         {
-            if (_useDecibels && !(value is 0.5f or 1.0f or 1.5f))
+            if (_useDecibels && (value <= 0.0 || value > 3.0 || value % 0.25f != 0.0f))
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(value),
-                    "Specified fine dB volume increment must be a multiple of 0.5 while being "
-                        + "greater than 0 and less than or equal to 1.5."
+                    "Specified fine dB volume increment must be a multiple of 0.25 while being "
+                        + "greater than 0 and less than or equal to 3.0."
                 );
             }
             else if (!_useDecibels && value is <= 0.0f or > 0.05f)
