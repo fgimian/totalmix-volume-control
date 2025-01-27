@@ -30,7 +30,7 @@ public partial class GlobalHotKeyManager : IDisposable
         _actions = [];
 
         // Please note that the message loop pumper calls ThreadFilterMessage and then
-        // ThreadPreprocessMessage every time it receives a key stroke.  Thus, either of these
+        // ThreadPreprocessMessage every time it receives a key stroke. Thus, either of these
         // will suffice for our purposes.
         ComponentDispatcher.ThreadPreprocessMessage += OnThreadPreprocessMessage;
     }
@@ -58,7 +58,7 @@ public partial class GlobalHotKeyManager : IDisposable
     }
 
     /// <summary>
-    /// The event handler that executes when a keyboard is message is received.  This handler
+    /// The event handler that executes when a keyboard is message is received. This handler
     /// will run the appropriate action based on the hotkey detected.
     /// </summary>
     /// <param name="msg">Message information for the key stroke.</param>

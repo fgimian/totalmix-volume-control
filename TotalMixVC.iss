@@ -1,5 +1,5 @@
 ; The version needs to be passed explicitly via /DAppVersion=0.1.0 as GitVersion is used to
-; determine the release version.  Alternatively, the option below may be uncommented if required.
+; determine the release version. Alternatively, the option below may be uncommented if required.
 ; #define AppVersion "1.0"
 
 ; The build configuration needs to be passed explicitly via /DAppBuildConfiguration=Release or

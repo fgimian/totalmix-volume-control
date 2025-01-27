@@ -42,11 +42,11 @@ public class VolumeManager : IDisposable
     /// Initializes a new instance of the <see cref="VolumeManager"/> class.
     /// </summary>
     /// <param name="outgoingEP">
-    /// The outgoing OSC endpoint to send volume changes to.  This should be set to the
+    /// The outgoing OSC endpoint to send volume changes to. This should be set to the
     /// incoming port in TotalMix settings.
     /// </param>
     /// <param name="incomingEP">
-    /// The incoming OSC endpoint to receive volume changes from.  This should be set to the
+    /// The incoming OSC endpoint to receive volume changes from. This should be set to the
     /// outgoing port in TotalMix settings.
     /// </param>
     [ExcludeFromCodeCoverage]
@@ -272,7 +272,7 @@ public class VolumeManager : IDisposable
     {
         // Ping events are sent from the device every around every 1 second, so we only
         // wait until a given timeout of 5 seconds before giving up and forcing a fresh
-        // receive request.  This ensures that the receiver can detect a device which was
+        // receive request. This ensures that the receiver can detect a device which was
         // previous offline.
         OscPacket packet;
         using var receiveCancellationTokenSource = new CancellationTokenSource();

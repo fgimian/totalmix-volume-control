@@ -59,7 +59,7 @@ public partial class VolumeIndicator : Window, IDisposable
     }
 
     /// <summary>
-    /// Displays the volume indicator with the current volume details.  This method may be
+    /// Displays the volume indicator with the current volume details. This method may be
     /// safely called from inside an async task.
     /// </summary>
     /// <returns>The task object representing the asynchronous operation.</returns>
@@ -68,7 +68,7 @@ public partial class VolumeIndicator : Window, IDisposable
         // Switch to the UI thread.
         await _joinableTaskFactory.SwitchToMainThreadAsync();
 
-        // Display the volume indicator with the current volume details.  We use a dispatcher
+        // Display the volume indicator with the current volume details. We use a dispatcher
         // to ensure that this work occurs in the UI thread.
         var showStoryboard = (Storyboard)Resources["WindowStoryboardShow"];
         showStoryboard.Begin(this);
@@ -86,7 +86,7 @@ public partial class VolumeIndicator : Window, IDisposable
     }
 
     /// <summary>
-    /// Updates the volume in the volume indicator given the provided volume details.  This
+    /// Updates the volume in the volume indicator given the provided volume details. This
     /// method may be safely called from inside an async task.
     /// </summary>
     /// <param name="volume">The current volume as a float.</param>
