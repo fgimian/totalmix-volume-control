@@ -478,17 +478,13 @@ public class VolumeManager : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    /// <summary>Disposes the current volume manager.</summary>
-    /// <param name="disposing">Whether managed resources should be disposed.</param>
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            _volumeMutex.Dispose();
-        }
-    }
-
-    private static float DecibelsToValue(float dBValue)
+    /// <summary>
+    /// Converts a volume value in dB to a float value in the range 0.0 to 1.0 that may then be
+    /// sent to the device.
+    /// </summary>
+    /// <param name="dBValue">The volume in decibels.</param>
+    /// <returns>The converted volume represented as a float between 0.0 and 1.0.</returns>
+    internal static float DecibelsToValue(float dBValue)
     {
         var sendValue =
             dBValue >= -6.0f
@@ -498,7 +494,14 @@ public class VolumeManager : IDisposable
         return Math.Clamp(sendValue, 0.0f, 1.0f);
     }
 
-    private static float ValueToDecibels(float receivedValue)
+    /// <summary>
+    /// Converts a float volume value in the range 0.0 to 1.0 to a value in dB.
+    /// </summary>
+    /// <param name="receivedValue">
+    /// The received volume represented as a float between 0.0 and 1.0.
+    /// </param>
+    /// <returns>The converted volume represented in decibels.</returns>
+    internal static float ValueToDecibels(float receivedValue)
     {
         var faderPos = receivedValue * 1023.0f;
         if (faderPos >= 649.0f)
@@ -507,6 +510,16 @@ public class VolumeManager : IDisposable
         }
 
         return (faderPos * faderPos * (-1.0f / 11033.0f)) + (faderPos * 0.1497326203f) - 65.0f;
+    }
+
+    /// <summary>Disposes the current volume manager.</summary>
+    /// <param name="disposing">Whether managed resources should be disposed.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _volumeMutex.Dispose();
+        }
     }
 
     private Task<int> SendVolumeAsync(float volume)
