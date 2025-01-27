@@ -23,7 +23,7 @@ public record Interface
     /// <summary>
     /// Gets or sets the number of second which the widget will take to fade out after hide delay.
     /// </summary>
-    public double FadeOutTime { get; set; } = 1.0;
+    public double FadeOutTime { get; set; } = 0.75;
 
     /// <summary>
     /// Gets or sets a value indicating whether the widget should be shown when remote volume
