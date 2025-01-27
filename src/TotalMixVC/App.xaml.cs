@@ -358,7 +358,6 @@ public partial class App : Application, IDisposable
                 button: MessageBoxButton.OK,
                 icon: MessageBoxImage.Exclamation
             );
-            return;
         }
 
         // Start a task that will receive and record volume changes.
