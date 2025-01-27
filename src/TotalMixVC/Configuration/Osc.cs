@@ -1,32 +1,23 @@
 ﻿using System.Net;
-using System.Text.Json.Serialization;
-using TotalMixVC.Configuration.Converters;
+using System.Runtime.Serialization;
 
 namespace TotalMixVC.Configuration;
 
 /// <summary>Provides configuration related to OSC communication with the device.</summary>
 public record Osc
 {
-    /// <summary>Gets the hostname to send volume changes to.</summary>
-    [JsonConverter(typeof(IPAddressConverter))]
-    public IPAddress OutgoingHostname { get; init; } = IPAddress.Loopback;
+    /// <summary>
+    /// Gets or sets the endpoint to send volume changes to. The port should match the
+    /// "Port incoming" setting in TotalMixFX.
+    /// </summary>
+    [DataMember(Name = "outgoing_endpoint")]
+    public IPEndPoint OutgoingEndPoint { get; set; } = new IPEndPoint(IPAddress.Loopback, 7001);
 
     /// <summary>
-    /// Gets the port to use when sending volume changes. This should match the "Port incoming"
-    /// setting in TotalMixFX.
+    /// Gets or sets the endpoint to receive volume changes from. This address should match the
+    /// "Remote Controller Address" and should typically be "127.0.0.1". The port should match the
+    /// "Port outgoing" setting in TotalMixFX.
     /// </summary>
-    [JsonConverter(typeof(PortIntegerConverter))]
-    public int OutgoingPort { get; init; } = 7001;
-
-    /// <summary>Gets the hostname to receive volume changes from. This should match the
-    /// "Remote Controller Address" and should typically be "127.0.0.1".</summary>
-    [JsonConverter(typeof(IPAddressConverter))]
-    public IPAddress IncomingHostname { get; init; } = IPAddress.Loopback;
-
-    /// <summary>
-    /// Gets the port to use when receiving volume changes. This should match the "Port outgoing"
-    /// setting in TotalMixFX.
-    /// </summary>
-    [JsonConverter(typeof(PortIntegerConverter))]
-    public int IncomingPort { get; init; } = 9001;
+    [DataMember(Name = "incoming_endpoint")]
+    public IPEndPoint IncomingEndPoint { get; set; } = new IPEndPoint(IPAddress.Loopback, 9001);
 }

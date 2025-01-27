@@ -17,9 +17,10 @@ public class Sender(IPEndPoint localEP) : ISender, IDisposable
 {
     private readonly UdpClient _client = new();
 
-    private readonly IPEndPoint _localEP = localEP;
-
     private bool _disposed;
+
+    /// <summary>Gets or sets the outgoing OSC endpoint to send volume changes to.</summary>
+    public IPEndPoint LocalEP { get; set; } = localEP;
 
     /// <summary>Disposes the current sender.</summary>
     public void Dispose()
@@ -38,7 +39,7 @@ public class Sender(IPEndPoint localEP) : ISender, IDisposable
     public Task<int> SendAsync(OscPacket message)
     {
         var datagram = message.ToByteArray();
-        return _client.SendAsync(datagram, datagram.Length, _localEP);
+        return _client.SendAsync(datagram, datagram.Length, LocalEP);
     }
 
     /// <summary>Disposes the current sender.</summary>

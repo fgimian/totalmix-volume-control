@@ -99,12 +99,16 @@ public partial class VolumeIndicator : Window, IDisposable
         await _joinableTaskFactory.SwitchToMainThreadAsync();
 
         // Update the color of text and the volume rectangle based on whether the volume is dimmed.
-        VolumeWidgetBarForeground.Fill = isDimmed
-            ? _config.Theme.VolumeBarForegroundColorDimmed
-            : _config.Theme.VolumeBarForegroundColorNormal;
-        VolumeWidgetReadout.Foreground = isDimmed
-            ? _config.Theme.VolumeReadoutColorDimmed
-            : _config.Theme.VolumeReadoutColorNormal;
+        VolumeWidgetBarForeground.Fill = new SolidColorBrush(
+            isDimmed
+                ? _config.Theme.VolumeBarForegroundColorDimmed
+                : _config.Theme.VolumeBarForegroundColorNormal
+        );
+        VolumeWidgetReadout.Foreground = new SolidColorBrush(
+            isDimmed
+                ? _config.Theme.VolumeReadoutColorDimmed
+                : _config.Theme.VolumeReadoutColorNormal
+        );
 
         // Update the volume bar with the percentage and readout text box with the decibel reading.
         VolumeWidgetBarForeground.Width = (int)(VolumeWidgetBarBackground.ActualWidth * volume);
@@ -181,12 +185,20 @@ public partial class VolumeIndicator : Window, IDisposable
 
     private void ConfigureTheme()
     {
-        VolumeWidgetBorder.BorderBrush = _config.Theme.BackgroundColor;
+        VolumeWidgetBorder.BorderBrush = new SolidColorBrush(_config.Theme.BackgroundColor);
         VolumeWidgetBorder.CornerRadius = new CornerRadius(_config.Theme.BackgroundRounding);
-        VolumeWidgetTitleTotalMix.Foreground = _config.Theme.HeadingTotalmixColor;
-        VolumeWidgetTitleVolume.Foreground = _config.Theme.HeadingVolumeColor;
-        VolumeWidgetReadout.Foreground = _config.Theme.VolumeReadoutColorNormal;
-        VolumeWidgetBarBackground.Fill = _config.Theme.VolumeBarBackgroundColor;
-        VolumeWidgetBarForeground.Fill = _config.Theme.VolumeBarForegroundColorNormal;
+        VolumeWidgetTitleTotalMix.Foreground = new SolidColorBrush(
+            _config.Theme.HeadingTotalmixColor
+        );
+        VolumeWidgetTitleVolume.Foreground = new SolidColorBrush(_config.Theme.HeadingVolumeColor);
+        VolumeWidgetReadout.Foreground = new SolidColorBrush(
+            _config.Theme.VolumeReadoutColorNormal
+        );
+        VolumeWidgetBarBackground.Fill = new SolidColorBrush(
+            _config.Theme.VolumeBarBackgroundColor
+        );
+        VolumeWidgetBarForeground.Fill = new SolidColorBrush(
+            _config.Theme.VolumeBarForegroundColorNormal
+        );
     }
 }

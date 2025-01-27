@@ -3,11 +3,9 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
-using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -45,15 +43,8 @@ public partial class App : Application, IDisposable
     private static readonly string s_configPath = Path.Join(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "TotalMix Volume Control",
-        "config.json"
+        "config.toml"
     );
-
-    private static readonly JsonSerializerOptions s_jsonConfigSerializerOptions = new()
-    {
-        AllowTrailingCommas = true,
-        ReadCommentHandling = JsonCommentHandling.Skip,
-        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-    };
 
     private readonly GlobalHotKeyManager _hotKeyManager = new();
 
@@ -105,41 +96,39 @@ public partial class App : Application, IDisposable
     /// Whether the application is already running with a previous loaded configuration.
     /// </param>
     /// <returns>Whether or not the config was loaded successfully.</returns>
-    [SuppressMessage(
-        "Design",
-        "CA1031:Do not catch general exception types",
-        Justification = "ReadAllText throws many exception types and this function can't fail."
-    )]
     public bool LoadConfig(bool running = false)
     {
-        try
-        {
-            var configText = File.ReadAllText(s_configPath);
-            _config = JsonSerializer.Deserialize<Config>(
-                configText,
-                s_jsonConfigSerializerOptions
-            )!;
-            return true;
-        }
-        catch (JsonException ex)
+        var configText = File.ReadAllText(s_configPath);
+        var isValid = Config.TryFromToml(configText, out var config, out var diagnostics);
+
+        if (!isValid && diagnostics is not null)
         {
             var configDescription = running ? "existing" : "default";
-
             var message = new StringBuilder();
 
-            message.Append(
-                CultureInfo.InvariantCulture,
-                $"Unable to parse the config file at {s_configPath}.\n\n{ex.Message}"
-            );
-
-            if (ex.InnerException is not null)
+            if (config is null)
             {
-                message.Append(CultureInfo.InvariantCulture, $" {ex.InnerException.Message}");
+                message.Append(
+                    CultureInfo.InvariantCulture,
+                    $"Unable to parse the config file at {s_configPath}.\n\n"
+                );
+            }
+            else
+            {
+                message.Append(
+                    CultureInfo.InvariantCulture,
+                    $"Unable to parse one or more more properties from the config file at {s_configPath}.\n\n"
+                );
+            }
+
+            foreach (var diagnostic in diagnostics)
+            {
+                message.Append(CultureInfo.InvariantCulture, $"- {diagnostic}\n");
             }
 
             message.Append(
                 CultureInfo.InvariantCulture,
-                $"\n\nThe application will continue with the {configDescription} configuration."
+                $"\nThe application will continue with the {configDescription} values for affected properties."
             );
 
             if (running)
@@ -161,39 +150,15 @@ public partial class App : Application, IDisposable
                     icon: MessageBoxImage.Exclamation
                 );
             }
-
-            return false;
         }
-        catch (Exception ex)
+
+        if (config is not null)
         {
-            var configDescription = running ? "existing" : "default";
-            var message =
-                $"Unable to load the config file at {s_configPath} "
-                + $"({ex.InnerException?.Message ?? ex.Message}).\n\nThe application will continue "
-                + $"with the {configDescription} configuration.";
-
-            if (running)
-            {
-                MessageBox.Show(
-                    _volumeIndicator,
-                    message,
-                    caption: "Configuration File Error",
-                    button: MessageBoxButton.OK,
-                    icon: MessageBoxImage.Exclamation
-                );
-            }
-            else
-            {
-                MessageBox.Show(
-                    message,
-                    caption: "Configuration File Error",
-                    button: MessageBoxButton.OK,
-                    icon: MessageBoxImage.Exclamation
-                );
-            }
-
-            return false;
+            _config = config;
+            return true;
         }
+
+        return false;
     }
 
     /// <summary>
@@ -221,23 +186,9 @@ public partial class App : Application, IDisposable
             return;
         }
 
-        try
-        {
-            ConfigureVolumeManager();
-        }
-        catch (ArgumentOutOfRangeException ex)
-        {
-            MessageBox.Show(
-                _volumeIndicator,
-                $"Unable to configure the volume based on the config file at {s_configPath} "
-                    + $"({ex.InnerException?.Message ?? ex.Message}).\n\nThe application will "
-                    + "continue with the existing configuration.",
-                caption: "Configuration File Error",
-                button: MessageBoxButton.OK,
-                icon: MessageBoxImage.Exclamation
-            );
-        }
+        _volumeManager.OutgoingEndpoint = _config.Osc.OutgoingEndPoint;
 
+        ConfigureVolumeManager(running: true);
         ConfigureInterface();
         ConfigureTheme();
 
@@ -245,8 +196,8 @@ public partial class App : Application, IDisposable
 
         MessageBox.Show(
             _volumeIndicator,
-            "Configuration has been reloaded successfully. Please note that changes to OSC "
-                + "settings will require an application restart to take effect.",
+            "Configuration has been reloaded successfully. Please note that changes to the "
+                + "incoming OSC endpoint will require an application restart to take effect.",
             caption: "Configuration Reloaded",
             button: MessageBoxButton.OK,
             icon: MessageBoxImage.Information
@@ -324,8 +275,8 @@ public partial class App : Application, IDisposable
         try
         {
             _volumeManager = new(
-                outgoingEP: new IPEndPoint(_config.Osc.OutgoingHostname, _config.Osc.OutgoingPort),
-                incomingEP: new IPEndPoint(_config.Osc.IncomingHostname, _config.Osc.IncomingPort)
+                outgoingEP: _config.Osc.OutgoingEndPoint,
+                incomingEP: _config.Osc.IncomingEndPoint
             );
         }
         catch (SocketException)
@@ -333,8 +284,8 @@ public partial class App : Application, IDisposable
             MessageBox.Show(
                 "Unable to open a listener to receive events from the device. Please exit any "
                     + "applications that are binding to UDP address "
-                    + $"{_config.Osc.OutgoingHostname}:{_config.Osc.OutgoingPort} and try "
-                    + "again.\n\nThe application will now exit.",
+                    + $"{_config.Osc.OutgoingEndPoint} and try again.\n\nThe application will "
+                    + "now exit.",
                 caption: "Socket Error",
                 button: MessageBoxButton.OK,
                 icon: MessageBoxImage.Exclamation
@@ -343,22 +294,7 @@ public partial class App : Application, IDisposable
             return;
         }
 
-        try
-        {
-            ConfigureVolumeManager();
-        }
-        catch (ArgumentOutOfRangeException ex)
-        {
-            MessageBox.Show(
-                _volumeIndicator,
-                $"Unable to configure the volume based on the config file at {s_configPath} "
-                    + $"({ex.InnerException?.Message ?? ex.Message}).\n\nThe application will "
-                    + "continue with the default configuration.",
-                caption: "Configuration File Error",
-                button: MessageBoxButton.OK,
-                icon: MessageBoxImage.Exclamation
-            );
-        }
+        ConfigureVolumeManager(running: false);
 
         // Start a task that will receive and record volume changes.
         _volumeReceiveTask = _joinableTaskFactory.RunAsync(ReceiveVolumeAsync);
@@ -487,9 +423,9 @@ public partial class App : Application, IDisposable
                 _trayToolTipStatus.Text = string.Format(
                     CultureInfo.InvariantCulture,
                     s_communicationErrorFormatString,
-                    _config.Osc.OutgoingPort,
-                    _config.Osc.IncomingPort,
-                    _config.Osc.IncomingHostname
+                    _config.Osc.OutgoingEndPoint.Port,
+                    _config.Osc.IncomingEndPoint.Port,
+                    _config.Osc.IncomingEndPoint.Address
                 );
                 _trayIcon.ToolTipText = "TotalMixVC - Unable to connect to your device";
             }
@@ -595,23 +531,87 @@ public partial class App : Application, IDisposable
         );
     }
 
-    private void ConfigureVolumeManager()
+    private void ConfigureVolumeManager(bool running = false)
     {
+        var exceptions = new List<Exception>();
+
         _volumeManager.UseDecibels = _config.Volume.UseDecibels;
 
         if (_config.Volume.Increment is float volumeIncrement)
         {
-            _volumeManager.VolumeRegularIncrement = volumeIncrement;
+            try
+            {
+                _volumeManager.VolumeRegularIncrement = volumeIncrement;
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                exceptions.Add(ex);
+            }
         }
 
         if (_config.Volume.FineIncrement is float fineIncrement)
         {
-            _volumeManager.VolumeFineIncrement = fineIncrement;
+            try
+            {
+                _volumeManager.VolumeFineIncrement = fineIncrement;
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                exceptions.Add(ex);
+            }
         }
 
         if (_config.Volume.Max is float volumeMax)
         {
-            _volumeManager.VolumeMax = volumeMax;
+            try
+            {
+                _volumeManager.VolumeMax = volumeMax;
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                exceptions.Add(ex);
+            }
+        }
+
+        if (exceptions.Count > 0)
+        {
+            var configDescription = running ? "existing" : "default";
+            var message = new StringBuilder();
+
+            message.Append(
+                CultureInfo.InvariantCulture,
+                $"Unable to configure the volume based on the config file at {s_configPath}.\n\n"
+            );
+
+            foreach (var exception in exceptions)
+            {
+                message.Append(CultureInfo.InvariantCulture, $"- {exception.Message}\n");
+            }
+
+            message.Append(
+                CultureInfo.InvariantCulture,
+                $"\nThe application will continue with the {configDescription} values for affected properties."
+            );
+
+            if (running)
+            {
+                MessageBox.Show(
+                    _volumeIndicator,
+                    message.ToString(),
+                    caption: "Configuration File Error",
+                    button: MessageBoxButton.OK,
+                    icon: MessageBoxImage.Exclamation
+                );
+            }
+            else
+            {
+                MessageBox.Show(
+                    message.ToString(),
+                    caption: "Configuration File Error",
+                    button: MessageBoxButton.OK,
+                    icon: MessageBoxImage.Exclamation
+                );
+            }
         }
     }
 
@@ -639,11 +639,13 @@ public partial class App : Application, IDisposable
         var trayToolTipStatus = (TextBlock)
             LogicalTreeHelper.FindLogicalNode(trayToolTipBorder, "TrayToolTipStatus");
 
-        trayToolTipBorder.BorderBrush = _config.Theme.BackgroundColor;
+        trayToolTipBorder.BorderBrush = new SolidColorBrush(_config.Theme.BackgroundColor);
         trayToolTipBorder.CornerRadius = new CornerRadius(_config.Theme.BackgroundRounding);
-        trayToolTipPanel.Background = _config.Theme.BackgroundColor;
-        trayToolTipTitleTotalMix.Foreground = _config.Theme.HeadingTotalmixColor;
-        trayToolTipTitleVolume.Foreground = _config.Theme.HeadingVolumeColor;
-        trayToolTipStatus.Foreground = _config.Theme.TrayTooltipMessageColor;
+        trayToolTipPanel.Background = new SolidColorBrush(_config.Theme.BackgroundColor);
+        trayToolTipTitleTotalMix.Foreground = new SolidColorBrush(
+            _config.Theme.HeadingTotalmixColor
+        );
+        trayToolTipTitleVolume.Foreground = new SolidColorBrush(_config.Theme.HeadingVolumeColor);
+        trayToolTipStatus.Foreground = new SolidColorBrush(_config.Theme.TrayTooltipMessageColor);
     }
 }

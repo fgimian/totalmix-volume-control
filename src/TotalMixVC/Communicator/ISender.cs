@@ -1,4 +1,5 @@
-﻿using OscCore;
+﻿using System.Net;
+using OscCore;
 
 namespace TotalMixVC.Communicator;
 
@@ -7,6 +8,9 @@ namespace TotalMixVC.Communicator;
 /// </summary>
 public interface ISender
 {
+    /// <summary>Gets or sets the outgoing OSC endpoint to send volume changes to.</summary>
+    public IPEndPoint LocalEP { get; set; }
+
     /// <summary>
     /// Sends an OSC packet to the configured endpoint.
     /// </summary>

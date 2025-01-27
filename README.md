@@ -69,20 +69,16 @@ a configuration file.
 
 Start by browsing to `%APPDATA%` in Windows Explorer and creating a directory named
 "TotalMix Volume Control". Now download the
-[sample configuration file](https://github.com/fgimian/totalmix-volume-control/blob/main/config.sample.json),
-rename it to "config.json" and place it in the directory you created.
+[sample configuration file](https://github.com/fgimian/totalmix-volume-control/blob/main/config.sample.toml),
+rename it to "config.toml" and place it in the directory you created.
 
 You may open this file in any text editor and read the included instructions to configure the
 application. All the pre-filled values you see in the sample configuration are optional and
 represent the application defaults.
 
-Despite being a JSON file, TotalMix Volume Control supports comments and trailing commas in the
-configuration (as per the sample).
-
 You may live-reload your updated configuration by right-clicking on the TotalMix Volume Control
-tray icon and selecting "Reload config" which will update all settings except those related to
-OSC (i.e. hostnames and ports). You will need to restart the application if you wish to change
-OSC settings.
+tray icon and selecting "Reload config" which will update all settings except the incoming OSC
+endpoint which requires an application restart to be changed.
 
 ## Building from Source
 

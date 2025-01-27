@@ -69,6 +69,13 @@ public class VolumeManager : IDisposable
         _listener = listener;
     }
 
+    /// <summary>Gets or sets the outgoing endpoint on the sender.</summary>
+    public IPEndPoint OutgoingEndpoint
+    {
+        get => _sender.LocalEP;
+        set => _sender.LocalEP = value;
+    }
+
     /// <summary>
     /// Gets the current device volume as a float (with a range of 0.0 to 1.0).
     /// </summary>
