@@ -77,14 +77,14 @@ application. All the pre-filled values you see in the sample configuration are o
 represent the application defaults.
 
 You may live-reload your updated configuration by right-clicking on the TotalMix Volume Control
-tray icon and selecting "Reload config" which will update all settings except the incoming OSC
-endpoint which requires an application restart to be changed.
+tray icon and selecting "Reload Configuration" which will update all settings except the incoming
+OSC endpoint which requires an application restart to be changed.
 
 ## Building from Source
 
 After cloning the source code from GitHub, follow the steps below:
 
-1. Install the [.NET 7.0 SDK](https://dotnet.microsoft.com/download).
+1. Install the [.NET 9.0 SDK](https://dotnet.microsoft.com/download).
 2. Install Task and the cross-platform coreutils using WinGet
 
     ```
