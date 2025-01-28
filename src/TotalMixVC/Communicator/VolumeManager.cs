@@ -30,14 +30,6 @@ public class VolumeManager : IDisposable
 
     private readonly IListener _listener;
 
-    private bool _useDecibels;
-
-    private float _volumeRegularIncrement = 0.02f;
-
-    private float _volumeFineIncrement = 0.01f;
-
-    private float _volumeMax = 1.0f;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="VolumeManager"/> class.
     /// </summary>
@@ -99,133 +91,43 @@ public class VolumeManager : IDisposable
     /// <summary>
     /// Gets or sets a value indicating whether volume units are set in dB instead of percentages.
     /// </summary>
-    public bool UseDecibels
-    {
-        get => _useDecibels;
-        set
-        {
-            if (_useDecibels != value)
-            {
-                if (value)
-                {
-                    _volumeRegularIncrement = 2.0f;
-                    _volumeFineIncrement = 1.0f;
-                    _volumeMax = 6.0f;
-                }
-                else
-                {
-                    _volumeRegularIncrement = 0.02f;
-                    _volumeFineIncrement = 0.01f;
-                    _volumeMax = 1.0f;
-                }
-            }
-
-            _useDecibels = value;
-        }
-    }
+    public bool UseDecibels { get; set; }
 
     /// <summary>
-    /// Gets or sets the increment to use when regularly increasing or decreasing the volume.
+    /// Gets or sets the increment to use when increasing or decreasing the volume
+    /// in percent.
     /// </summary>
-    /// <exception cref="ArgumentException">
-    /// The regular volume increment is not within the required range.
-    /// </exception>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// When the regular increment specified is not in the supported range.
-    /// </exception>
-    public float VolumeRegularIncrement
-    {
-        get => _volumeRegularIncrement;
-        set
-        {
-            if (_useDecibels && (value <= 0.0 || value > 6.0 || value % 0.25f != 0.0f))
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(value),
-                    "Specified dB volume increment must be a multiple of 0.25 while being greater "
-                        + "than 0 and less than or equal to 6.0."
-                );
-            }
-            else if (!_useDecibels && value is <= 0.0f or > 0.10f)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(value),
-                    "Specified volume increment must be greater than 0 and less than or equal "
-                        + "to 0.1."
-                );
-            }
-
-            _volumeRegularIncrement = value;
-        }
-    }
+    public float VolumeIncrementPercent { get; set; }
 
     /// <summary>
-    /// Gets or sets the increment to use when finely increasing or decreasing the volume.
+    /// Gets or sets the increment to use when finely increasing or decreasing the volume
+    /// in percent.
     /// </summary>
-    /// <exception cref="ArgumentException">
-    /// The fine volume increment is not within the required range.
-    /// </exception>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// When the fine increment specified is not in the supported range.
-    /// </exception>
-    public float VolumeFineIncrement
-    {
-        get => _volumeFineIncrement;
-        set
-        {
-            if (_useDecibels && (value <= 0.0 || value > 3.0 || value % 0.25f != 0.0f))
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(value),
-                    "Specified fine dB volume increment must be a multiple of 0.25 while being "
-                        + "greater than 0 and less than or equal to 3.0."
-                );
-            }
-            else if (!_useDecibels && value is <= 0.0f or > 0.05f)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(value),
-                    "Specified fine volume increment must be greater than 0 and less than or "
-                        + "equal to 0.05."
-                );
-            }
-
-            _volumeFineIncrement = value;
-        }
-    }
+    public float VolumeFineIncrementPercent { get; set; }
 
     /// <summary>
-    /// Gets or sets the maximum volume that should be allowed when increasing the volume.
+    /// Gets or sets the maximum volume that should be allowed when increasing the volume
+    /// in percent.
     /// </summary>
-    /// <exception cref="ArgumentException">
-    /// The max volume increment not within the required range.
-    /// </exception>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// When the max volume specified is not in the supported range.
-    /// </exception>
-    public float VolumeMax
-    {
-        get => _volumeMax;
-        set
-        {
-            if (_useDecibels && value is > 6.0f)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(value),
-                    "Specified max dB volume must be less than or equal to 6.0."
-                );
-            }
-            else if (!_useDecibels && value is <= 0.0f or > 1.0f)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(value),
-                    "Specified max volume must be greater than 0 and less than or equal to 1.0."
-                );
-            }
+    public float VolumeMaxPercent { get; set; }
 
-            _volumeMax = value;
-        }
-    }
+    /// <summary>
+    /// Gets or sets the increment to use when increasing or decreasing the volume
+    /// in decibels.
+    /// </summary>
+    public float VolumeIncrementDecibels { get; set; }
+
+    /// <summary>
+    /// Gets or sets the increment to use when finely increasing or decreasing the volume
+    /// in decibels.
+    /// </summary>
+    public float VolumeFineIncrementDecibels { get; set; }
+
+    /// <summary>
+    /// Gets or sets the maximum volume that should be allowed when increasing the volume
+    /// in decibels.
+    /// </summary>
+    public float VolumeMaxDecibels { get; set; }
 
     /// <summary>
     /// Gets a value indicating whether the volume has been obtained from the device at least
@@ -351,31 +253,33 @@ public class VolumeManager : IDisposable
         try
         {
             // Calculate the new volume.
-            var increment = fine ? _volumeFineIncrement : _volumeRegularIncrement;
-
             float newVolume;
             if (UseDecibels)
             {
+                var increment = fine ? VolumeFineIncrementDecibels : VolumeIncrementDecibels;
+
                 var volumeDB =
                     MathF.Floor(MathF.Round(ValueToDecibels(Volume) / increment, 1)) * increment;
                 volumeDB += increment;
 
                 // Ensure it doesn't exceed the max dB.
-                if (volumeDB >= VolumeMax)
+                if (volumeDB >= VolumeMaxDecibels)
                 {
-                    volumeDB = VolumeMax;
+                    volumeDB = VolumeMaxDecibels;
                 }
 
                 newVolume = DecibelsToValue(volumeDB);
             }
             else
             {
+                var increment = fine ? VolumeFineIncrementPercent : VolumeIncrementPercent;
+
                 newVolume = Volume + increment;
 
                 // Ensure it doesn't exceed the max.
-                if (newVolume >= VolumeMax)
+                if (newVolume >= VolumeMaxPercent)
                 {
-                    newVolume = VolumeMax;
+                    newVolume = VolumeMaxPercent;
                 }
             }
 
@@ -414,17 +318,20 @@ public class VolumeManager : IDisposable
         try
         {
             // Calculate the new volume.
-            var increment = fine ? VolumeFineIncrement : VolumeRegularIncrement;
             float newVolume;
             if (UseDecibels)
             {
+                var increment = fine ? VolumeFineIncrementDecibels : VolumeIncrementDecibels;
+
                 var volumeDB =
                     MathF.Ceiling(MathF.Round(ValueToDecibels(Volume) / increment, 1)) * increment;
                 volumeDB -= increment;
+
                 newVolume = DecibelsToValue(volumeDB);
             }
             else
             {
+                var increment = fine ? VolumeFineIncrementPercent : VolumeIncrementPercent;
                 newVolume = Volume - increment;
             }
 

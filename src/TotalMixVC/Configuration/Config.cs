@@ -2,6 +2,7 @@
 using System.Windows.Media;
 using Tomlyn;
 using Tomlyn.Syntax;
+using TotalMixVC.Configuration.Models;
 
 namespace TotalMixVC.Configuration;
 
@@ -44,6 +45,20 @@ public record Config
                         string color when type == typeof(Color) => (Color)
                             ColorConverter.ConvertFromString(color)!,
                         string address when type == typeof(IPEndPoint) => IPEndPoint.Parse(address),
+                        double increment when type == typeof(VolumeIncrementPercent) =>
+                            new VolumeIncrementPercent((float)increment),
+                        double increment when type == typeof(VolumeFineIncrementPercent) =>
+                            new VolumeFineIncrementPercent((float)increment),
+                        double max when type == typeof(VolumeMaxPercent) => new VolumeMaxPercent(
+                            (float)max
+                        ),
+                        double increment when type == typeof(VolumeIncrementDecibels) =>
+                            new VolumeIncrementDecibels((float)increment),
+                        double increment when type == typeof(VolumeFineIncrementDecibels) =>
+                            new VolumeFineIncrementDecibels((float)increment),
+                        double max when type == typeof(VolumeMaxDecibels) => new VolumeMaxDecibels(
+                            (float)max
+                        ),
                         _ => null,
                     },
             }

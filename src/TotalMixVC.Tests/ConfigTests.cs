@@ -18,9 +18,12 @@ public sealed class ConfigTests
 
             [volume]
             use_decibels = true
-            increment = 1.0
-            fine_increment = 0.5
-            max = 0.0
+            increment_percent = 0.04
+            fine_increment_percent = 0.02
+            max_percent = 0.8
+            increment_decibels = 1.0
+            fine_increment_decibels = 0.5
+            max_decibels = 0.0
 
             [theme]
             background_rounding = 5.0
@@ -55,9 +58,12 @@ public sealed class ConfigTests
             Volume = new Volume()
             {
                 UseDecibels = true,
-                Increment = 1.0f,
-                FineIncrement = 0.5f,
-                Max = 0.0f,
+                IncrementPercent = new(0.04f),
+                FineIncrementPercent = new(0.02f),
+                MaxPercent = new(0.8f),
+                IncrementDecibels = new(1.0f),
+                FineIncrementDecibels = new(0.5f),
+                MaxDecibels = new(0.0f),
             },
             Theme = new Theme()
             {
@@ -135,6 +141,343 @@ public sealed class ConfigTests
                 IncomingEndPoint = new IPEndPoint(IPAddress.Loopback, 9001),
             },
         };
+
+        Assert.False(isValid);
+        Assert.NotNull(config);
+        Assert.NotNull(diagnostics);
+        Assert.Equal(2, diagnostics.Count);
+        Assert.Equal(expectedConfig, config);
+    }
+
+    [Fact]
+    public void TryFromToml_ValidVolumeIncrementPercent_LoadsProperty()
+    {
+        var isValid = Config.TryFromToml(
+            """
+            [volume]
+            increment_percent = 0.03
+            """,
+            out var config,
+            out var diagnostics
+        );
+
+        var expectedConfig = new Config()
+        {
+            Volume = new Volume() { IncrementPercent = new(0.03f) },
+        };
+
+        Assert.True(isValid);
+        Assert.NotNull(config);
+        Assert.NotNull(diagnostics);
+        Assert.Empty(diagnostics);
+        Assert.Equal(expectedConfig, config);
+    }
+
+    [Theory]
+    [InlineData(0.30f)]
+    [InlineData(-0.01f)]
+    public void TryFromToml_InvalidVolumeIncrementPercent_SkipsLoadingProperty(
+        float volumeIncrementPercent
+    )
+    {
+        var isValid = Config.TryFromToml(
+            $"""
+            [volume]
+            increment_percent = {volumeIncrementPercent:F2}
+            """,
+            out var config,
+            out var diagnostics
+        );
+
+        var expectedConfig = new Config()
+        {
+            Volume = new Volume() { IncrementPercent = new(0.02f) },
+        };
+
+        Assert.False(isValid);
+        Assert.NotNull(config);
+        Assert.NotNull(diagnostics);
+        Assert.Equal(2, diagnostics.Count);
+        Assert.Equal(expectedConfig, config);
+    }
+
+    [Fact]
+    public void TryFromToml_ValidVolumeFineIncrementPercent_LoadsProperty()
+    {
+        var isValid = Config.TryFromToml(
+            """
+            [volume]
+            fine_increment_percent = 0.01
+            """,
+            out var config,
+            out var diagnostics
+        );
+
+        var expectedConfig = new Config()
+        {
+            Volume = new Volume() { FineIncrementPercent = new(0.01f) },
+        };
+
+        Assert.True(isValid);
+        Assert.NotNull(config);
+        Assert.NotNull(diagnostics);
+        Assert.Empty(diagnostics);
+        Assert.Equal(expectedConfig, config);
+    }
+
+    [Theory]
+    [InlineData(0.10f)]
+    [InlineData(-0.03f)]
+    public void TryFromToml_InvalidVolumeFineIncrementPercent_SkipsLoadingProperty(
+        float volumeFineIncrementPercent
+    )
+    {
+        var isValid = Config.TryFromToml(
+            $"""
+            [volume]
+            fine_increment_percent = {volumeFineIncrementPercent:F2}
+            """,
+            out var config,
+            out var diagnostics
+        );
+
+        var expectedConfig = new Config()
+        {
+            Volume = new Volume() { FineIncrementPercent = new(0.01f) },
+        };
+
+        Assert.False(isValid);
+        Assert.NotNull(config);
+        Assert.NotNull(diagnostics);
+        Assert.Equal(2, diagnostics.Count);
+        Assert.Equal(expectedConfig, config);
+    }
+
+    [Fact]
+    public void TryFromToml_ValidVolumeMaxPercent_LoadsProperty()
+    {
+        var isValid = Config.TryFromToml(
+            """
+            [volume]
+            max_percent = 0.90
+            """,
+            out var config,
+            out var diagnostics
+        );
+
+        var expectedConfig = new Config() { Volume = new Volume() { MaxPercent = new(0.90f) } };
+
+        Assert.True(isValid);
+        Assert.NotNull(config);
+        Assert.NotNull(diagnostics);
+        Assert.Empty(diagnostics);
+        Assert.Equal(expectedConfig, config);
+    }
+
+    [Theory]
+    [InlineData(1.10f)]
+    [InlineData(-0.15f)]
+    public void TryFromToml_InvalidVolumeMaxPercent_SkipsLoadingProperty(float volumeMaxPercent)
+    {
+        var isValid = Config.TryFromToml(
+            $"""
+            [volume]
+            max_percent = {volumeMaxPercent:F2}
+            """,
+            out var config,
+            out var diagnostics
+        );
+
+        var expectedConfig = new Config() { Volume = new Volume() { MaxPercent = new(1.0f) } };
+
+        Assert.False(isValid);
+        Assert.NotNull(config);
+        Assert.NotNull(diagnostics);
+        Assert.Equal(2, diagnostics.Count);
+        Assert.Equal(expectedConfig, config);
+    }
+
+    [Theory]
+    [InlineData(0.5f)]
+    [InlineData(1.0f)]
+    [InlineData(1.5f)]
+    [InlineData(2.0f)]
+    [InlineData(2.5f)]
+    [InlineData(4.0f)]
+    [InlineData(5.0f)]
+    [InlineData(5.5f)]
+    public void TryFromToml_ValidVolumeIncrementDecibels_LoadsProperty(
+        float volumeIncrementDecibels
+    )
+    {
+        var isValid = Config.TryFromToml(
+            $"""
+            [volume]
+            increment_decibels = {volumeIncrementDecibels:F1}
+            """,
+            out var config,
+            out var diagnostics
+        );
+
+        var expectedConfig = new Config()
+        {
+            Volume = new Volume() { IncrementDecibels = new(volumeIncrementDecibels) },
+        };
+
+        Assert.True(isValid);
+        Assert.NotNull(config);
+        Assert.NotNull(diagnostics);
+        Assert.Empty(diagnostics);
+        Assert.Equal(expectedConfig, config);
+    }
+
+    [Theory]
+    [InlineData(-0.01f)]
+    [InlineData(0.0f)]
+    [InlineData(0.25f)]
+    [InlineData(0.75f)]
+    [InlineData(1.1f)]
+    [InlineData(1.25f)]
+    [InlineData(1.75f)]
+    [InlineData(2.7f)]
+    [InlineData(3.1f)]
+    [InlineData(5.75f)]
+    [InlineData(6.25f)]
+    [InlineData(6.5f)]
+    public void TryFromToml_InvalidVolumeIncrementDecibels_SkipsLoadingProperty(
+        float volumeIncrementDecibels
+    )
+    {
+        var isValid = Config.TryFromToml(
+            $"""
+            [volume]
+            increment_decibels = {volumeIncrementDecibels:F2}
+            """,
+            out var config,
+            out var diagnostics
+        );
+
+        var expectedConfig = new Config()
+        {
+            Volume = new Volume() { IncrementDecibels = new(2.0f) },
+        };
+
+        Assert.False(isValid);
+        Assert.NotNull(config);
+        Assert.NotNull(diagnostics);
+        Assert.Equal(2, diagnostics.Count);
+        Assert.Equal(expectedConfig, config);
+    }
+
+    [Theory]
+    [InlineData(0.25f)]
+    [InlineData(0.5f)]
+    [InlineData(1.0f)]
+    [InlineData(1.25f)]
+    [InlineData(1.5f)]
+    [InlineData(2.0f)]
+    [InlineData(2.75f)]
+    public void TryFromToml_ValidVolumeFineIncrementDecibels_LoadsProperty(
+        float volumeFineIncrementDecibels
+    )
+    {
+        var isValid = Config.TryFromToml(
+            $"""
+            [volume]
+            fine_increment_decibels = {volumeFineIncrementDecibels:F2}
+            """,
+            out var config,
+            out var diagnostics
+        );
+
+        var expectedConfig = new Config()
+        {
+            Volume = new Volume() { FineIncrementDecibels = new(volumeFineIncrementDecibels) },
+        };
+
+        Assert.True(isValid);
+        Assert.NotNull(config);
+        Assert.NotNull(diagnostics);
+        Assert.Empty(diagnostics);
+        Assert.Equal(expectedConfig, config);
+    }
+
+    [Theory]
+    [InlineData(-0.03f)]
+    [InlineData(0.3f)]
+    [InlineData(1.1f)]
+    [InlineData(1.9f)]
+    [InlineData(3.25f)]
+    [InlineData(3.5f)]
+    public void TryFromToml_InvalidVolumeFineIncrementDecibels_SkipsLoadingProperty(
+        float volumeFineIncrementDecibels
+    )
+    {
+        var isValid = Config.TryFromToml(
+            $"""
+            [volume]
+            fine_increment_decibels = {volumeFineIncrementDecibels}
+            """,
+            out var config,
+            out var diagnostics
+        );
+
+        var expectedConfig = new Config()
+        {
+            Volume = new Volume() { FineIncrementDecibels = new(1.0f) },
+        };
+
+        Assert.False(isValid);
+        Assert.NotNull(config);
+        Assert.NotNull(diagnostics);
+        Assert.Equal(2, diagnostics.Count);
+        Assert.Equal(expectedConfig, config);
+    }
+
+    [Theory]
+    [InlineData(-61.2f)]
+    [InlineData(-32.0f)]
+    [InlineData(0.0f)]
+    [InlineData(3.5f)]
+    [InlineData(6.0f)]
+    public void TryFromToml_ValidVolumeMaxDecibels_LoadsProperty(float volumeMaxDecibels)
+    {
+        var isValid = Config.TryFromToml(
+            $"""
+            [volume]
+            max_decibels = {volumeMaxDecibels:F1}
+            """,
+            out var config,
+            out var diagnostics
+        );
+
+        var expectedConfig = new Config()
+        {
+            Volume = new Volume() { MaxDecibels = new(volumeMaxDecibels) },
+        };
+
+        Assert.True(isValid);
+        Assert.NotNull(config);
+        Assert.NotNull(diagnostics);
+        Assert.Empty(diagnostics);
+        Assert.Equal(expectedConfig, config);
+    }
+
+    [Theory]
+    [InlineData(6.1f)]
+    [InlineData(10.0f)]
+    public void TryFromToml_InvalidVolumeMaxDecibels_SkipsLoadingProperty(float volumeMaxDecibels)
+    {
+        var isValid = Config.TryFromToml(
+            $"""
+            [volume]
+            max_decibels = {volumeMaxDecibels:F1}
+            """,
+            out var config,
+            out var diagnostics
+        );
+
+        var expectedConfig = new Config() { Volume = new Volume() { MaxDecibels = new(6.0f) } };
 
         Assert.False(isValid);
         Assert.NotNull(config);

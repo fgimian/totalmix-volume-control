@@ -26,199 +26,7 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Fact]
-    public void Constructor_EnablingUseDecibels_UpdatesDefaults()
-    {
-        _volumeManager.UseDecibels = true;
-        Assert.Equal(2.0f, _volumeManager.VolumeRegularIncrement);
-        Assert.Equal(1.0f, _volumeManager.VolumeFineIncrement);
-        Assert.Equal(6.0f, _volumeManager.VolumeMax);
-    }
-
-    [Fact]
-    public void Constructor_DisablingUseDecibels_UpdatesDefaults()
-    {
-        _volumeManager.UseDecibels = true;
-        _volumeManager.UseDecibels = false;
-        Assert.Equal(0.02f, _volumeManager.VolumeRegularIncrement);
-        Assert.Equal(0.01f, _volumeManager.VolumeFineIncrement);
-        Assert.Equal(1.0f, _volumeManager.VolumeMax);
-    }
-
-    [Fact]
-    public void Constructor_EnablingUseDecibelsMultipleTimes_RetainsValues()
-    {
-        _volumeManager.UseDecibels = true;
-        _volumeManager.VolumeRegularIncrement = 2.0f;
-        _volumeManager.VolumeFineIncrement = 1.0f;
-        _volumeManager.VolumeMax = 0.0f;
-        _volumeManager.UseDecibels = true;
-        Assert.Equal(2.0f, _volumeManager.VolumeRegularIncrement);
-        Assert.Equal(1.0f, _volumeManager.VolumeFineIncrement);
-        Assert.Equal(0.0f, _volumeManager.VolumeMax);
-    }
-
-    [Fact]
-    public void Constructor_DisablingUseDecibelsMultipleTimes_RetainsValues()
-    {
-        _volumeManager.VolumeRegularIncrement = 0.04f;
-        _volumeManager.VolumeFineIncrement = 0.02f;
-        _volumeManager.VolumeMax = 0.8f;
-        _volumeManager.UseDecibels = false;
-        Assert.Equal(0.04f, _volumeManager.VolumeRegularIncrement);
-        Assert.Equal(0.02f, _volumeManager.VolumeFineIncrement);
-        Assert.Equal(0.8f, _volumeManager.VolumeMax);
-    }
-
-    [Fact]
-    public void Constructor_ValidVolumeRegularIncrementPercentage_SetsProperty()
-    {
-        _volumeManager.VolumeRegularIncrement = 0.03f;
-        Assert.Equal(0.03f, _volumeManager.VolumeRegularIncrement);
-    }
-
-    [Theory]
-    [InlineData(0.25f)]
-    [InlineData(0.5f)]
-    [InlineData(0.75f)]
-    [InlineData(1.0f)]
-    [InlineData(1.25f)]
-    [InlineData(1.5f)]
-    [InlineData(1.75f)]
-    [InlineData(2.0f)]
-    [InlineData(2.5f)]
-    [InlineData(4.0f)]
-    [InlineData(5.0f)]
-    [InlineData(5.5f)]
-    [InlineData(5.75f)]
-    public void Constructor_ValidVolumeRegularIncrementDecibels_SetsProperty(
-        float volumeRegularIncrement
-    )
-    {
-        _volumeManager.UseDecibels = true;
-        _volumeManager.VolumeRegularIncrement = volumeRegularIncrement;
-        Assert.Equal(volumeRegularIncrement, _volumeManager.VolumeRegularIncrement);
-    }
-
-    [Theory]
-    [InlineData(0.30f)]
-    [InlineData(-0.01f)]
-    public void Constructor_InvalidVolumeRegularIncrementPercentage_ThrowsException(
-        float volumeRegularIncrement
-    )
-    {
-        Assert.Throws<ArgumentOutOfRangeException>(
-            () => _volumeManager.VolumeRegularIncrement = volumeRegularIncrement
-        );
-    }
-
-    [Theory]
-    [InlineData(-0.01f)]
-    [InlineData(0.0f)]
-    [InlineData(1.1f)]
-    [InlineData(2.7f)]
-    [InlineData(3.1f)]
-    [InlineData(6.25f)]
-    [InlineData(6.5f)]
-    public void Constructor_InvalidVolumeRegularIncrementDecibels_ThrowsException(
-        float volumeRegularIncrement
-    )
-    {
-        _volumeManager.UseDecibels = true;
-        Assert.Throws<ArgumentOutOfRangeException>(
-            () => _volumeManager.VolumeRegularIncrement = volumeRegularIncrement
-        );
-    }
-
-    [Fact]
-    public void Constructor_ValidVolumeFineIncrementPercentage_SetsProperty()
-    {
-        _volumeManager.VolumeFineIncrement = 0.01f;
-        Assert.Equal(0.01f, _volumeManager.VolumeFineIncrement);
-    }
-
-    [Theory]
-    [InlineData(0.25f)]
-    [InlineData(0.5f)]
-    [InlineData(1.0f)]
-    [InlineData(1.25f)]
-    [InlineData(1.5f)]
-    [InlineData(2.0f)]
-    [InlineData(2.75f)]
-    public void Constructor_ValidVolumeFineIncrementDecibels_SetsProperty(float volumeFineIncrement)
-    {
-        _volumeManager.UseDecibels = true;
-        _volumeManager.VolumeFineIncrement = volumeFineIncrement;
-        Assert.Equal(volumeFineIncrement, _volumeManager.VolumeFineIncrement);
-    }
-
-    [Theory]
-    [InlineData(0.10f)]
-    [InlineData(-0.03f)]
-    public void Constructor_InvalidVolumeFineIncrementPercentage_ThrowsException(
-        float volumeFineIncrement
-    )
-    {
-        Assert.Throws<ArgumentOutOfRangeException>(
-            () => _volumeManager.VolumeFineIncrement = volumeFineIncrement
-        );
-    }
-
-    [Theory]
-    [InlineData(-0.03f)]
-    [InlineData(0.3f)]
-    [InlineData(1.1f)]
-    [InlineData(1.9f)]
-    [InlineData(3.25f)]
-    [InlineData(3.5f)]
-    public void Constructor_InvalidVolumeFineIncrementDecibels_ThrowsException(
-        float volumeFineIncrement
-    )
-    {
-        _volumeManager.UseDecibels = true;
-        Assert.Throws<ArgumentOutOfRangeException>(
-            () => _volumeManager.VolumeFineIncrement = volumeFineIncrement
-        );
-    }
-
-    [Fact]
-    public void Constructor_ValidVolumeMaxPercentage_SetsProperty()
-    {
-        _volumeManager.VolumeMax = 0.90f;
-        Assert.Equal(0.90f, _volumeManager.VolumeMax);
-    }
-
-    [Theory]
-    [InlineData(-61.2f)]
-    [InlineData(-32.0f)]
-    [InlineData(0.0f)]
-    [InlineData(3.5f)]
-    [InlineData(6.0f)]
-    public void Constructor_ValidVolumeMaxDecibels_SetsProperty(float volumeMax)
-    {
-        _volumeManager.UseDecibels = true;
-        _volumeManager.VolumeMax = volumeMax;
-        Assert.Equal(volumeMax, _volumeManager.VolumeMax);
-    }
-
-    [Theory]
-    [InlineData(1.10f)]
-    [InlineData(-0.15f)]
-    public void Constructor_InvalidVolumeMaxPercentage_ThrowsException(float volumeMax)
-    {
-        Assert.Throws<ArgumentOutOfRangeException>(() => _volumeManager.VolumeMax = volumeMax);
-    }
-
-    [Theory]
-    [InlineData(6.1f)]
-    [InlineData(10.0f)]
-    public void Constructor_InvalidVolumeMaxDecibels_ThrowsException(float volumeMax)
-    {
-        _volumeManager.UseDecibels = true;
-        Assert.Throws<ArgumentOutOfRangeException>(() => _volumeManager.VolumeMax = volumeMax);
-    }
-
-    [Fact]
-    public async Task RequestVolumeAsync_RegularRequest_RequestsVolume_Async()
+    public async Task RequestVolumeAsync_Request_RequestsVolume_Async()
     {
         await _volumeManager.RequestVolumeAsync();
         await _sender
@@ -429,14 +237,14 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task IncreaseVolumeAsync_RegularVolumeNotInitialized_DoesNotUpdateVolume_Async()
+    public async Task IncreaseVolumeAsync_VolumeNotInitialized_DoesNotUpdateVolume_Async()
     {
         var updated = await _volumeManager.IncreaseVolumeAsync();
         Assert.False(updated);
     }
 
     [Fact]
-    public async Task IncreaseVolumeAsync_RegularAfterVolumeInitializedPercentage_UpdatesVolume_Async()
+    public async Task IncreaseVolumeAsync_AfterVolumeInitializedPercent_UpdatesVolume_Async()
     {
         _listener
             .ReceiveAsync(default)
@@ -451,7 +259,9 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
-        _volumeManager.VolumeRegularIncrement = 0.02f;
+        _volumeManager.VolumeIncrementPercent = 0.02f;
+        _volumeManager.VolumeMaxPercent = 1.0f;
+
         await _volumeManager.ReceiveVolumeAsync();
         var updated = await _volumeManager.IncreaseVolumeAsync();
 
@@ -471,7 +281,7 @@ public sealed class VolumeManagerTests : IDisposable
     [InlineData(0.19964331f, "-38.2 dB", -38.0f)]
     [InlineData(0.2372316f, "-34.0 dB", -33.0f)]
     [InlineData(0.2764855f, "-29.9 dB", -29.0f)]
-    public async Task IncreaseVolumeAsync_RegularAfterVolumeInitializedDecibels_UpdatesVolume_Async(
+    public async Task IncreaseVolumeAsync_AfterVolumeInitializedDecibels_UpdatesVolume_Async(
         float masterVolume,
         string masterVolumeVal,
         float expectedUpdatedVolumeDB
@@ -491,7 +301,9 @@ public sealed class VolumeManagerTests : IDisposable
             );
 
         _volumeManager.UseDecibels = true;
-        _volumeManager.VolumeRegularIncrement = 1.0f;
+        _volumeManager.VolumeIncrementDecibels = 1.0f;
+        _volumeManager.VolumeMaxDecibels = 6.0f;
+
         await _volumeManager.ReceiveVolumeAsync();
         var updated = await _volumeManager.IncreaseVolumeAsync();
         var updatedValue = VolumeManager.DecibelsToValue(expectedUpdatedVolumeDB);
@@ -509,7 +321,7 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task IncreaseVolumeAsync_RegularExceedsMaxPercentage_IsCappedAndUpdatesVolume_Async()
+    public async Task IncreaseVolumeAsync_ExceedsMaxPercent_IsCappedAndUpdatesVolume_Async()
     {
         _listener
             .ReceiveAsync(default)
@@ -524,8 +336,8 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
-        _volumeManager.VolumeRegularIncrement = 0.05f;
-        _volumeManager.VolumeMax = 0.50f;
+        _volumeManager.VolumeIncrementPercent = 0.05f;
+        _volumeManager.VolumeMaxPercent = 0.50f;
 
         await _volumeManager.ReceiveVolumeAsync();
         var updated = await _volumeManager.IncreaseVolumeAsync();
@@ -543,7 +355,7 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task IncreaseVolumeAsync_RegularExceedsMaxDecibels_IsCappedAndUpdatesVolume_Async()
+    public async Task IncreaseVolumeAsync_ExceedsMaxDecibels_IsCappedAndUpdatesVolume_Async()
     {
         _listener
             .ReceiveAsync(default)
@@ -559,8 +371,8 @@ public sealed class VolumeManagerTests : IDisposable
             );
 
         _volumeManager.UseDecibels = true;
-        _volumeManager.VolumeRegularIncrement = 1.0f;
-        _volumeManager.VolumeMax = -13.0f;
+        _volumeManager.VolumeIncrementDecibels = 1.0f;
+        _volumeManager.VolumeMaxDecibels = -13.0f;
 
         await _volumeManager.ReceiveVolumeAsync();
         var updated = await _volumeManager.IncreaseVolumeAsync();
@@ -579,7 +391,7 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task IncreaseVolumeAsync_RegularAlreadyMaxPercentage_DoesNotUpdateVolume_Async()
+    public async Task IncreaseVolumeAsync_AlreadyMaxPercent_DoesNotUpdateVolume_Async()
     {
         _listener
             .ReceiveAsync(default)
@@ -594,8 +406,8 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
-        _volumeManager.VolumeRegularIncrement = 0.05f;
-        _volumeManager.VolumeMax = 0.50f;
+        _volumeManager.VolumeIncrementPercent = 0.05f;
+        _volumeManager.VolumeMaxPercent = 0.50f;
 
         await _volumeManager.ReceiveVolumeAsync();
         var updated = await _volumeManager.IncreaseVolumeAsync();
@@ -604,7 +416,7 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task IncreaseVolumeAsync_RegularAlreadyMaxDecibels_DoesNotUpdateVolume_Async()
+    public async Task IncreaseVolumeAsync_AlreadyMaxDecibels_DoesNotUpdateVolume_Async()
     {
         _listener
             .ReceiveAsync(default)
@@ -620,8 +432,8 @@ public sealed class VolumeManagerTests : IDisposable
             );
 
         _volumeManager.UseDecibels = true;
-        _volumeManager.VolumeRegularIncrement = 1.0f;
-        _volumeManager.VolumeMax = -12.1f;
+        _volumeManager.VolumeIncrementDecibels = 1.0f;
+        _volumeManager.VolumeMaxDecibels = -12.1f;
 
         await _volumeManager.ReceiveVolumeAsync();
         var updated = await _volumeManager.IncreaseVolumeAsync();
@@ -637,7 +449,7 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task FineAfterVolumeInitializedPercentage_UpdatesVolume_Async()
+    public async Task FineAfterVolumeInitializedPercent_UpdatesVolume_Async()
     {
         _listener
             .ReceiveAsync(default)
@@ -652,7 +464,9 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
-        _volumeManager.VolumeFineIncrement = 0.01f;
+        _volumeManager.VolumeFineIncrementPercent = 0.01f;
+        _volumeManager.VolumeMaxPercent = 1.0f;
+
         await _volumeManager.ReceiveVolumeAsync();
         var updated = await _volumeManager.IncreaseVolumeAsync(fine: true);
 
@@ -685,7 +499,9 @@ public sealed class VolumeManagerTests : IDisposable
             );
 
         _volumeManager.UseDecibels = true;
-        _volumeManager.VolumeFineIncrement = 0.5f;
+        _volumeManager.VolumeFineIncrementDecibels = 0.5f;
+        _volumeManager.VolumeMaxDecibels = 6.0f;
+
         await _volumeManager.ReceiveVolumeAsync();
         var updated = await _volumeManager.IncreaseVolumeAsync(fine: true);
         var updatedValue = VolumeManager.DecibelsToValue(-38.5f);
@@ -703,14 +519,14 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task DecreaseVolumeAsync_RegularVolumeNotInitialized_DoesNotUpdateVolume_Async()
+    public async Task DecreaseVolumeAsync_VolumeNotInitialized_DoesNotUpdateVolume_Async()
     {
         var updated = await _volumeManager.DecreaseVolumeAsync();
         Assert.False(updated);
     }
 
     [Fact]
-    public async Task DecreaseVolumeAsync_RegularAfterVolumeInitializedPercentage_UpdatesVolume_Async()
+    public async Task DecreaseVolumeAsync_AfterVolumeInitializedPercent_UpdatesVolume_Async()
     {
         _listener
             .ReceiveAsync(default)
@@ -725,7 +541,7 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
-        _volumeManager.VolumeRegularIncrement = 0.02f;
+        _volumeManager.VolumeIncrementPercent = 0.02f;
         await _volumeManager.ReceiveVolumeAsync();
         var updated = await _volumeManager.DecreaseVolumeAsync();
 
@@ -742,7 +558,7 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task DecreaseVolumeAsync_RegularAfterVolumeInitializedDecibels_UpdatesVolume_Async()
+    public async Task DecreaseVolumeAsync_AfterVolumeInitializedDecibels_UpdatesVolume_Async()
     {
         _listener
             .ReceiveAsync(default)
@@ -758,7 +574,7 @@ public sealed class VolumeManagerTests : IDisposable
             );
 
         _volumeManager.UseDecibels = true;
-        _volumeManager.VolumeRegularIncrement = 1.0f;
+        _volumeManager.VolumeIncrementDecibels = 1.0f;
         await _volumeManager.ReceiveVolumeAsync();
         var updated = await _volumeManager.DecreaseVolumeAsync();
         var updatedValue = VolumeManager.DecibelsToValue(-13.0f);
@@ -776,7 +592,7 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task DecreaseVolumeAsync_RegularBelowSilentPercentage_IsSetToSilentAndUpdatesVolume_Async()
+    public async Task DecreaseVolumeAsync_BelowSilentPercent_IsSetToSilentAndUpdatesVolume_Async()
     {
         _listener
             .ReceiveAsync(default)
@@ -791,7 +607,7 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
-        _volumeManager.VolumeRegularIncrement = 0.05f;
+        _volumeManager.VolumeIncrementPercent = 0.05f;
         await _volumeManager.ReceiveVolumeAsync();
         var updated = await _volumeManager.DecreaseVolumeAsync();
 
@@ -808,7 +624,7 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task DecreaseVolumeAsync_RegularBelowSilentDecibels_IsSetToSilentAndUpdatesVolume_Async()
+    public async Task DecreaseVolumeAsync_BelowSilentDecibels_IsSetToSilentAndUpdatesVolume_Async()
     {
         _listener
             .ReceiveAsync(default)
@@ -824,7 +640,7 @@ public sealed class VolumeManagerTests : IDisposable
             );
 
         _volumeManager.UseDecibels = true;
-        _volumeManager.VolumeRegularIncrement = 1.0f;
+        _volumeManager.VolumeIncrementDecibels = 1.0f;
         await _volumeManager.ReceiveVolumeAsync();
         var updated = await _volumeManager.DecreaseVolumeAsync();
 
@@ -841,7 +657,7 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task DecreaseVolumeAsync_RegularAlreadySilentPercentage_DoesNotUpdateVolume_Async()
+    public async Task DecreaseVolumeAsync_AlreadySilentPercent_DoesNotUpdateVolume_Async()
     {
         _listener
             .ReceiveAsync(default)
@@ -856,7 +672,7 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
-        _volumeManager.VolumeRegularIncrement = 0.05f;
+        _volumeManager.VolumeIncrementPercent = 0.05f;
 
         await _volumeManager.ReceiveVolumeAsync();
         var updated = await _volumeManager.DecreaseVolumeAsync();
@@ -865,7 +681,7 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task DecreaseVolumeAsync_RegularAlreadySilentDecibels_DoesNotUpdateVolume_Async()
+    public async Task DecreaseVolumeAsync_AlreadySilentDecibels_DoesNotUpdateVolume_Async()
     {
         _listener
             .ReceiveAsync(default)
@@ -881,7 +697,7 @@ public sealed class VolumeManagerTests : IDisposable
             );
 
         _volumeManager.UseDecibels = true;
-        _volumeManager.VolumeRegularIncrement = 1.0f;
+        _volumeManager.VolumeIncrementDecibels = 1.0f;
 
         await _volumeManager.ReceiveVolumeAsync();
         var updated = await _volumeManager.DecreaseVolumeAsync();
@@ -897,7 +713,7 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task DecreaseVolumeAsync_FineAfterVolumeInitializedPercentage_UpdatesVolume_Async()
+    public async Task DecreaseVolumeAsync_FineAfterVolumeInitializedPercent_UpdatesVolume_Async()
     {
         _listener
             .ReceiveAsync(default)
@@ -912,7 +728,7 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
-        _volumeManager.VolumeFineIncrement = 0.01f;
+        _volumeManager.VolumeFineIncrementPercent = 0.01f;
         await _volumeManager.ReceiveVolumeAsync();
         var updated = await _volumeManager.DecreaseVolumeAsync(fine: true);
 
@@ -945,7 +761,7 @@ public sealed class VolumeManagerTests : IDisposable
             );
 
         _volumeManager.UseDecibels = true;
-        _volumeManager.VolumeFineIncrement = 0.5f;
+        _volumeManager.VolumeFineIncrementDecibels = 0.5f;
         await _volumeManager.ReceiveVolumeAsync();
         var updated = await _volumeManager.DecreaseVolumeAsync(fine: true);
         var updateValue = VolumeManager.DecibelsToValue(-39.0f);
