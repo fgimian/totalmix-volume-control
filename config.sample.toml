@@ -40,7 +40,7 @@ increment_decibels = 2.0
 # The amount that the volume should be increased when using the volume keys and holding shift down
 # and using decibels.
 # Up to max of 3.0 dB in multiples of 0.25 (i.e.. 0.25, 0.5, 0.75, etc.).
-fine_increment_decibels = 0.5
+fine_increment_decibels = 1.0
 
 # The maximum volume to send when using decibels.
 # Up to max of 6.0 dB.
