@@ -1,4 +1,4 @@
-namespace TotalMixVC.Configuration.Models;
+﻿namespace TotalMixVC.Configuration.Models;
 
 /// <summary>
 /// Provides the maximum volume that should be allowed when increasing the volume in decibels.
@@ -17,7 +17,7 @@ public record VolumeMaxDecibels
     }
 
     /// <summary>Gets or sets the volume decibel value.</summary>
-    /// <exception cref="ArgumentOutOfRangeException">
+    /// <exception cref="InvalidOperationException">
     /// The max volume specified is not in the supported range.
     /// </exception>
     public float Value
@@ -27,10 +27,7 @@ public record VolumeMaxDecibels
         {
             if (value is > 6.0f)
             {
-                throw new ArgumentOutOfRangeException(
-                    nameof(value),
-                    "Must be less than or equal to 6.0."
-                );
+                throw new InvalidOperationException("The value must be less than or equal to 6.0.");
             }
 
             _value = value;

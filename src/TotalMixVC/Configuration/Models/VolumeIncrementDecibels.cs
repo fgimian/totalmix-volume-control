@@ -1,4 +1,4 @@
-namespace TotalMixVC.Configuration.Models;
+﻿namespace TotalMixVC.Configuration.Models;
 
 /// <summary>
 /// Provides the increment to use when increasing or decreasing the volume in decibels.
@@ -17,7 +17,7 @@ public record VolumeIncrementDecibels
     }
 
     /// <summary>Gets or sets the volume decibel value.</summary>
-    /// <exception cref="ArgumentOutOfRangeException">
+    /// <exception cref="InvalidOperationException">
     /// The increment specified is not in the supported range.
     /// </exception>
     public float Value
@@ -27,10 +27,9 @@ public record VolumeIncrementDecibels
         {
             if (value <= 0.0 || value > 6.0 || value % 0.5f != 0.0f)
             {
-                throw new ArgumentOutOfRangeException(
-                    nameof(value),
-                    "Must be a multiple of 0.5 while being greater than 0 and less than or equal "
-                        + "to 6.0."
+                throw new InvalidOperationException(
+                    "The value must be a multiple of 0.5 while being greater than 0 and less "
+                        + "than or equal to 6.0."
                 );
             }
 

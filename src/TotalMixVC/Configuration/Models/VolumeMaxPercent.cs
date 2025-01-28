@@ -1,4 +1,4 @@
-namespace TotalMixVC.Configuration.Models;
+﻿namespace TotalMixVC.Configuration.Models;
 
 /// <summary>
 /// Provides the maximum volume that should be allowed when increasing the volume in percent.
@@ -17,7 +17,7 @@ public record VolumeMaxPercent
     }
 
     /// <summary>Gets or sets the volume percentage value.</summary>
-    /// <exception cref="ArgumentOutOfRangeException">
+    /// <exception cref="InvalidOperationException">
     /// The max volume specified is not in the supported range.
     /// </exception>
     public float Value
@@ -27,9 +27,8 @@ public record VolumeMaxPercent
         {
             if (value is <= 0.0f or > 1.0f)
             {
-                throw new ArgumentOutOfRangeException(
-                    nameof(value),
-                    "Must be greater than 0 and less than or equal to 1.0."
+                throw new InvalidOperationException(
+                    "The value must be greater than 0 and less than or equal to 1.0."
                 );
             }
 

@@ -121,9 +121,9 @@ public partial class App : Application, IDisposable
                 );
             }
 
-            foreach (var diagnostic in diagnostics)
+            foreach (var diagnosticMessage in Config.CleanDiagnostics(diagnostics))
             {
-                message.Append(CultureInfo.InvariantCulture, $"- {diagnostic}\n");
+                message.Append(CultureInfo.InvariantCulture, $"- {diagnosticMessage}\n");
             }
 
             message.Append(

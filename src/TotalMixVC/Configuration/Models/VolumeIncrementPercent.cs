@@ -1,4 +1,4 @@
-namespace TotalMixVC.Configuration.Models;
+﻿namespace TotalMixVC.Configuration.Models;
 
 /// <summary>
 /// Provides the increment to use when increasing or decreasing the volume in percent.
@@ -17,7 +17,7 @@ public record VolumeIncrementPercent
     }
 
     /// <summary>Gets or sets the volume percentage value.</summary>
-    /// <exception cref="ArgumentOutOfRangeException">
+    /// <exception cref="InvalidOperationException">
     /// The increment specified is not in the supported range.
     /// </exception>
     public float Value
@@ -27,9 +27,8 @@ public record VolumeIncrementPercent
         {
             if (value is <= 0.0f or > 0.10f)
             {
-                throw new ArgumentOutOfRangeException(
-                    nameof(value),
-                    "Must be greater than 0 and less than or equal to 0.1."
+                throw new InvalidOperationException(
+                    "The value must be greater than 0 and less than or equal to 0.1."
                 );
             }
 
