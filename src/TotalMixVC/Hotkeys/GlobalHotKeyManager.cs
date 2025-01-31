@@ -42,7 +42,7 @@ public partial class GlobalHotKeyManager : IDisposable
     /// <param name="hotkey">The hotkey to bind globally.</param>
     /// <param name="action">The action to run when the hotkey is detected.</param>
     /// <exception cref="Win32Exception">
-    /// An issue occurred during the registration of the hotkey.
+    /// An error occurred during the registration of the hotkey.
     /// </exception>
     public void Register(Hotkey hotkey, Action action)
     {

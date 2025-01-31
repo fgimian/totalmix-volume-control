@@ -11,13 +11,17 @@ namespace TotalMixVC.Communicator;
 /// <remarks>
 /// Initializes a new instance of the <see cref="Listener"/> class.
 /// </remarks>
-/// <param name="localEP">The endpoint to receive OSC data from.</param>
+/// <param name="ep">The endpoint to receive OSC data from.</param>
+/// <exception cref="SocketException">An error occurred when accessing the socket.</exception>
 [ExcludeFromCodeCoverage]
-public class Listener(IPEndPoint localEP) : IListener, IDisposable
+public class Listener(IPEndPoint ep) : IListener, IDisposable
 {
-    private readonly UdpClient _client = new(localEP);
+    private readonly UdpClient _client = new(ep);
 
     private bool _disposed;
+
+    /// <summary>Gets the incoming OSC endpoint to receive volume changes from.</summary>
+    public IPEndPoint EP { get; } = ep;
 
     /// <summary>Disposes the current listener.</summary>
     public void Dispose()

@@ -1,4 +1,5 @@
-﻿using OscCore;
+﻿using System.Net;
+using OscCore;
 
 namespace TotalMixVC.Communicator;
 
@@ -7,6 +8,9 @@ namespace TotalMixVC.Communicator;
 /// </summary>
 public interface IListener
 {
+    /// <summary>Gets the incoming OSC endpoint to receive volume changes from.</summary>
+    IPEndPoint EP { get; }
+
     /// <summary>
     /// Receives an OSC packet from the endpoint configured.
     /// </summary>

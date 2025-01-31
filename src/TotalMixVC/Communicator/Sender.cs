@@ -11,16 +11,17 @@ namespace TotalMixVC.Communicator;
 /// <remarks>
 /// Initializes a new instance of the <see cref="Sender"/> class.
 /// </remarks>
-/// <param name="localEP">The endpoint to receive OSC data from.</param>
+/// <param name="ep">The endpoint to receive OSC data from.</param>
+/// <exception cref="SocketException">An error occurred when accessing the socket.</exception>
 [ExcludeFromCodeCoverage]
-public class Sender(IPEndPoint localEP) : ISender, IDisposable
+public class Sender(IPEndPoint ep) : ISender, IDisposable
 {
     private readonly UdpClient _client = new();
 
     private bool _disposed;
 
     /// <summary>Gets or sets the outgoing OSC endpoint to send volume changes to.</summary>
-    public IPEndPoint LocalEP { get; set; } = localEP;
+    public IPEndPoint EP { get; set; } = ep;
 
     /// <summary>Disposes the current sender.</summary>
     public void Dispose()
@@ -39,7 +40,7 @@ public class Sender(IPEndPoint localEP) : ISender, IDisposable
     public Task<int> SendAsync(OscPacket message)
     {
         var datagram = message.ToByteArray();
-        return _client.SendAsync(datagram, datagram.Length, LocalEP);
+        return _client.SendAsync(datagram, datagram.Length, EP);
     }
 
     /// <summary>Disposes the current sender.</summary>

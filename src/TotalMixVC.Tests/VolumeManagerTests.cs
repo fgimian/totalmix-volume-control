@@ -17,7 +17,7 @@ public sealed class VolumeManagerTests : IDisposable
     {
         _sender = Substitute.For<ISender>();
         _listener = Substitute.For<IListener>();
-        _volumeManager = new(_sender, _listener);
+        _volumeManager = new(_sender) { Listener = _listener };
     }
 
     public void Dispose()

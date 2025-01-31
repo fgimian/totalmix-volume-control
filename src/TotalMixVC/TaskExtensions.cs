@@ -29,9 +29,9 @@ public static class TaskExtensions
     /// </param>
     /// <returns>The task object representing the asynchronous operation.</returns>
     /// <exception cref="OperationCanceledException">
-    /// Thrown if the task is cancelled using the provided cancellation token source.
+    /// The task was cancelled using the provided cancellation token source.
     /// </exception>
-    /// <exception cref="TimeoutException">Thrown if the task times out.</exception>
+    /// <exception cref="TimeoutException">The task timed out.</exception>
     public static async Task TimeoutAfter(
         this Task task,
         int millisecondsTimeout,
@@ -94,9 +94,9 @@ public static class TaskExtensions
     /// the task.
     /// </returns>
     /// <exception cref="OperationCanceledException">
-    /// Thrown if the task is cancelled using the provided cancellation token source.
+    /// The task was cancelled using the provided cancellation token source.
     /// </exception>
-    /// <exception cref="TimeoutException">Thrown if the task times out.</exception>
+    /// <exception cref="TimeoutException">The task timed out.</exception>
     public static async Task<TResult> TimeoutAfter<TResult>(
         this Task<TResult> task,
         int millisecondsTimeout,

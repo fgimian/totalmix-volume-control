@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Net;
+﻿using System.Net.Sockets;
 using OscCore;
 
 namespace TotalMixVC.Communicator;
@@ -7,7 +6,8 @@ namespace TotalMixVC.Communicator;
 /// <summary>
 /// Tracks the volume of the device and provides a way to send volume updates.
 /// </summary>
-public class VolumeManager : IDisposable
+/// <param name="sender">A custom sender that implements the ISender interface.</param>
+public class VolumeManager(ISender sender) : IDisposable
 {
     /// <summary>
     /// The address to be used to sending and receiving volume as a float.
@@ -24,49 +24,18 @@ public class VolumeManager : IDisposable
     /// </summary>
     private const string DimAddress = "/1/mainDim";
 
-    private readonly SemaphoreSlim _volumeMutex;
-
-    private readonly ISender _sender;
-
-    private readonly IListener _listener;
+    private readonly SemaphoreSlim _volumeMutex = new(1);
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="VolumeManager"/> class.
+    /// Gets or sets the implementation of ISender which is used to send messages to the device.
     /// </summary>
-    /// <param name="outgoingEP">
-    /// The outgoing OSC endpoint to send volume changes to. This should be set to the
-    /// incoming port in TotalMix settings.
-    /// </param>
-    /// <param name="incomingEP">
-    /// The incoming OSC endpoint to receive volume changes from. This should be set to the
-    /// outgoing port in TotalMix settings.
-    /// </param>
-    [ExcludeFromCodeCoverage]
-    public VolumeManager(IPEndPoint outgoingEP, IPEndPoint incomingEP)
-    {
-        _volumeMutex = new SemaphoreSlim(1);
-        _sender = new Sender(outgoingEP);
-        _listener = new Listener(incomingEP);
-    }
+    public ISender Sender { get; set; } = sender;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="VolumeManager"/> class.
+    /// Gets or sets the implementation of IListener which is used to receive messages from the
+    /// device.
     /// </summary>
-    /// <param name="sender">A custom sender that implements the ISender interface.</param>
-    /// <param name="listener">A custom listener that implements the ISender interface.</param>
-    public VolumeManager(ISender sender, IListener listener)
-    {
-        _volumeMutex = new SemaphoreSlim(1);
-        _sender = sender;
-        _listener = listener;
-    }
-
-    /// <summary>Gets or sets the outgoing endpoint on the sender.</summary>
-    public IPEndPoint OutgoingEndpoint
-    {
-        get => _sender.LocalEP;
-        set => _sender.LocalEP = value;
-    }
+    public IListener? Listener { get; set; }
 
     /// <summary>
     /// Gets the current device volume as a float (with a range of 0.0 to 1.0).
@@ -164,14 +133,20 @@ public class VolumeManager : IDisposable
     /// indicating whether or not the volume was obtained from the device.
     /// </returns>
     /// <exception cref="OperationCanceledException">
-    /// Thrown if the task is cancelled using the provided cancellation token source.
+    /// The task was cancelled using the provided cancellation token source.
     /// </exception>
-    /// <exception cref="TimeoutException">Thrown if the task times out.</exception>
+    /// <exception cref="InvalidOperationException">The listener is null.</exception>
+    /// <exception cref="TimeoutException">The task timed out.</exception>
     public async Task<bool> ReceiveVolumeAsync(
         int timeout = 5000,
         CancellationTokenSource? cancellationTokenSource = null
     )
     {
+        if (Listener is null)
+        {
+            throw new InvalidOperationException();
+        }
+
         // Ping events are sent from the device every around every 1 second, so we only
         // wait until a given timeout of 5 seconds before giving up and forcing a fresh
         // receive request. This ensures that the receiver can detect a device which was
@@ -180,7 +155,7 @@ public class VolumeManager : IDisposable
         using var receiveCancellationTokenSource = new CancellationTokenSource();
         try
         {
-            packet = await _listener
+            packet = await Listener
                 .ReceiveAsync(receiveCancellationTokenSource)
                 .TimeoutAfter(timeout, cancellationTokenSource)
                 .ConfigureAwait(false);
@@ -436,14 +411,28 @@ public class VolumeManager : IDisposable
         }
     }
 
-    private Task<int> SendVolumeAsync(float volume)
+    private async Task SendVolumeAsync(float volume)
     {
-        return _sender.SendAsync(new OscMessage(VolumeAddress, volume));
+        try
+        {
+            await Sender.SendAsync(new OscMessage(VolumeAddress, volume)).ConfigureAwait(false);
+        }
+        catch (SocketException)
+        {
+            // This exception is raised during a reconnect which can be ignored.
+        }
     }
 
-    private Task<int> SendDimAsync(float dim)
+    private async Task SendDimAsync(float dim)
     {
-        return _sender.SendAsync(new OscMessage(DimAddress, dim));
+        try
+        {
+            await Sender.SendAsync(new OscMessage(DimAddress, dim)).ConfigureAwait(false);
+        }
+        catch (SocketException)
+        {
+            // This exception is raised during a reconnect which can be ignored.
+        }
     }
 
     private async Task<bool> UpdateVolumeFromMessagesAsync(List<OscMessage> messages)

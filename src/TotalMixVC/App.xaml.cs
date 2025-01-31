@@ -18,9 +18,7 @@ using TotalMixVC.Hotkeys;
 
 namespace TotalMixVC;
 
-/// <summary>
-/// Interaction logic for App.xaml.
-/// </summary>
+/// <summary>Interaction logic for App.xaml.</summary>
 [SuppressMessage(
     "Roslynator",
     "RCS1043:Remove 'partial' modifier from type with a single part",
@@ -28,6 +26,13 @@ namespace TotalMixVC;
 )]
 public partial class App : Application, IDisposable
 {
+    private static readonly CompositeFormat s_listenerErrorFormatString = CompositeFormat.Parse(
+        "Unable to open a listener to receive events from your RME device.\n"
+            + "\n"
+            + "1. Ensure that the address {0} is not being used by another application\n"
+            + "2. Right-click the tray icon and reload configuration to try again"
+    );
+
     private static readonly CompositeFormat s_communicationErrorFormatString =
         CompositeFormat.Parse(
             "Unable to communicate with your RME device.\n"
@@ -62,6 +67,10 @@ public partial class App : Application, IDisposable
     private TaskbarIcon _trayIcon;
 
     private TextBlock _trayToolTipStatus;
+
+    private Sender _sender;
+
+    private Listener? _listener;
 
     private VolumeManager _volumeManager;
 
@@ -164,8 +173,12 @@ public partial class App : Application, IDisposable
     /// <summary>
     /// Reloads the application configuration and updates all components accordingly.
     /// </summary>
-    public void ReloadConfig()
+    /// <returns>The task object representing the asynchronous operation.</returns>
+    public async Task ReloadConfigAsync()
     {
+        // Switch to the background thread to avoid UI interruptions.
+        await TaskScheduler.Default;
+
         if (!File.Exists(s_configPath))
         {
             // It is important to use specify the owner of the message box or it will be closed
@@ -186,7 +199,29 @@ public partial class App : Application, IDisposable
             return;
         }
 
-        _volumeManager.OutgoingEndpoint = _config.Osc.OutgoingEndPoint;
+        _sender.EP = _config.Osc.OutgoingEndPoint;
+
+        // Switch to the UI thread and update the tray tooltip text.
+        await _joinableTaskFactory.SwitchToMainThreadAsync(_taskCancellationTokenSource.Token);
+
+        if (_listener?.EP.ToString() != _config.Osc.IncomingEndPoint.ToString())
+        {
+            _volumeManager.Listener = null;
+
+            _listener?.Dispose();
+
+            _trayToolTipStatus.Text = "TotalMix Volume Manager is initializing.";
+
+            try
+            {
+                _listener = new(_config.Osc.IncomingEndPoint);
+                _volumeManager.Listener = _listener;
+            }
+            catch (SocketException)
+            {
+                _listener = null;
+            }
+        }
 
         ConfigureVolumeManager();
         ConfigureInterface();
@@ -196,8 +231,7 @@ public partial class App : Application, IDisposable
 
         MessageBox.Show(
             _volumeIndicator,
-            "Configuration has been reloaded successfully. Please note that changes to the "
-                + "incoming OSC endpoint will require an application restart to take effect.",
+            "Configuration has been reloaded successfully.",
             caption: "Configuration Reloaded",
             button: MessageBoxButton.OK,
             icon: MessageBoxImage.Information
@@ -274,18 +308,13 @@ public partial class App : Application, IDisposable
         // Create the volume manager which will communicate with the device.
         try
         {
-            _volumeManager = new(
-                outgoingEP: _config.Osc.OutgoingEndPoint,
-                incomingEP: _config.Osc.IncomingEndPoint
-            );
+            _sender = new Sender(_config.Osc.OutgoingEndPoint);
         }
         catch (SocketException)
         {
             MessageBox.Show(
-                "Unable to open a listener to receive events from the device. Please exit any "
-                    + "applications that are binding to UDP address "
-                    + $"{_config.Osc.OutgoingEndPoint} and try again.\n\nThe application will "
-                    + "now exit.",
+                "Unable to bind to an available port to send events to the device. The "
+                    + "application will now exit.",
                 caption: "Socket Error",
                 button: MessageBoxButton.OK,
                 icon: MessageBoxImage.Exclamation
@@ -293,6 +322,19 @@ public partial class App : Application, IDisposable
             Shutdown();
             return;
         }
+
+        _volumeManager = new(_sender);
+
+        try
+        {
+            _listener = new Listener(_config.Osc.IncomingEndPoint);
+        }
+        catch (SocketException)
+        {
+            _listener = null;
+        }
+
+        _volumeManager.Listener = _listener;
 
         ConfigureVolumeManager();
 
@@ -361,6 +403,8 @@ public partial class App : Application, IDisposable
             _joinableTaskContext.Dispose();
             _hotKeyManager.Dispose();
             _volumeManager.Dispose();
+            _listener?.Dispose();
+            _sender.Dispose();
             _volumeIndicator.Dispose();
             _trayIcon.Dispose();
         }
@@ -370,11 +414,34 @@ public partial class App : Application, IDisposable
     {
         while (true)
         {
-            try
+            if (_listener is null)
             {
+                // Switch to the UI thread and update the tray tooltip text.
+                await _joinableTaskFactory.SwitchToMainThreadAsync(
+                    _taskCancellationTokenSource.Token
+                );
+                _trayToolTipStatus.Text = string.Format(
+                    CultureInfo.InvariantCulture,
+                    s_listenerErrorFormatString,
+                    _config.Osc.IncomingEndPoint
+                );
+                _trayIcon.ToolTipText =
+                    "TotalMixVC - Unable to open listener to receive events from your RME device";
+
                 // Switch to the background thread to avoid UI interruptions.
                 await TaskScheduler.Default;
 
+                // Sleep for a second before trying again.
+                await Task.Delay(1000, _taskCancellationTokenSource.Token).ConfigureAwait(false);
+
+                continue;
+            }
+
+            // Switch to the background thread to avoid UI interruptions.
+            await TaskScheduler.Default;
+
+            try
+            {
                 // Obtain the initialized state before setting the volume.
                 var initializedBeforeReceive = _volumeManager.IsVolumeInitialized;
 
@@ -428,6 +495,10 @@ public partial class App : Application, IDisposable
                     _config.Osc.IncomingEndPoint.Address
                 );
                 _trayIcon.ToolTipText = "TotalMixVC - Unable to connect to your device";
+            }
+            catch (SocketException)
+            {
+                // This exception is raised during a reconnect which can be ignored.
             }
             catch (OperationCanceledException)
             {

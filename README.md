@@ -77,8 +77,7 @@ application. All the pre-filled values you see in the sample configuration are o
 represent the application defaults.
 
 You may live-reload your updated configuration by right-clicking on the TotalMix Volume Control
-tray icon and selecting "Reload Configuration" which will update all settings except the incoming
-OSC endpoint which requires an application restart to be changed.
+tray icon and selecting "Reload Configuration" which will update all settings.
 
 ## Building from Source
 
