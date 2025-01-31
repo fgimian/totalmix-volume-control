@@ -39,6 +39,10 @@ public class Listener(IPEndPoint ep) : IListener, IDisposable
     /// <returns>
     /// An OSC packet which may be either a <see cref="OscBundle"/> or <see cref="OscMessage"/>.
     /// </returns>
+    /// <exception cref="ObjectDisposedException">
+    /// The underlying <see cref="Socket"/> has been closed.
+    /// </exception>
+    /// <exception cref="SocketException">An error occurred when accessing the socket.</exception>
     public async Task<OscPacket> ReceiveAsync(
         CancellationTokenSource? cancellationTokenSource = null
     )

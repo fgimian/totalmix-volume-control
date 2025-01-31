@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Sockets;
 using OscCore;
 
 namespace TotalMixVC.Communicator;
@@ -20,5 +21,9 @@ public interface IListener
     /// <returns>
     /// An OSC packet which may be either a <see cref="OscBundle"/> or <see cref="OscMessage"/>.
     /// </returns>
+    /// <exception cref="ObjectDisposedException">
+    /// The underlying <see cref="Socket"/> has been closed.
+    /// </exception>
+    /// <exception cref="SocketException">An error occurred when accessing the socket.</exception>
     Task<OscPacket> ReceiveAsync(CancellationTokenSource? cancellationTokenSource = null);
 }

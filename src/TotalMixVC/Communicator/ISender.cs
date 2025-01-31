@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Sockets;
 using OscCore;
 
 namespace TotalMixVC.Communicator;
@@ -18,5 +19,7 @@ public interface ISender
     /// The <see cref="OscBundle"/> or <see cref="OscMessage"/> message to send.
     /// </param>
     /// <returns>The number of bytes sent to the endpoint.</returns>
+    /// <exception cref="ObjectDisposedException">The <see cref="UdpClient"/> is closed.</exception>
+    /// <exception cref="SocketException">An error occurred when accessing the socket.</exception>
     Task<int> SendAsync(OscPacket message);
 }

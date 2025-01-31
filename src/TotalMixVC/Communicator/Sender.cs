@@ -37,6 +37,8 @@ public class Sender(IPEndPoint ep) : ISender, IDisposable
     /// The <see cref="OscBundle"/> or <see cref="OscMessage"/> message to send.
     /// </param>
     /// <returns>The number of bytes sent to the endpoint.</returns>
+    /// <exception cref="ObjectDisposedException">The <see cref="UdpClient"/> is closed.</exception>
+    /// <exception cref="SocketException">An error occurred when accessing the socket.</exception>
     public Task<int> SendAsync(OscPacket message)
     {
         var datagram = message.ToByteArray();

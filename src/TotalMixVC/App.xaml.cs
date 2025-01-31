@@ -476,6 +476,10 @@ public partial class App : Application, IDisposable
                 _trayToolTipStatus.Text = "Successfully communicating with your RME device.";
                 _trayIcon.ToolTipText = "TotalMixVC - Connection established.";
             }
+            catch (SocketException)
+            {
+                // This exception is raised during a reconnect which can be ignored.
+            }
             catch (TimeoutException)
             {
                 // Update the volume indicator values with initial values after a timeout.
@@ -495,10 +499,6 @@ public partial class App : Application, IDisposable
                     _config.Osc.IncomingEndPoint.Address
                 );
                 _trayIcon.ToolTipText = "TotalMixVC - Unable to connect to your device";
-            }
-            catch (SocketException)
-            {
-                // This exception is raised during a reconnect which can be ignored.
             }
             catch (OperationCanceledException)
             {

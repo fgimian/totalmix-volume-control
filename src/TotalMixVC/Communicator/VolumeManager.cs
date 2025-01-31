@@ -136,6 +136,7 @@ public class VolumeManager(ISender sender) : IDisposable
     /// The task was cancelled using the provided cancellation token source.
     /// </exception>
     /// <exception cref="InvalidOperationException">The listener is null.</exception>
+    /// <exception cref="SocketException">An error occurred when accessing the socket.</exception>
     /// <exception cref="TimeoutException">The task timed out.</exception>
     public async Task<bool> ReceiveVolumeAsync(
         int timeout = 5000,
