@@ -476,9 +476,9 @@ public partial class App : Application, IDisposable
                 _trayToolTipStatus.Text = "Successfully communicating with your RME device.";
                 _trayIcon.ToolTipText = "TotalMixVC - Connection established.";
             }
-            catch (SocketException)
+            catch (Exception ex) when (ex is InvalidOperationException or SocketException)
             {
-                // This exception is raised during a reconnect which can be ignored.
+                // These exceptions is raised during a reconnect which can be ignored.
             }
             catch (TimeoutException)
             {
