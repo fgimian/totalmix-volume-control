@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using AsyncAwaitBestPractices.MVVM;
 using Microsoft.Win32;
 
 namespace TotalMixVC;
@@ -23,11 +22,11 @@ public static class TrayIconMenu
     /// <summary>
     /// Gets the command which reloads the application configuration.
     /// </summary>
-    public static IAsyncCommand ReloadConfig =>
-        new AsyncCommand(async () =>
+    public static ICommand ReloadConfig =>
+        new DelegateCommand(() =>
         {
             var app = (App)Application.Current;
-            await app.ReloadConfigAsync().ConfigureAwait(false);
+            app.ReloadConfig();
         });
 
     /// <summary>

@@ -173,8 +173,7 @@ public partial class App : Application, IDisposable
     /// <summary>
     /// Reloads the application configuration and updates all components accordingly.
     /// </summary>
-    /// <returns>The task object representing the asynchronous operation.</returns>
-    public async Task ReloadConfigAsync()
+    public void ReloadConfig()
     {
         if (!File.Exists(s_configPath))
         {
