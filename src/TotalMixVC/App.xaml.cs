@@ -199,7 +199,6 @@ public partial class App : Application, IDisposable
 
         if (_listener?.EP.ToString() != _config.Osc.IncomingEndPoint.ToString())
         {
-            _volumeManager.Listener = null;
             _listener?.Dispose();
             _trayToolTipStatus.Text = "TotalMix Volume Manager is initializing.";
 
@@ -491,7 +490,7 @@ public partial class App : Application, IDisposable
                 );
                 _trayIcon.ToolTipText = "TotalMixVC - Unable to connect to your device";
             }
-            catch (SocketException)
+            catch (Exception ex) when (ex is SocketException or ObjectDisposedException)
             {
                 // This exception is raised during a reconnect which can be ignored.
             }
