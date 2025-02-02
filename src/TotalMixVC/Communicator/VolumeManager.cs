@@ -24,7 +24,10 @@ public class VolumeManager(ISender sender) : IDisposable
     /// </summary>
     private const string DimAddress = "/1/mainDim";
 
-    private readonly SemaphoreSlim _volumeMutex = new(1);
+    /// <summary>
+    /// A write semaphore (mutex) for the volume value properties Volume, VolumeDecibels and Dim.
+    /// </summary>
+    private readonly SemaphoreSlim _volumeSemaphore = new(1);
 
     /// <summary>
     /// Gets or sets the implementation of ISender which is used to send messages to the device.
@@ -175,7 +178,7 @@ public class VolumeManager(ISender sender) : IDisposable
             // Reset the volume back to an initial state so that the caller is forced to
             // request device volume before continuing as this may have changed while the
             // device was offline.
-            await _volumeMutex
+            await _volumeSemaphore
                 .WaitAsync(cancellationTokenSource?.Token ?? default)
                 .ConfigureAwait(false);
             try
@@ -186,7 +189,7 @@ public class VolumeManager(ISender sender) : IDisposable
             }
             finally
             {
-                _volumeMutex.Release();
+                _volumeSemaphore.Release();
             }
 
             throw;
@@ -225,7 +228,7 @@ public class VolumeManager(ISender sender) : IDisposable
             return false;
         }
 
-        await _volumeMutex.WaitAsync().ConfigureAwait(false);
+        await _volumeSemaphore.WaitAsync().ConfigureAwait(false);
         try
         {
             // Calculate the new volume.
@@ -271,7 +274,7 @@ public class VolumeManager(ISender sender) : IDisposable
         }
         finally
         {
-            _volumeMutex.Release();
+            _volumeSemaphore.Release();
         }
     }
 
@@ -290,7 +293,7 @@ public class VolumeManager(ISender sender) : IDisposable
             return false;
         }
 
-        await _volumeMutex.WaitAsync().ConfigureAwait(false);
+        await _volumeSemaphore.WaitAsync().ConfigureAwait(false);
         try
         {
             // Calculate the new volume.
@@ -329,7 +332,7 @@ public class VolumeManager(ISender sender) : IDisposable
         }
         finally
         {
-            _volumeMutex.Release();
+            _volumeSemaphore.Release();
         }
     }
 
@@ -347,7 +350,7 @@ public class VolumeManager(ISender sender) : IDisposable
             return false;
         }
 
-        await _volumeMutex.WaitAsync().ConfigureAwait(false);
+        await _volumeSemaphore.WaitAsync().ConfigureAwait(false);
         try
         {
             // To toggle the dim function, we must simply send 1, not the actual 0 or 1 value.
@@ -357,7 +360,7 @@ public class VolumeManager(ISender sender) : IDisposable
         }
         finally
         {
-            _volumeMutex.Release();
+            _volumeSemaphore.Release();
         }
     }
 
@@ -408,7 +411,7 @@ public class VolumeManager(ISender sender) : IDisposable
     {
         if (disposing)
         {
-            _volumeMutex.Dispose();
+            _volumeSemaphore.Dispose();
         }
     }
 
@@ -446,7 +449,7 @@ public class VolumeManager(ISender sender) : IDisposable
             )
         )
         {
-            await _volumeMutex.WaitAsync().ConfigureAwait(false);
+            await _volumeSemaphore.WaitAsync().ConfigureAwait(false);
             try
             {
                 if (message.Address == VolumeDecibelsAddress)
@@ -471,7 +474,7 @@ public class VolumeManager(ISender sender) : IDisposable
             }
             finally
             {
-                _volumeMutex.Release();
+                _volumeSemaphore.Release();
             }
         }
 
