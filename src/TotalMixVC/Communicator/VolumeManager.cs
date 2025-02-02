@@ -167,7 +167,7 @@ public class VolumeManager(ISender sender) : IDisposable
             // transmission of the message.
             return false;
         }
-        catch (TimeoutException)
+        catch (Exception ex) when (ex is TimeoutException or SocketException)
         {
             // Cancel the receive task since it timed out.
             await receiveCancellationTokenSource.CancelAsync().ConfigureAwait(false);

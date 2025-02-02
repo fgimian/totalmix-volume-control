@@ -207,20 +207,19 @@ public partial class App : Application, IDisposable
         if (_listener?.EP.ToString() != _config.Osc.IncomingEndPoint.ToString())
         {
             _volumeManager.Listener = null;
-
             _listener?.Dispose();
-
             _trayToolTipStatus.Text = "TotalMix Volume Manager is initializing.";
 
             try
             {
                 _listener = new(_config.Osc.IncomingEndPoint);
-                _volumeManager.Listener = _listener;
             }
             catch (SocketException)
             {
                 _listener = null;
             }
+
+            _volumeManager.Listener = _listener;
         }
 
         ConfigureVolumeManager();
@@ -414,29 +413,6 @@ public partial class App : Application, IDisposable
     {
         while (true)
         {
-            if (_listener is null)
-            {
-                // Switch to the UI thread and update the tray tooltip text.
-                await _joinableTaskFactory.SwitchToMainThreadAsync(
-                    _taskCancellationTokenSource.Token
-                );
-                _trayToolTipStatus.Text = string.Format(
-                    CultureInfo.InvariantCulture,
-                    s_listenerErrorFormatString,
-                    _config.Osc.IncomingEndPoint
-                );
-                _trayIcon.ToolTipText =
-                    "TotalMixVC - Unable to open listener to receive events from your RME device";
-
-                // Switch to the background thread to avoid UI interruptions.
-                await TaskScheduler.Default;
-
-                // Sleep for a second before trying again.
-                await Task.Delay(1000, _taskCancellationTokenSource.Token).ConfigureAwait(false);
-
-                continue;
-            }
-
             // Switch to the background thread to avoid UI interruptions.
             await TaskScheduler.Default;
 
@@ -476,9 +452,31 @@ public partial class App : Application, IDisposable
                 _trayToolTipStatus.Text = "Successfully communicating with your RME device.";
                 _trayIcon.ToolTipText = "TotalMixVC - Connection established.";
             }
-            catch (Exception ex) when (ex is InvalidOperationException or SocketException)
+            catch (InvalidOperationException)
             {
-                // These exceptions is raised during a reconnect which can be ignored.
+                // Update the volume indicator values with initial values after not being able to
+                // communicate with the device.
+                await _volumeIndicator
+                    .UpdateVolumeAsync(volume: 0.0f, volumeDecibels: "-", isDimmed: false)
+                    .ConfigureAwait(false);
+
+                // Switch to the UI thread and update the tray tooltip text.
+                await _joinableTaskFactory.SwitchToMainThreadAsync(
+                    _taskCancellationTokenSource.Token
+                );
+                _trayToolTipStatus.Text = string.Format(
+                    CultureInfo.InvariantCulture,
+                    s_listenerErrorFormatString,
+                    _config.Osc.IncomingEndPoint
+                );
+                _trayIcon.ToolTipText =
+                    "TotalMixVC - Unable to open listener to receive events from your RME device";
+
+                // Switch to the background thread to avoid UI interruptions.
+                await TaskScheduler.Default;
+
+                // Sleep for a second before trying again.
+                await Task.Delay(1000, _taskCancellationTokenSource.Token).ConfigureAwait(false);
             }
             catch (TimeoutException)
             {
@@ -499,6 +497,10 @@ public partial class App : Application, IDisposable
                     _config.Osc.IncomingEndPoint.Address
                 );
                 _trayIcon.ToolTipText = "TotalMixVC - Unable to connect to your device";
+            }
+            catch (SocketException)
+            {
+                // This exception is raised during a reconnect which can be ignored.
             }
             catch (OperationCanceledException)
             {
