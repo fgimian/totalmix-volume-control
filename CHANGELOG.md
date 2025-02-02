@@ -1,5 +1,32 @@
 # TotalMix Volume Control Changelog
 
+## 0.8.0 (2025-02-02)
+
+This release brings major new functionality to the application and also makes some breaking
+changes to the configuration file.
+
+* All project dependencies have been updated to their latest version
+* You may now configure the application to increment volume by a specific number of decibels
+* The configuration file has switched back to the
+  [TOML](https://github.com/toml-lang/toml) format
+* Various configuration parameters have been modified:
+  * `osc.outgoing_hostname` and `osc.outgoing_port` have been consolidated to
+    `osc.outgoing_endpoint`
+  * `osc.incoming_hostname` and `osc.incoming_port` have been consolidated to
+    `osc.incoming_endpoint`
+  * `volume.increment` has been renamed to `volume.increment_percent`
+  * `volume.fine_increment` has been renamed to `volume.fine_increment_percent`
+  * `volume.max` has been renamed to `volume.max_percent`
+* You may now change both the incoming and outgoing endpoint without an application restart
+* The default fade out time of the widget has been shortened slightly
+* Socket exceptions are now handled properly which should resolve some reports of the application
+  disconnecting after waking from sleep or physically disconnecting the device
+
+You may use the updated
+[sample configuration file](https://github.com/fgimian/totalmix-volume-control/blob/v0.8.0/config.sample.toml)
+as a reference while updating your personal configuration. The sample configuration file also
+demonstrates how to switch to and configure incrementing of the volume by dB instead of percent.
+
 ## 0.7.0 (2024-11-21)
 
 This is a maintenance release of TotalMix Volume Control which updates .NET to version 9 and
