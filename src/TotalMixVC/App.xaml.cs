@@ -176,9 +176,6 @@ public partial class App : Application, IDisposable
     /// <returns>The task object representing the asynchronous operation.</returns>
     public async Task ReloadConfigAsync()
     {
-        // Switch to the background thread to avoid UI interruptions.
-        await TaskScheduler.Default;
-
         if (!File.Exists(s_configPath))
         {
             // It is important to use specify the owner of the message box or it will be closed
@@ -200,9 +197,6 @@ public partial class App : Application, IDisposable
         }
 
         _sender.EP = _config.Osc.OutgoingEndPoint;
-
-        // Switch to the UI thread and update the tray tooltip text.
-        await _joinableTaskFactory.SwitchToMainThreadAsync(_taskCancellationTokenSource.Token);
 
         if (_listener?.EP.ToString() != _config.Osc.IncomingEndPoint.ToString())
         {
