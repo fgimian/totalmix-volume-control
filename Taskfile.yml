@@ -55,7 +55,7 @@ tasks:
       dotnet reportgenerator
       -reports:src/*/TestResults/*/coverage.cobertura.xml
       -targetdir:.coverage
-      "-reporttypes:Cobertura;lcov;Html"
+      -reporttypes:Cobertura,lcov,Html
       -filefilters:-*.g.cs
     deps:
       - test
