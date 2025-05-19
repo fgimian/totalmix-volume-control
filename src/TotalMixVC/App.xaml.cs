@@ -417,37 +417,28 @@ public partial class App : Application, IDisposable
 
                 // The device sends a ping roughly every 2 seconds (usually a pinch over
                 // 2 seconds), so we'll timeout at 3 seconds to be on the safe side.
-                var received = await _volumeManager
+                var snapshot = await _volumeManager
                     .ReceiveVolumeAsync(3000, _taskCancellationTokenSource)
                     .ConfigureAwait(false);
 
                 // When volume updates are received, we display update the volume and display
                 // the volume indicator.
-                if (received)
+                if (snapshot is not null)
                 {
-                    var snapshot = await _volumeManager
-                        .GetDeviceSnapshotAsync()
+                    await _volumeIndicator
+                        .UpdateVolumeAsync(
+                            snapshot.Volume,
+                            snapshot.VolumeDecibels,
+                            snapshot.IsDimmed
+                        )
                         .ConfigureAwait(false);
 
-                    if (snapshot is not null)
+                    if (
+                        isVolumeInitializedBeforeReceive
+                        && _config.Interface.ShowRemoteVolumeChanges
+                    )
                     {
-                        await _volumeIndicator
-                            .UpdateVolumeAsync(
-                                snapshot.Volume,
-                                snapshot.VolumeDecibels,
-                                snapshot.IsDimmed
-                            )
-                            .ConfigureAwait(false);
-
-                        if (
-                            isVolumeInitializedBeforeReceive
-                            && _config.Interface.ShowRemoteVolumeChanges
-                        )
-                        {
-                            await _volumeIndicator
-                                .DisplayCurrentVolumeAsync()
-                                .ConfigureAwait(false);
-                        }
+                        await _volumeIndicator.DisplayCurrentVolumeAsync().ConfigureAwait(false);
                     }
                 }
 

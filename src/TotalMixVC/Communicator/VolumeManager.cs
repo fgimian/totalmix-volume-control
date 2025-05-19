@@ -183,7 +183,7 @@ public class VolumeManager(ISender sender) : IDisposable
     /// </exception>
     /// <exception cref="SocketException">An error occurred when accessing the socket.</exception>
     /// <exception cref="TimeoutException">The task timed out.</exception>
-    public async Task<bool> ReceiveVolumeAsync(
+    public async Task<DeviceSnapshot?> ReceiveVolumeAsync(
         int timeout = 5000,
         CancellationTokenSource? cancellationTokenSource = null
     )
@@ -210,7 +210,7 @@ public class VolumeManager(ISender sender) : IDisposable
         {
             // An incomplete packet may be received if the device goes offline during
             // transmission of the message.
-            return false;
+            return null;
         }
         catch (Exception ex) when (ex is TimeoutException or SocketException)
         {
@@ -252,7 +252,7 @@ public class VolumeManager(ISender sender) : IDisposable
             return await UpdateVolumeFromMessagesAsync(messages).ConfigureAwait(false);
         }
 
-        return false;
+        return null;
     }
 
     /// <summary>
@@ -482,7 +482,7 @@ public class VolumeManager(ISender sender) : IDisposable
         }
     }
 
-    private async Task<bool> UpdateVolumeFromMessagesAsync(List<OscMessage> messages)
+    private async Task<DeviceSnapshot?> UpdateVolumeFromMessagesAsync(List<OscMessage> messages)
     {
         var received = false;
 
@@ -521,6 +521,11 @@ public class VolumeManager(ISender sender) : IDisposable
             }
         }
 
-        return received;
+        if (received)
+        {
+            return await GetDeviceSnapshotAsync().ConfigureAwait(false);
+        }
+
+        return null;
     }
 }

@@ -54,10 +54,8 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
-        var received = await _volumeManager.ReceiveVolumeAsync();
-        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
+        var snapshot = await _volumeManager.ReceiveVolumeAsync();
 
-        Assert.True(received);
         Assert.NotNull(snapshot);
         Assert.Equal(0.20f, snapshot.Volume);
         Assert.Equal("-38.2 dB", snapshot.VolumeDecibels);
@@ -80,10 +78,8 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
-        var received = await _volumeManager.ReceiveVolumeAsync();
-        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
+        var snapshot = await _volumeManager.ReceiveVolumeAsync();
 
-        Assert.True(received);
         Assert.NotNull(snapshot);
         Assert.Equal(0.20f, snapshot.Volume);
         Assert.Equal("-38.2 dB", snapshot.VolumeDecibels);
@@ -106,10 +102,10 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
-        var received = await _volumeManager.ReceiveVolumeAsync();
+        var snapshot = await _volumeManager.ReceiveVolumeAsync();
         var isVolumeInitialized = await _volumeManager.IsVolumeInitializedAsync();
 
-        Assert.False(received);
+        Assert.Null(snapshot);
         Assert.False(isVolumeInitialized);
     }
 
@@ -132,15 +128,15 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
-        var receivedAll = await _volumeManager.ReceiveVolumeAsync();
-        var receivedDecibelsOnly = await _volumeManager.ReceiveVolumeAsync();
-        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
+        var snapshotAll = await _volumeManager.ReceiveVolumeAsync();
+        var snapshotDecibelsOnly = await _volumeManager.ReceiveVolumeAsync();
 
-        Assert.True(receivedAll);
-        Assert.True(receivedDecibelsOnly);
-        Assert.NotNull(snapshot);
-        Assert.Equal(0.20f, snapshot.Volume);
-        Assert.Equal("-40.5 dB", snapshot.VolumeDecibels);
+        Assert.NotNull(snapshotAll);
+        Assert.Equal(0.20f, snapshotAll.Volume);
+        Assert.Equal("-38.2 dB", snapshotAll.VolumeDecibels);
+        Assert.NotNull(snapshotDecibelsOnly);
+        Assert.Equal(0.20f, snapshotDecibelsOnly.Volume);
+        Assert.Equal("-40.5 dB", snapshotDecibelsOnly.VolumeDecibels);
     }
 
     [Fact]
@@ -154,11 +150,9 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
-        var received = await _volumeManager.ReceiveVolumeAsync();
-        var isVolumeInitialized = await _volumeManager.IsVolumeInitializedAsync();
+        var snapshot = await _volumeManager.ReceiveVolumeAsync();
 
-        Assert.False(received);
-        Assert.False(isVolumeInitialized);
+        Assert.Null(snapshot);
     }
 
     [Fact]
@@ -176,11 +170,9 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
-        var received = await _volumeManager.ReceiveVolumeAsync();
-        var isVolumeInitialized = await _volumeManager.IsVolumeInitializedAsync();
+        var snapshot = await _volumeManager.ReceiveVolumeAsync();
 
-        Assert.False(received);
-        Assert.False(isVolumeInitialized);
+        Assert.Null(snapshot);
     }
 
     [Fact]
@@ -192,11 +184,9 @@ public sealed class VolumeManagerTests : IDisposable
                 Task.FromResult<OscPacket>(new OscMessage("/1/mastervolume", 0.20f))
             );
 
-        var received = await _volumeManager.ReceiveVolumeAsync();
-        var isVolumeInitialized = await _volumeManager.IsVolumeInitializedAsync();
+        var snapshot = await _volumeManager.ReceiveVolumeAsync();
 
-        Assert.False(received);
-        Assert.False(isVolumeInitialized);
+        Assert.Null(snapshot);
     }
 
     [Fact]
@@ -208,11 +198,9 @@ public sealed class VolumeManagerTests : IDisposable
                 Task.FromException<OscPacket>(new OscException(OscError.MissingComma, "weov"))
             );
 
-        var received = await _volumeManager.ReceiveVolumeAsync();
-        var isVolumeInitialized = await _volumeManager.IsVolumeInitializedAsync();
+        var snapshot = await _volumeManager.ReceiveVolumeAsync();
 
-        Assert.False(received);
-        Assert.False(isVolumeInitialized);
+        Assert.Null(snapshot);
     }
 
     [Fact]
@@ -232,12 +220,9 @@ public sealed class VolumeManagerTests : IDisposable
                 Task.FromException<OscPacket>(new TimeoutException("weov"))
             );
 
-        var received = await _volumeManager.ReceiveVolumeAsync();
-        var isVolumeInitializedAfterVolumeReceived =
-            await _volumeManager.IsVolumeInitializedAsync();
+        var snapshot = await _volumeManager.ReceiveVolumeAsync();
 
-        Assert.True(received);
-        Assert.True(isVolumeInitializedAfterVolumeReceived);
+        Assert.NotNull(snapshot);
 
         await Assert.ThrowsAsync<TimeoutException>(async () =>
             await _volumeManager.ReceiveVolumeAsync()
