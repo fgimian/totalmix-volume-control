@@ -56,10 +56,9 @@ public class TaskExtensionsTests
             TestContext.Current.CancellationToken
         );
 
-        await Assert.ThrowsAsync<OperationCanceledException>(
-            async () =>
-                await Task.Run(task, TestContext.Current.CancellationToken)
-                    .TimeoutAfter(1000, cancellationTokenSource)
+        await Assert.ThrowsAsync<OperationCanceledException>(async () =>
+            await Task.Run(task, TestContext.Current.CancellationToken)
+                .TimeoutAfter(1000, cancellationTokenSource)
         );
         Assert.False(completed);
         await cancelTask;
@@ -121,8 +120,8 @@ public class TaskExtensionsTests
             TestContext.Current.CancellationToken
         );
 
-        await Assert.ThrowsAsync<OperationCanceledException>(
-            async () => await Task.Run(task).TimeoutAfter(1000, cancellationTokenSource)
+        await Assert.ThrowsAsync<OperationCanceledException>(async () =>
+            await Task.Run(task).TimeoutAfter(1000, cancellationTokenSource)
         );
         Assert.False(completed);
         await cancelTask;
