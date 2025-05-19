@@ -55,12 +55,13 @@ public sealed class VolumeManagerTests : IDisposable
             );
 
         var received = await _volumeManager.ReceiveVolumeAsync();
+        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
 
         Assert.True(received);
-        Assert.Equal(0.20f, _volumeManager.Volume);
-        Assert.Equal("-38.2 dB", _volumeManager.VolumeDecibels);
-        Assert.False(_volumeManager.IsDimmed);
-        Assert.True(_volumeManager.IsVolumeInitialized);
+        Assert.NotNull(snapshot);
+        Assert.Equal(0.20f, snapshot.Volume);
+        Assert.Equal("-38.2 dB", snapshot.VolumeDecibels);
+        Assert.False(snapshot.IsDimmed);
     }
 
     [Fact]
@@ -80,12 +81,13 @@ public sealed class VolumeManagerTests : IDisposable
             );
 
         var received = await _volumeManager.ReceiveVolumeAsync();
+        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
 
         Assert.True(received);
-        Assert.Equal(0.20f, _volumeManager.Volume);
-        Assert.Equal("-38.2 dB", _volumeManager.VolumeDecibels);
-        Assert.True(_volumeManager.IsDimmed);
-        Assert.True(_volumeManager.IsVolumeInitialized);
+        Assert.NotNull(snapshot);
+        Assert.Equal(0.20f, snapshot.Volume);
+        Assert.Equal("-38.2 dB", snapshot.VolumeDecibels);
+        Assert.True(snapshot.IsDimmed);
     }
 
     [Fact]
@@ -105,9 +107,10 @@ public sealed class VolumeManagerTests : IDisposable
             );
 
         var received = await _volumeManager.ReceiveVolumeAsync();
+        var isVolumeInitialized = await _volumeManager.IsVolumeInitializedAsync();
 
         Assert.False(received);
-        Assert.False(_volumeManager.IsVolumeInitialized);
+        Assert.False(isVolumeInitialized);
     }
 
     [Fact]
@@ -131,12 +134,13 @@ public sealed class VolumeManagerTests : IDisposable
 
         var receivedAll = await _volumeManager.ReceiveVolumeAsync();
         var receivedDecibelsOnly = await _volumeManager.ReceiveVolumeAsync();
+        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
 
         Assert.True(receivedAll);
         Assert.True(receivedDecibelsOnly);
-        Assert.Equal(0.20f, _volumeManager.Volume);
-        Assert.Equal("-40.5 dB", _volumeManager.VolumeDecibels);
-        Assert.True(_volumeManager.IsVolumeInitialized);
+        Assert.NotNull(snapshot);
+        Assert.Equal(0.20f, snapshot.Volume);
+        Assert.Equal("-40.5 dB", snapshot.VolumeDecibels);
     }
 
     [Fact]
@@ -151,9 +155,10 @@ public sealed class VolumeManagerTests : IDisposable
             );
 
         var received = await _volumeManager.ReceiveVolumeAsync();
+        var isVolumeInitialized = await _volumeManager.IsVolumeInitializedAsync();
 
         Assert.False(received);
-        Assert.False(_volumeManager.IsVolumeInitialized);
+        Assert.False(isVolumeInitialized);
     }
 
     [Fact]
@@ -172,9 +177,10 @@ public sealed class VolumeManagerTests : IDisposable
             );
 
         var received = await _volumeManager.ReceiveVolumeAsync();
+        var isVolumeInitialized = await _volumeManager.IsVolumeInitializedAsync();
 
         Assert.False(received);
-        Assert.False(_volumeManager.IsVolumeInitialized);
+        Assert.False(isVolumeInitialized);
     }
 
     [Fact]
@@ -187,9 +193,10 @@ public sealed class VolumeManagerTests : IDisposable
             );
 
         var received = await _volumeManager.ReceiveVolumeAsync();
+        var isVolumeInitialized = await _volumeManager.IsVolumeInitializedAsync();
 
         Assert.False(received);
-        Assert.False(_volumeManager.IsVolumeInitialized);
+        Assert.False(isVolumeInitialized);
     }
 
     [Fact]
@@ -202,9 +209,10 @@ public sealed class VolumeManagerTests : IDisposable
             );
 
         var received = await _volumeManager.ReceiveVolumeAsync();
+        var isVolumeInitialized = await _volumeManager.IsVolumeInitializedAsync();
 
         Assert.False(received);
-        Assert.False(_volumeManager.IsVolumeInitialized);
+        Assert.False(isVolumeInitialized);
     }
 
     [Fact]
@@ -225,15 +233,19 @@ public sealed class VolumeManagerTests : IDisposable
             );
 
         var received = await _volumeManager.ReceiveVolumeAsync();
-        var initializedAfterVolumeReceived = _volumeManager.IsVolumeInitialized;
+        var isVolumeInitializedAfterVolumeReceived =
+            await _volumeManager.IsVolumeInitializedAsync();
 
         Assert.True(received);
-        Assert.True(initializedAfterVolumeReceived);
+        Assert.True(isVolumeInitializedAfterVolumeReceived);
 
-        await Assert.ThrowsAsync<TimeoutException>(
-            async () => await _volumeManager.ReceiveVolumeAsync()
+        await Assert.ThrowsAsync<TimeoutException>(async () =>
+            await _volumeManager.ReceiveVolumeAsync()
         );
-        Assert.False(_volumeManager.IsVolumeInitialized);
+
+        var isVolumeInitializedAfterTimeout = await _volumeManager.IsVolumeInitializedAsync();
+
+        Assert.False(isVolumeInitializedAfterTimeout);
     }
 
     [Fact]
@@ -273,8 +285,11 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
+        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
+
         Assert.True(updated);
-        Assert.Equal(0.22f, _volumeManager.Volume);
+        Assert.NotNull(snapshot);
+        Assert.Equal(0.22f, snapshot.Volume);
     }
 
     [Theory]
@@ -284,7 +299,7 @@ public sealed class VolumeManagerTests : IDisposable
     public async Task IncreaseVolumeAsync_AfterVolumeInitializedDecibels_UpdatesVolume_Async(
         float masterVolume,
         string masterVolumeVal,
-        float expectedUpdatedVolumeDB
+        float expectedUpdatedVolumeDecibels
     )
     {
         _listener
@@ -306,7 +321,7 @@ public sealed class VolumeManagerTests : IDisposable
 
         await _volumeManager.ReceiveVolumeAsync();
         var updated = await _volumeManager.IncreaseVolumeAsync();
-        var updatedValue = VolumeManager.DecibelsToValue(expectedUpdatedVolumeDB);
+        var updatedValue = VolumeManager.DecibelsToValue(expectedUpdatedVolumeDecibels);
 
         await _sender
             .Received()
@@ -316,8 +331,11 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
+        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
+
         Assert.True(updated);
-        Assert.Equal(updatedValue, _volumeManager.Volume);
+        Assert.NotNull(snapshot);
+        Assert.Equal(updatedValue, snapshot.Volume);
     }
 
     [Fact]
@@ -350,8 +368,11 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
+        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
+
         Assert.True(updated);
-        Assert.Equal(0.50f, _volumeManager.Volume);
+        Assert.NotNull(snapshot);
+        Assert.Equal(0.50f, snapshot.Volume);
     }
 
     [Fact]
@@ -386,8 +407,11 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
+        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
+
         Assert.True(updated);
-        Assert.Equal(updatedValue, _volumeManager.Volume);
+        Assert.NotNull(snapshot);
+        Assert.Equal(updatedValue, snapshot.Volume);
     }
 
     [Fact]
@@ -478,8 +502,11 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
+        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
+
         Assert.True(updated);
-        Assert.Equal(0.21000001f, _volumeManager.Volume);
+        Assert.NotNull(snapshot);
+        Assert.Equal(0.21000001f, snapshot.Volume);
     }
 
     [Fact]
@@ -514,8 +541,11 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
+        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
+
         Assert.True(updated);
-        Assert.Equal(updatedValue, _volumeManager.Volume);
+        Assert.NotNull(snapshot);
+        Assert.Equal(updatedValue, snapshot.Volume);
     }
 
     [Fact]
@@ -553,8 +583,11 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
+        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
+
         Assert.True(updated);
-        Assert.Equal(0.18f, _volumeManager.Volume);
+        Assert.NotNull(snapshot);
+        Assert.Equal(0.18f, snapshot.Volume);
     }
 
     [Fact]
@@ -587,8 +620,11 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
+        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
+
         Assert.True(updated);
-        Assert.Equal(updatedValue, _volumeManager.Volume);
+        Assert.NotNull(snapshot);
+        Assert.Equal(updatedValue, snapshot.Volume);
     }
 
     [Fact]
@@ -619,8 +655,11 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
+        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
+
         Assert.True(updated);
-        Assert.Equal(0.00f, _volumeManager.Volume);
+        Assert.NotNull(snapshot);
+        Assert.Equal(0.00f, snapshot.Volume);
     }
 
     [Fact]
@@ -652,8 +691,11 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
+        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
+
         Assert.True(updated);
-        Assert.Equal(0.0f, _volumeManager.Volume);
+        Assert.NotNull(snapshot);
+        Assert.Equal(0.0f, snapshot.Volume);
     }
 
     [Fact]
@@ -740,8 +782,11 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
+        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
+
         Assert.True(updated);
-        Assert.Equal(0.19f, _volumeManager.Volume);
+        Assert.NotNull(snapshot);
+        Assert.Equal(0.19f, snapshot.Volume);
     }
 
     [Fact]
@@ -774,8 +819,11 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
+        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
+
         Assert.True(updated);
-        Assert.Equal(updateValue, _volumeManager.Volume);
+        Assert.NotNull(snapshot);
+        Assert.Equal(updateValue, snapshot.Volume);
     }
 
     [Fact]
@@ -812,8 +860,11 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
+        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
+
         Assert.True(updated);
-        Assert.Equal(1f, _volumeManager.Dim);
+        Assert.NotNull(snapshot);
+        Assert.True(snapshot.IsDimmed);
     }
 
     [Fact]
@@ -843,8 +894,11 @@ public sealed class VolumeManagerTests : IDisposable
                 )
             );
 
+        var snapshot = await _volumeManager.GetDeviceSnapshotAsync();
+
         Assert.True(updated);
-        Assert.Equal(0f, _volumeManager.Dim);
+        Assert.NotNull(snapshot);
+        Assert.False(snapshot.IsDimmed);
     }
 
     [Theory]
@@ -874,10 +928,10 @@ public sealed class VolumeManagerTests : IDisposable
     [InlineData(1.0, 6.0)]
     public void ValueToDecibels_GivenVolumeValue_ReturnsExpectedDecibels(
         float value,
-        float expectedDB
+        float expectedDecibels
     )
     {
         var dB = VolumeManager.ValueToDecibels(value);
-        Assert.Equal(expectedDB, dB, precision: 1);
+        Assert.Equal(expectedDecibels, dB, precision: 1);
     }
 }

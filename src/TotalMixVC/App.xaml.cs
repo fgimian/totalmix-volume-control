@@ -411,7 +411,9 @@ public partial class App : Application, IDisposable
             try
             {
                 // Obtain the initialized state before setting the volume.
-                var initializedBeforeReceive = _volumeManager.IsVolumeInitialized;
+                var isVolumeInitializedBeforeReceive = await _volumeManager
+                    .IsVolumeInitializedAsync()
+                    .ConfigureAwait(false);
 
                 // The device sends a ping roughly every 2 seconds (usually a pinch over
                 // 2 seconds), so we'll timeout at 3 seconds to be on the safe side.
@@ -423,17 +425,29 @@ public partial class App : Application, IDisposable
                 // the volume indicator.
                 if (received)
                 {
-                    await _volumeIndicator
-                        .UpdateVolumeAsync(
-                            _volumeManager.Volume,
-                            _volumeManager.VolumeDecibels!,
-                            _volumeManager.IsDimmed
-                        )
+                    var snapshot = await _volumeManager
+                        .GetDeviceSnapshotAsync()
                         .ConfigureAwait(false);
 
-                    if (initializedBeforeReceive && _config.Interface.ShowRemoteVolumeChanges)
+                    if (snapshot is not null)
                     {
-                        await _volumeIndicator.DisplayCurrentVolumeAsync().ConfigureAwait(false);
+                        await _volumeIndicator
+                            .UpdateVolumeAsync(
+                                snapshot.Volume,
+                                snapshot.VolumeDecibels,
+                                snapshot.IsDimmed
+                            )
+                            .ConfigureAwait(false);
+
+                        if (
+                            isVolumeInitializedBeforeReceive
+                            && _config.Interface.ShowRemoteVolumeChanges
+                        )
+                        {
+                            await _volumeIndicator
+                                .DisplayCurrentVolumeAsync()
+                                .ConfigureAwait(false);
+                        }
                     }
                 }
 
@@ -510,10 +524,7 @@ public partial class App : Application, IDisposable
         while (true)
         {
             // The volume is uninitialized so it is requested from the device.
-            if (!_volumeManager.IsVolumeInitialized)
-            {
-                await _volumeManager.RequestVolumeAsync().ConfigureAwait(false);
-            }
+            await _volumeManager.RequestVolumeAsync().ConfigureAwait(false);
 
             // A volume request was just sent or the volume is already known, so we sleep
             // for a second before checking again.

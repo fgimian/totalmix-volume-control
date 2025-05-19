@@ -30,6 +30,21 @@ public class VolumeManager(ISender sender) : IDisposable
     private readonly SemaphoreSlim _volumeSemaphore = new(1);
 
     /// <summary>
+    /// The current device volume as a float (with a range of 0.0 to 1.0).
+    /// </summary>
+    private float? _volume;
+
+    /// <summary>
+    /// The current device volume as a string in decibels.
+    /// </summary>
+    private string? _volumeDecibels;
+
+    /// <summary>
+    /// Whether dim is enabled on the device (where 0 is disabled and 1 is enabled).
+    /// </summary>
+    private float? _dim;
+
+    /// <summary>
     /// Gets or sets the implementation of ISender which is used to send messages to the device.
     /// </summary>
     public ISender Sender { get; set; } = sender;
@@ -39,26 +54,6 @@ public class VolumeManager(ISender sender) : IDisposable
     /// device.
     /// </summary>
     public IListener? Listener { get; set; }
-
-    /// <summary>
-    /// Gets the current device volume as a float (with a range of 0.0 to 1.0).
-    /// </summary>
-    public float Volume { get; private set; } = -1.0f;
-
-    /// <summary>
-    /// Gets the current device volume as a string in decibels.
-    /// </summary>
-    public string? VolumeDecibels { get; private set; }
-
-    /// <summary>
-    /// Gets whether dim is enabled on the device (where 0 is disabled and 1 is enabled).
-    /// </summary>
-    public float Dim { get; private set; } = -1.0f;
-
-    /// <summary>
-    /// Gets a value indicating whether the device volume is dimmed.
-    /// </summary>
-    public bool IsDimmed => Dim == 1.0f;
 
     /// <summary>
     /// Gets or sets a value indicating whether volume units are set in dB instead of percentages.
@@ -101,12 +96,50 @@ public class VolumeManager(ISender sender) : IDisposable
     /// </summary>
     public float VolumeMaxDecibels { get; set; }
 
-    /// <summary>
-    /// Gets a value indicating whether the volume has been obtained from the device at least
-    /// once.
-    /// </summary>
-    public bool IsVolumeInitialized =>
-        Volume != -1.0f && VolumeDecibels is not null && Dim != -1.0f;
+    /// <summary>Determines whether the device volume is currently known.</summary>
+    /// <returns>
+    /// The task object representing the asynchronous operation which will contain a boolean
+    /// indicating whether or not the device volume is currently known.
+    /// </returns>
+    public async Task<bool> IsVolumeInitializedAsync()
+    {
+        await _volumeSemaphore.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            return _volume is not null && _volumeDecibels is not null && _dim is not null;
+        }
+        finally
+        {
+            _volumeSemaphore.Release();
+        }
+    }
+
+    /// <summary>Obtains the current device snapshot.</summary>
+    /// <returns>
+    /// The task object representing the asynchronous operation which will contain a
+    /// <see cref="DeviceSnapshot"/> providing the current device snapshot.
+    /// </returns>
+    public async Task<DeviceSnapshot?> GetDeviceSnapshotAsync()
+    {
+        await _volumeSemaphore.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            if (
+                _volume is float volumeFloat
+                && _volumeDecibels is not null
+                && _dim is float dimFloat
+            )
+            {
+                return new DeviceSnapshot(volumeFloat, _volumeDecibels, isDimmed: dimFloat == 1.0f);
+            }
+
+            return null;
+        }
+        finally
+        {
+            _volumeSemaphore.Release();
+        }
+    }
 
     /// <summary>
     /// Requests the current device volume by sending an invalid value (-1.0) for volume and
@@ -117,6 +150,12 @@ public class VolumeManager(ISender sender) : IDisposable
     /// <returns>The task object representing the asynchronous operation.</returns>
     public async Task RequestVolumeAsync()
     {
+        var isVolumeInitialized = await IsVolumeInitializedAsync().ConfigureAwait(false);
+        if (isVolumeInitialized)
+        {
+            return;
+        }
+
         await SendVolumeAsync(-1.0f).ConfigureAwait(false);
         await SendDimAsync(-1.0f).ConfigureAwait(false);
     }
@@ -186,9 +225,9 @@ public class VolumeManager(ISender sender) : IDisposable
                 .ConfigureAwait(false);
             try
             {
-                Volume = -1.0f;
-                VolumeDecibels = null;
-                Dim = -1.0f;
+                _volume = null;
+                _volumeDecibels = null;
+                _dim = null;
             }
             finally
             {
@@ -226,37 +265,37 @@ public class VolumeManager(ISender sender) : IDisposable
     /// </returns>
     public async Task<bool> IncreaseVolumeAsync(bool fine = false)
     {
-        if (!IsVolumeInitialized)
-        {
-            return false;
-        }
-
         await _volumeSemaphore.WaitAsync().ConfigureAwait(false);
         try
         {
+            if (_volume is not float volumeFloat)
+            {
+                return false;
+            }
+
             // Calculate the new volume.
             float newVolume;
             if (UseDecibels)
             {
                 var increment = fine ? VolumeFineIncrementDecibels : VolumeIncrementDecibels;
 
-                var volumeDB =
-                    MathF.Floor(MathF.Round(ValueToDecibels(Volume) / increment, 1)) * increment;
-                volumeDB += increment;
+                var volumeDecibels =
+                    MathF.Floor(MathF.Round(ValueToDecibels(volumeFloat) / increment, 1))
+                    * increment;
+                volumeDecibels += increment;
 
                 // Ensure it doesn't exceed the max dB.
-                if (volumeDB >= VolumeMaxDecibels)
+                if (volumeDecibels >= VolumeMaxDecibels)
                 {
-                    volumeDB = VolumeMaxDecibels;
+                    volumeDecibels = VolumeMaxDecibels;
                 }
 
-                newVolume = DecibelsToValue(volumeDB);
+                newVolume = DecibelsToValue(volumeDecibels);
             }
             else
             {
                 var increment = fine ? VolumeFineIncrementPercent : VolumeIncrementPercent;
-
-                newVolume = Volume + increment;
+                newVolume = volumeFloat + increment;
 
                 // Ensure it doesn't exceed the max.
                 if (newVolume >= VolumeMaxPercent)
@@ -266,10 +305,10 @@ public class VolumeManager(ISender sender) : IDisposable
             }
 
             // Only send an update via OSC if the value has changed.
-            if (newVolume != Volume)
+            if (newVolume != volumeFloat)
             {
                 await SendVolumeAsync(newVolume).ConfigureAwait(false);
-                Volume = newVolume;
+                _volume = newVolume;
                 return true;
             }
 
@@ -291,30 +330,31 @@ public class VolumeManager(ISender sender) : IDisposable
     /// </returns>
     public async Task<bool> DecreaseVolumeAsync(bool fine = false)
     {
-        if (!IsVolumeInitialized)
-        {
-            return false;
-        }
-
         await _volumeSemaphore.WaitAsync().ConfigureAwait(false);
         try
         {
+            if (_volume is not float volumeFloat)
+            {
+                return false;
+            }
+
             // Calculate the new volume.
             float newVolume;
             if (UseDecibels)
             {
                 var increment = fine ? VolumeFineIncrementDecibels : VolumeIncrementDecibels;
 
-                var volumeDB =
-                    MathF.Ceiling(MathF.Round(ValueToDecibels(Volume) / increment, 1)) * increment;
-                volumeDB -= increment;
+                var volumeDecibels =
+                    MathF.Ceiling(MathF.Round(ValueToDecibels(volumeFloat) / increment, 1))
+                    * increment;
+                volumeDecibels -= increment;
 
-                newVolume = DecibelsToValue(volumeDB);
+                newVolume = DecibelsToValue(volumeDecibels);
             }
             else
             {
                 var increment = fine ? VolumeFineIncrementPercent : VolumeIncrementPercent;
-                newVolume = Volume - increment;
+                newVolume = volumeFloat - increment;
             }
 
             // Ensure it doesn't go below the minimum possible volume.
@@ -324,10 +364,10 @@ public class VolumeManager(ISender sender) : IDisposable
             }
 
             // Only send an update via OSC if the value has changed.
-            if (newVolume != Volume)
+            if (newVolume != volumeFloat)
             {
                 await SendVolumeAsync(newVolume).ConfigureAwait(false);
-                Volume = newVolume;
+                _volume = newVolume;
                 return true;
             }
 
@@ -348,17 +388,17 @@ public class VolumeManager(ISender sender) : IDisposable
     /// </returns>
     public async Task<bool> ToggloDimAsync()
     {
-        if (!IsVolumeInitialized)
-        {
-            return false;
-        }
-
         await _volumeSemaphore.WaitAsync().ConfigureAwait(false);
         try
         {
+            if (_dim is null)
+            {
+                return false;
+            }
+
             // To toggle the dim function, we must simply send 1, not the actual 0 or 1 value.
             await SendDimAsync(1.0f).ConfigureAwait(false);
-            Dim = Dim == 1.0f ? 0.0f : 1.0f;
+            _dim = _dim == 1.0f ? 0.0f : 1.0f;
             return true;
         }
         finally
@@ -457,15 +497,15 @@ public class VolumeManager(ISender sender) : IDisposable
             {
                 if (message.Address == VolumeDecibelsAddress)
                 {
-                    VolumeDecibels = (string)message[0];
+                    _volumeDecibels = (string)message[0];
                 }
                 else if (message.Address == VolumeAddress)
                 {
-                    Volume = (float)message[0];
+                    _volume = (float)message[0];
                 }
                 else
                 {
-                    Dim = (float)message[0];
+                    _dim = (float)message[0];
                 }
 
                 received = true;
