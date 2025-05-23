@@ -2,6 +2,7 @@ version: '3'
 
 vars:
   CONFIGURATION: '{{default "Debug" .CONFIGURATION}}'
+  RUNTIME: '{{default "win-x64" .RUNTIME}}'
 
 tasks:
   default:
@@ -65,13 +66,18 @@ tasks:
     cmd: >-
       dotnet publish src/TotalMixVC
       --configuration {{.CONFIGURATION}}
-      --runtime win-x64
+      --runtime {{.RUNTIME}}
       --self-contained
     deps:
       - restore
 
   installer:
     desc: Create an installer for distribution.
-    cmd: iscc /Oartifacts /DAppBuildConfiguration={{.CONFIGURATION}} TotalMixVC.iss
+    cmd: >-
+      iscc
+      /Oartifacts
+      /DAppBuildConfiguration={{.CONFIGURATION}}
+      /DAppBuildRuntime={{.RUNTIME}}
+      TotalMixVC.iss
     deps:
       - publish

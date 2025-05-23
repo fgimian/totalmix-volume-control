@@ -6,13 +6,17 @@
 ; the option below may be uncommented if required.
 ; #define AppBuildConfiguration "Release"
 
+; The runtime used also needs to be passed explicitly via /DAppBuildRuntime=win-x64 or
+; the option below may be uncommented if required.
+; #define AppBuildRuntime "win-x64"
+
 #define AppName "TotalMix Volume Control"
 #define AppPublisher "Fotis Gimian"
 #define AppRepoURL "https://github.com/fgimian/totalmix-volume-control"
 #define AppRepoIssuesURL AppRepoURL + "/issues"
 #define AppRepoReleasesURL AppRepoURL + "/releases"
 #define AppIconPath "src\TotalMixVC\Icons\TotalMixVC.ico"
-#define AppPublishPath "src\TotalMixVC\bin\" + AppBuildConfiguration + "\net9.0-windows\win-x64\publish"
+#define AppPublishPath "src\TotalMixVC\bin\" + AppBuildConfiguration + "\net9.0-windows\" + AppBuildRuntime + "\publish"
 #define AppExeName "TotalMixVC.exe"
 #define AppVersion GetStringFileInfo(AddBackslash(AppPublishPath) + AppExeName, "ProductVersion")
 
@@ -31,7 +35,7 @@ LicenseFile=.\LICENSE
 SetupIconFile=.\{#AppIconPath}
 UninstallDisplayIcon={app}\TotalMixVC.exe
 OutputDir=.\artifacts
-OutputBaseFilename=TotalMixVCSetup-v{#AppVersion}-{#AppBuildConfiguration}
+OutputBaseFilename=TotalMixVCSetup-v{#AppVersion}-{#AppBuildConfiguration}-{#AppBuildRuntime}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
