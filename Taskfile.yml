@@ -1,8 +1,8 @@
 version: '3'
 
 vars:
-  CONFIGURATION: '{{default "Debug" .CONFIGURATION}}'
-  RUNTIME: '{{default "win-x64" .RUNTIME}}'
+  CONFIGURATION: '{{.CONFIGURATION | default "Debug"}}'
+  RUNTIME: '{{.RUNTIME | default "win-x64"}}'
 
 tasks:
   default:
