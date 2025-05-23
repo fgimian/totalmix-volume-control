@@ -23,6 +23,16 @@ You may download the latest release from the
 [releases page](https://github.com/fgimian/totalmix-volume-control/releases). Simply expand the
 **Assets** item under the latest release and download the release installer.
 
+Various downloads are provided for various architectures and build types. Most people will want
+to grab the **TotalMixVCSetup-vx.x.x-Release-win-x64-SelfContained.exe** installer which embeds
+the .NET runtime and is built 64-bit architectures.
+
+Other variants are provided for [Windows on ARM](https://learn.microsoft.com/en-us/windows/arm)
+(win-arm64) and for those who want no .NET runtime included (NoRuntime). Installers that have no
+runtime will be much smaller but require the separate
+[download and installation of the desktop app .NET 9 runtime](https://dotnet.microsoft.com/en-us/download/dotnet/9.0/runtime)
+for your respective architecture.
+
 ### Usage
 
 After starting the application, the keyboard shortcut bindings are enabled:
