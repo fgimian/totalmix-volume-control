@@ -3,6 +3,7 @@ version: '3'
 vars:
   CONFIGURATION: '{{.CONFIGURATION | default "Debug"}}'
   RUNTIME: '{{.RUNTIME | default "win-x64"}}'
+  TYPE: '{{.TYPE | default "SelfContained"}}'
 
 tasks:
   default:
@@ -67,7 +68,7 @@ tasks:
       dotnet publish src/TotalMixVC
       --configuration {{.CONFIGURATION}}
       --runtime {{.RUNTIME}}
-      --self-contained
+      {{if eq .TYPE "SelfContained"}}--self-contained{{end}}
     deps:
       - restore
 
@@ -78,6 +79,7 @@ tasks:
       /Oartifacts
       /DAppBuildConfiguration={{.CONFIGURATION}}
       /DAppBuildRuntime={{.RUNTIME}}
+      /DAppBuildType={{.TYPE}}
       TotalMixVC.iss
     deps:
       - publish

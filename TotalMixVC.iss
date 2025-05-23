@@ -2,13 +2,11 @@
 ; determine the release version. Alternatively, the option below may be uncommented if required.
 ; #define AppVersion "1.0"
 
-; The build configuration needs to be passed explicitly via /DAppBuildConfiguration=Release or
-; the option below may be uncommented if required.
+; The following variables must be passed explicitly via /D<Name>=<Value> or the options may
+; be uncommented below:
 ; #define AppBuildConfiguration "Release"
-
-; The runtime used also needs to be passed explicitly via /DAppBuildRuntime=win-x64 or
-; the option below may be uncommented if required.
 ; #define AppBuildRuntime "win-x64"
+; #define AppBuildType "SelfContained"
 
 #define AppName "TotalMix Volume Control"
 #define AppPublisher "Fotis Gimian"
@@ -35,7 +33,7 @@ LicenseFile=.\LICENSE
 SetupIconFile=.\{#AppIconPath}
 UninstallDisplayIcon={app}\TotalMixVC.exe
 OutputDir=.\artifacts
-OutputBaseFilename=TotalMixVCSetup-v{#AppVersion}-{#AppBuildConfiguration}-{#AppBuildRuntime}
+OutputBaseFilename=TotalMixVCSetup-v{#AppVersion}-{#AppBuildConfiguration}-{#AppBuildRuntime}-{#AppBuildType}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
