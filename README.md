@@ -24,8 +24,8 @@ You may download the latest release from the
 **Assets** item under the latest release and download the release installer.
 
 Various downloads are provided for various architectures and build types. Most people will want
-to grab the **TotalMixVCSetup-vx.x.x-Release-win-x64-SelfContained.exe** installer which embeds
-the .NET runtime and is built 64-bit architectures.
+to grab the **TotalMixVCSetup-vx.x.x-x64-SelfContained.exe** installer which embeds the .NET
+runtime and is built 64-bit architectures.
 
 Other variants are provided for [Windows on ARM](https://learn.microsoft.com/en-us/windows/arm)
 (win-arm64) and for those who want no .NET runtime included (NoRuntime). Installers that have no
