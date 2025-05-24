@@ -5,7 +5,7 @@
 ; The following variables must be passed explicitly via /D<Name>=<Value> or the options may
 ; be uncommented below:
 ; #define AppBuildConfiguration "Release"
-; #define AppBuildRuntime "x64"
+; #define AppBuildArchitecture "x64"
 ; #define AppBuildType "SelfContained"
 
 #define AppName "TotalMix Volume Control"
@@ -14,7 +14,7 @@
 #define AppRepoIssuesURL AppRepoURL + "/issues"
 #define AppRepoReleasesURL AppRepoURL + "/releases"
 #define AppIconPath "src\TotalMixVC\Icons\TotalMixVC.ico"
-#define AppPublishPath "src\TotalMixVC\bin\" + AppBuildConfiguration + "\net9.0-windows\win-" + AppBuildRuntime + "\publish"
+#define AppPublishPath "src\TotalMixVC\bin\" + AppBuildConfiguration + "\net9.0-windows\win-" + AppBuildArchitecture + "\publish"
 #define AppExeName "TotalMixVC.exe"
 #define AppVersion GetStringFileInfo(AddBackslash(AppPublishPath) + AppExeName, "ProductVersion")
 
@@ -33,7 +33,7 @@ LicenseFile=.\LICENSE
 SetupIconFile=.\{#AppIconPath}
 UninstallDisplayIcon={app}\TotalMixVC.exe
 OutputDir=.\artifacts
-OutputBaseFilename=TotalMixVCSetup-v{#AppVersion}-{#AppBuildConfiguration}-{#AppBuildRuntime}-{#AppBuildType}
+OutputBaseFilename=TotalMixVCSetup-v{#AppVersion}-{#AppBuildConfiguration}-{#AppBuildArchitecture}-{#AppBuildType}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern

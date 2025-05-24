@@ -7,7 +7,7 @@ jobs:
     strategy:
       matrix:
         configuration: [Debug, Release]
-        runtime: [x64, arm64]
+        architecture: [x64, arm64]
         type: [SelfContained, NoRuntime]
 
     runs-on: windows-latest
@@ -42,7 +42,7 @@ jobs:
       run: task installer
       env:
         CONFIGURATION: ${{ matrix.configuration }}
-        RUNTIME: ${{ matrix.runtime }}
+        ARCHITECTURE: ${{ matrix.architecture }}
         TYPE: ${{ matrix.type }}
 
     - name: Upload coverage
@@ -58,6 +58,6 @@ jobs:
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: TotalMixVC ${{ matrix.configuration }} ${{ matrix.runtime }} ${{ matrix.type }} Setup
+        name: TotalMixVC ${{ matrix.configuration }} ${{ matrix.architecture }} ${{ matrix.type }} Setup
         path: artifacts/*.exe
         if-no-files-found: error
