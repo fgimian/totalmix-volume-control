@@ -37,10 +37,10 @@ for your respective architecture.
 
 After starting the application, the keyboard shortcut bindings are enabled:
 
-* **Volume Up / Down**: Increase or decrease the volume by 1% respectively.
-* **Shift + Volume Up / Down**: Increase or decrease the volume by 0.5% respectively
+- **Volume Up / Down**: Increase or decrease the volume by 1% respectively.
+- **Shift + Volume Up / Down**: Increase or decrease the volume by 0.5% respectively
   (fine adjustment).
-* **Mute**: Toggles the dim model of the device.
+- **Mute**: Toggles the dim model of the device.
 
 **Note**: You can still access the regular volume indicator by using **Ctrl + Volume Up / Down**
 or **Alt + Volume Up / Down** and the regular mute functionality using **Ctrl + Mute**
@@ -96,28 +96,28 @@ After cloning the source code from GitHub, follow the steps below:
 1. Install the [.NET 9.0 SDK](https://dotnet.microsoft.com/download).
 2. Install Task and the cross-platform coreutils using WinGet
 
-    ```
-    winget install Task.Task uutils.coreutils
-    ```
+   ```
+   winget install Task.Task uutils.coreutils
+   ```
 
 3. Build the project using the default **Debug** configuration and create the installer
 
-    ```
-    task build
-    ```
+   ```
+   task build
+   ```
 
-    You may create a release build by passing the **CONFIGURATION** variable to the task:
+   You may create a release build by passing the **CONFIGURATION** variable to the task:
 
-    ```
-    task build CONFIGURATION=Release
-    ```
+   ```
+   task build CONFIGURATION=Release
+   ```
 
 4. Once you're ready, you can publish a self-container version of the application and create the
    installer using the **installer** target
 
-    ```
-    task installer CONFIGURATION=Release
-    ```
+   ```
+   task installer CONFIGURATION=Release
+   ```
 
 You'll now find an installer under the **artifacts** sub-directory.
 
@@ -129,16 +129,16 @@ You may follow the steps below to build the icon from the provided SVG:
 
 1. Install ImageMagick and Inkscape using WinGet
 
-    ```
-    winget install ImageMagick.ImageMagick Inkscape.Inkscape
-    ```
+   ```
+   winget install ImageMagick.ImageMagick Inkscape.Inkscape
+   ```
 
 2. Add **C:\Program Files\Inkscape\bin** to your **Path** environment variable
 3. Build the icon
 
-    ```
-    task icon
-    ```
+   ```
+   task icon
+   ```
 
 ## License
 

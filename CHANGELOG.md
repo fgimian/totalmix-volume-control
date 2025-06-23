@@ -5,21 +5,21 @@
 This release brings major new functionality to the application and also makes some breaking
 changes to the configuration file.
 
-* All project dependencies have been updated to their latest version
-* You may now configure the application to increment volume by a specific number of decibels
-* The configuration file has switched back to the
+- All project dependencies have been updated to their latest version
+- You may now configure the application to increment volume by a specific number of decibels
+- The configuration file has switched back to the
   [TOML](https://github.com/toml-lang/toml) format
-* Various configuration parameters have been modified:
-  * `osc.outgoing_hostname` and `osc.outgoing_port` have been consolidated to
+- Various configuration parameters have been modified:
+  - `osc.outgoing_hostname` and `osc.outgoing_port` have been consolidated to
     `osc.outgoing_endpoint`
-  * `osc.incoming_hostname` and `osc.incoming_port` have been consolidated to
+  - `osc.incoming_hostname` and `osc.incoming_port` have been consolidated to
     `osc.incoming_endpoint`
-  * `volume.increment` has been renamed to `volume.increment_percent`
-  * `volume.fine_increment` has been renamed to `volume.fine_increment_percent`
-  * `volume.max` has been renamed to `volume.max_percent`
-* You may now change both the incoming and outgoing endpoint without an application restart
-* The default fade out time of the widget has been shortened slightly
-* Socket exceptions are now handled properly which should resolve some reports of the application
+  - `volume.increment` has been renamed to `volume.increment_percent`
+  - `volume.fine_increment` has been renamed to `volume.fine_increment_percent`
+  - `volume.max` has been renamed to `volume.max_percent`
+- You may now change both the incoming and outgoing endpoint without an application restart
+- The default fade out time of the widget has been shortened slightly
+- Socket exceptions are now handled properly which should resolve some reports of the application
   disconnecting after waking from sleep or physically disconnecting the device
 
 You may use the updated
@@ -43,22 +43,22 @@ optimisations.
 This marks the next major release and milestone for TotalMix Volume Control with various major new
 features and some important bug fixes:
 
-* Vertical alignment of the elements on the volume indicator has been refined
-* Cursor events now pass through the volume indicator making it completely transparent
-* All project dependencies have been updated to their latest version including .NET itself which
+- Vertical alignment of the elements on the volume indicator has been refined
+- Cursor events now pass through the volume indicator making it completely transparent
+- All project dependencies have been updated to their latest version including .NET itself which
   now uses .NET 7
-* The application is now fully customizable via a configuration file including OSC communication,
+- The application is now fully customizable via a configuration file including OSC communication,
   the theme, scaling and timing options for the volume indicator
-* Your configuration may be reloaded while the app is running via the "Reload Configuration" tray
+- Your configuration may be reloaded while the app is running via the "Reload Configuration" tray
   menu item
-* Errors will now correctly be displayed if hotkeys cannot be mapped or the UDP listener cannot be
+- Errors will now correctly be displayed if hotkeys cannot be mapped or the UDP listener cannot be
   opened
-* Version information is now embedded in the application executable
-* Text in the tray icon menu has been refined and an About message box implemented showing the
+- Version information is now embedded in the application executable
+- Text in the tray icon menu has been refined and an About message box implemented showing the
   version of the application
-* The application now uses the registry for starting on boot instead of a shortcut file in the
+- The application now uses the registry for starting on boot instead of a shortcut file in the
   Startup directory
-* A critical bug has been fixed which could mean that the application would not recover if the RME
+- A critical bug has been fixed which could mean that the application would not recover if the RME
   device is offline for an extended period of time
 
 **Important**: Due to several major changes in the application, it is recommended that you disable
@@ -99,13 +99,13 @@ I'll look at making this configurable in a future release.
 
 This is a rather major refinement and performance-oriented release of TotalMixVC! 🎵
 
-* The application application download and install size is significantly reduced
-* Code quality is generally improved and unit tests have been added
-* Various improvements have been made which should ultimately make the application more stable
-* The uninstaller for the application now has an icon
-* Application exit is now immediate
-* Volume is always re-requested after loss of communication with the device
-* A critical bug is resolved where the application would stop responding if it could not
+- The application application download and install size is significantly reduced
+- Code quality is generally improved and unit tests have been added
+- Various improvements have been made which should ultimately make the application more stable
+- The uninstaller for the application now has an icon
+- Application exit is now immediate
+- Volume is always re-requested after loss of communication with the device
+- A critical bug is resolved where the application would stop responding if it could not
   communicate with the device
 
 ## 0.1.1 (2021-08-08)
@@ -113,10 +113,10 @@ This is a rather major refinement and performance-oriented release of TotalMixVC
 This is a significant release for TotalMixVC which now provides all remaining essential features I
 had planned for the application! 😄
 
-* The tray icon now will show a tooltip when you hover over it that will indicate whether
+- The tray icon now will show a tooltip when you hover over it that will indicate whether
   communication is healthy between the app and your device
-* The context menu in the tray icon will now let you set the application to start on boot
-* The application is now much more robust if your device is not setup properly to communicate via
+- The context menu in the tray icon will now let you set the application to start on boot
+- The application is now much more robust if your device is not setup properly to communicate via
   OSC
 
 ## 0.1.0 (2021-08-07)

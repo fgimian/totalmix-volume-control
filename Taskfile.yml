@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 vars:
   CONFIGURATION: '{{.CONFIGURATION | default "Debug"}}'
@@ -41,13 +41,13 @@ tasks:
     cmds:
       - coreutils rm -f src/*/TestResults/*/coverage.cobertura.xml
       - >-
-        dotnet test
-        --configuration {{.CONFIGURATION}}
-        --logger xunit
-        --verbosity normal
-        --no-build
-        --collect:"XPlat Code Coverage"
-        {{if .FQN}}--filter "FullyQualifiedName~{{.FQN}}"{{end}}
+          dotnet test
+          --configuration {{.CONFIGURATION}}
+          --logger xunit
+          --verbosity normal
+          --no-build
+          --collect:"XPlat Code Coverage"
+          {{if .FQN}}--filter "FullyQualifiedName~{{.FQN}}"{{end}}
     deps:
       - build
 

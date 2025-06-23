@@ -13,51 +13,51 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 9.0.x
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
 
-    - name: Setup Task
-      uses: arduino/setup-task@v2
-      with:
-        version: 3.x
+      - name: Setup Task
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
 
-    - name: Setup coreutils
-      uses: baptiste0928/cargo-install@v3
-      with:
-        crate: coreutils
+      - name: Setup coreutils
+        uses: baptiste0928/cargo-install@v3
+        with:
+          crate: coreutils
 
-    - name: Run unit tests and produce a coverage report
-      run: task report
-      env:
-        CONFIGURATION: ${{ matrix.configuration }}
+      - name: Run unit tests and produce a coverage report
+        run: task report
+        env:
+          CONFIGURATION: ${{ matrix.configuration }}
 
-    - name: Publish a self-container version of the app and create the installer
-      run: task installer
-      env:
-        CONFIGURATION: ${{ matrix.configuration }}
-        ARCHITECTURE: ${{ matrix.architecture }}
-        TYPE: ${{ matrix.type }}
+      - name: Publish a self-container version of the app and create the installer
+        run: task installer
+        env:
+          CONFIGURATION: ${{ matrix.configuration }}
+          ARCHITECTURE: ${{ matrix.architecture }}
+          TYPE: ${{ matrix.type }}
 
-    - name: Upload coverage
-      if: ${{ matrix.configuration == 'Release' }}
-      uses: codecov/codecov-action@v5
-      with:
-        directory: ./.coverage
-        files: Cobertura.xml
-        fail_ci_if_error: true
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload coverage
+        if: ${{ matrix.configuration == 'Release' }}
+        uses: codecov/codecov-action@v5
+        with:
+          directory: ./.coverage
+          files: Cobertura.xml
+          fail_ci_if_error: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: TotalMixVC ${{ matrix.configuration }} ${{ matrix.architecture }} ${{ matrix.type }} Setup
-        path: artifacts/*.exe
-        if-no-files-found: error
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: TotalMixVC ${{ matrix.configuration }} ${{ matrix.architecture }} ${{ matrix.type }} Setup
+          path: artifacts/*.exe
+          if-no-files-found: error
