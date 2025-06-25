@@ -33,6 +33,8 @@ jobs:
         uses: baptiste0928/cargo-install@v3
         with:
           crate: coreutils
+        env:
+          PROJECT_NAME_FOR_VERSION_STRING: uutils coreutils
 
       - name: Run unit tests and produce a coverage report
         run: task report
