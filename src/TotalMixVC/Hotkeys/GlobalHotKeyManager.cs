@@ -95,9 +95,9 @@ public partial class GlobalHotKeyManager : IDisposable
 
         if (disposing)
         {
-            foreach (var kvp in _actions)
+            foreach (var (id, _) in _actions)
             {
-                UnregisterHotKey(nint.Zero, kvp.Key.GetHashCode());
+                UnregisterHotKey(nint.Zero, id.GetHashCode());
             }
         }
 
