@@ -18,21 +18,22 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup .NET
+      - name: Install .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 9.0.x
 
-      - name: Setup Task
+      - name: Install Task
         uses: arduino/setup-task@v2
         with:
           version: 3.x
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup coreutils
-        uses: baptiste0928/cargo-install@v3
-        with:
-          crate: coreutils
+      - name: Install cargo-binstall
+        uses: cargo-bins/cargo-binstall@main
+
+      - name: Install coreutils
+        run: cargo binstall --locked --no-confirm coreutils
         env:
           PROJECT_NAME_FOR_VERSION_STRING: uutils coreutils
 
