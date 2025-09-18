@@ -11,7 +11,7 @@ tasks:
 
   clean:
     desc: Clean all object and binary files along with test output.
-    cmd: coreutils rm -rf .coverage src/*/TestResults src/*/bin/{{.CONFIGURATION}} src/*/obj/{{.CONFIGURATION}}
+    cmd: rm -rf .coverage src/*/TestResults src/*/bin/{{.CONFIGURATION}} src/*/obj/{{.CONFIGURATION}}
 
   icon:
     desc: Create the application icon.
@@ -22,7 +22,7 @@ tasks:
           var: SIZES
         cmd: inkscape -w {{.ITEM}} -h {{.ITEM}} -o {{.ITEM}}.png TotalMixVC.svg
       - magick {{range .SIZES}}{{.}}.png {{end}}-compress none src/TotalMixVC/Icons/TotalMixVC.ico
-      - coreutils rm *.png
+      - rm *.png
 
   restore:
     desc: Restore the required tools and project dependencies.
@@ -39,7 +39,7 @@ tasks:
   test:
     desc: Run the unit tests.
     cmds:
-      - coreutils rm -f src/*/TestResults/*/coverage.cobertura.xml
+      - rm -f src/*/TestResults/*/coverage.cobertura.xml
       - >-
           dotnet test
           --configuration {{.CONFIGURATION}}
