@@ -13,21 +13,23 @@ namespace TotalMixVC;
 )]
 internal static partial class WindowServices
 {
+    private const int WS_EX_TOOLWINDOW = 0x00000080;
+
     private const int WS_EX_TRANSPARENT = 0x00000020;
 
     private const int GWL_EXSTYLE = -20;
 
     /// <summary>
     /// Sets the extended window style to be transparent so that mouse events can pass through
-    /// the window.
+    /// the window and also set it to a tool window so that it doesn't appear in Alt+Tab.
     /// </summary>
     /// <param name="hwnd">
     /// The raw window handle which is typically obtained via WindowInteropHelper.
     /// </param>
-    public static void SetWindowExTransparent(nint hwnd)
+    public static void SetWindowExTransparentTool(nint hwnd)
     {
         var extendedStyle = GetWindowLongW(hwnd, GWL_EXSTYLE);
-        _ = SetWindowLongW(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_TRANSPARENT);
+        _ = SetWindowLongW(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT);
     }
 
     [LibraryImport("user32.dll")]

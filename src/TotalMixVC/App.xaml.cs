@@ -270,28 +270,9 @@ public partial class App : Application, IDisposable
         ConfigureInterface();
         ConfigureTheme();
 
-        // Create the volume indicator widget which displays volume changes.
-        _volumeIndicator = new(_config);
-
-        // Create a parent window which is not visible in the taskbar or Alt+Tab.
-        var hiddenParentWindow = new Window()
-        {
-            Top = -100,
-            Left = -100,
-            Width = 0,
-            Height = 0,
-            WindowStyle = WindowStyle.ToolWindow,
-            ShowInTaskbar = false,
-        };
-
-        // Set the owner of the volume indicator window to the hidden parent.
-        hiddenParentWindow.Show();
-        _volumeIndicator.Owner = hiddenParentWindow;
-        hiddenParentWindow.Hide();
-
-        // Silently display the volume indicator so the volume bar rectangle background
-        // width is initialized.
-        _volumeIndicator.Opacity = 0.0;
+        // Create the volume indicator widget which displays volume changes and silently.
+        // display it so the volume bar rectangle background width is initialized.
+        _volumeIndicator = new(_config) { Opacity = 0.0 };
         _volumeIndicator.Show();
         _volumeIndicator.Hide();
         _volumeIndicator.Opacity = 1.0;

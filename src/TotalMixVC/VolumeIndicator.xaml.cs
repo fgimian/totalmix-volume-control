@@ -140,7 +140,7 @@ public partial class VolumeIndicator : Window, IDisposable
     {
         base.OnSourceInitialized(e);
         var hwnd = new WindowInteropHelper(this).Handle;
-        WindowServices.SetWindowExTransparent(hwnd);
+        WindowServices.SetWindowExTransparentTool(hwnd);
     }
 
     /// <summary>Disposes the current volume indicator.</summary>
