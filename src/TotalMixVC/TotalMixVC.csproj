@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0-windows</TargetFramework>
@@ -68,5 +67,4 @@
     </PackageReference>
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)..\..\.stylecop.json" />
   </ItemGroup>
-
 </Project>

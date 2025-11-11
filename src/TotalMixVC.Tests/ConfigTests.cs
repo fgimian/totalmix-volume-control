@@ -527,70 +527,68 @@ public sealed class ConfigTests
     [Fact]
     public void CleanDiagnostics_InvalidProperties_ProvidesCleanMessages()
     {
-        var diagnostics = new DiagnosticsBag(
-            [
-                new DiagnosticMessage(
-                    DiagnosticMessageKind.Error,
-                    new SourceSpan(
-                        fileName: string.Empty,
-                        start: new TextPosition(offset: 0, line: 0, column: 0),
-                        end: new TextPosition(offset: 27, line: 0, column: 27)
-                    ),
-                    "Exception while trying to convert System.String to type "
-                        + "System.Windows.Media.Color. Reason: Token is not valid."
+        var diagnostics = new DiagnosticsBag([
+            new DiagnosticMessage(
+                DiagnosticMessageKind.Error,
+                new SourceSpan(
+                    fileName: string.Empty,
+                    start: new TextPosition(offset: 0, line: 0, column: 0),
+                    end: new TextPosition(offset: 27, line: 0, column: 27)
                 ),
-                new DiagnosticMessage(
-                    DiagnosticMessageKind.Error,
-                    new SourceSpan(
-                        fileName: string.Empty,
-                        start: new TextPosition(offset: 0, line: 0, column: 0),
-                        end: new TextPosition(offset: 27, line: 0, column: 27)
-                    ),
-                    "The property value of type System.String couldn't be converted to "
-                        + "System.Windows.Media.Color for the property Config/background_color"
+                "Exception while trying to convert System.String to type "
+                    + "System.Windows.Media.Color. Reason: Token is not valid."
+            ),
+            new DiagnosticMessage(
+                DiagnosticMessageKind.Error,
+                new SourceSpan(
+                    fileName: string.Empty,
+                    start: new TextPosition(offset: 0, line: 0, column: 0),
+                    end: new TextPosition(offset: 27, line: 0, column: 27)
                 ),
-                new DiagnosticMessage(
-                    DiagnosticMessageKind.Warning,
-                    new SourceSpan(
-                        fileName: string.Empty,
-                        start: new TextPosition(offset: 59, line: 2, column: 0),
-                        end: new TextPosition(offset: 87, line: 2, column: 28)
-                    ),
-                    "The property `EndPoint` was not found, but `end_point` was. By default "
-                        + "property names are lowered and split by _ by PascalCase letters. This "
-                        + "behavior can be changed by passing a TomlModelOptions and specifying "
-                        + "the TomlModelOptions.ConvertPropertyName delegate."
+                "The property value of type System.String couldn't be converted to "
+                    + "System.Windows.Media.Color for the property Config/background_color"
+            ),
+            new DiagnosticMessage(
+                DiagnosticMessageKind.Warning,
+                new SourceSpan(
+                    fileName: string.Empty,
+                    start: new TextPosition(offset: 59, line: 2, column: 0),
+                    end: new TextPosition(offset: 87, line: 2, column: 28)
                 ),
-                new DiagnosticMessage(
-                    DiagnosticMessageKind.Error,
-                    new SourceSpan(
-                        fileName: string.Empty,
-                        start: new TextPosition(offset: 59, line: 2, column: 0),
-                        end: new TextPosition(offset: 87, line: 2, column: 28)
-                    ),
-                    "The property EndPoint was not found on object type Config"
+                "The property `EndPoint` was not found, but `end_point` was. By default "
+                    + "property names are lowered and split by _ by PascalCase letters. This "
+                    + "behavior can be changed by passing a TomlModelOptions and specifying "
+                    + "the TomlModelOptions.ConvertPropertyName delegate."
+            ),
+            new DiagnosticMessage(
+                DiagnosticMessageKind.Error,
+                new SourceSpan(
+                    fileName: string.Empty,
+                    start: new TextPosition(offset: 59, line: 2, column: 0),
+                    end: new TextPosition(offset: 87, line: 2, column: 28)
                 ),
-                new DiagnosticMessage(
-                    DiagnosticMessageKind.Error,
-                    new SourceSpan(
-                        fileName: string.Empty,
-                        start: new TextPosition(offset: 100, line: 5, column: 0),
-                        end: new TextPosition(offset: 112, line: 5, column: 12)
-                    ),
-                    "Unsupported type to convert System.String to type System.Single."
+                "The property EndPoint was not found on object type Config"
+            ),
+            new DiagnosticMessage(
+                DiagnosticMessageKind.Error,
+                new SourceSpan(
+                    fileName: string.Empty,
+                    start: new TextPosition(offset: 100, line: 5, column: 0),
+                    end: new TextPosition(offset: 112, line: 5, column: 12)
                 ),
-                new DiagnosticMessage(
-                    DiagnosticMessageKind.Error,
-                    new SourceSpan(
-                        fileName: string.Empty,
-                        start: new TextPosition(offset: 100, line: 5, column: 0),
-                        end: new TextPosition(offset: 112, line: 5, column: 12)
-                    ),
-                    "The property value of type System.String couldn't be converted to "
-                        + "System.Single for the property Volume/max"
+                "Unsupported type to convert System.String to type System.Single."
+            ),
+            new DiagnosticMessage(
+                DiagnosticMessageKind.Error,
+                new SourceSpan(
+                    fileName: string.Empty,
+                    start: new TextPosition(offset: 100, line: 5, column: 0),
+                    end: new TextPosition(offset: 112, line: 5, column: 12)
                 ),
-            ]
-        );
+                "The property value of type System.String couldn't be converted to "
+                    + "System.Single for the property Volume/max"
+            ),
+        ]);
 
         var diagnosticMessages = Config.CleanDiagnostics(diagnostics);
         Assert.Equal(
@@ -613,19 +611,17 @@ public sealed class ConfigTests
     [Fact]
     public void CleanDiagnostics_InvalidSyntax_DoesNotConsolidateMessages()
     {
-        var diagnostics = new DiagnosticsBag(
-            [
-                new DiagnosticMessage(
-                    DiagnosticMessageKind.Error,
-                    new SourceSpan(
-                        fileName: string.Empty,
-                        start: new TextPosition(offset: 16, line: 0, column: 16),
-                        end: new TextPosition(offset: 16, line: 0, column: 16)
-                    ),
-                    "Expecting `=` after a key instead of !"
+        var diagnostics = new DiagnosticsBag([
+            new DiagnosticMessage(
+                DiagnosticMessageKind.Error,
+                new SourceSpan(
+                    fileName: string.Empty,
+                    start: new TextPosition(offset: 16, line: 0, column: 16),
+                    end: new TextPosition(offset: 16, line: 0, column: 16)
                 ),
-            ]
-        );
+                "Expecting `=` after a key instead of !"
+            ),
+        ]);
 
         var diagnosticMessages = Config.CleanDiagnostics(diagnostics);
         Assert.Equal(

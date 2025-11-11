@@ -51,9 +51,8 @@ public static class TaskExtensions
 
         // Create a combined cancellation token source with all cancellation tokens and
         // build a task that will be cancelled when any of the tokens are.
-        using var combinedCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
-            [.. cancellationTokens]
-        );
+        using var combinedCancellationTokenSource =
+            CancellationTokenSource.CreateLinkedTokenSource([.. cancellationTokens]);
 
         var cancellationTask = Task.Delay(
             millisecondsTimeout,
@@ -116,9 +115,8 @@ public static class TaskExtensions
 
         // Create a combined cancellation token source with all cancellation tokens and
         // build a task that will be cancelled when any of the tokens are.
-        using var combinedCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
-            [.. cancellationTokens]
-        );
+        using var combinedCancellationTokenSource =
+            CancellationTokenSource.CreateLinkedTokenSource([.. cancellationTokens]);
 
         var cancellationTask = Task.Delay(
             millisecondsTimeout,
