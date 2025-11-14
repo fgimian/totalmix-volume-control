@@ -14,7 +14,7 @@
 #define AppRepoIssuesURL AppRepoURL + "/issues"
 #define AppRepoReleasesURL AppRepoURL + "/releases"
 #define AppIconPath "src\TotalMixVC\Icons\TotalMixVC.ico"
-#define AppPublishPath "src\TotalMixVC\bin\" + AppBuildConfiguration + "\net9.0-windows\win-" + AppBuildArchitecture + "\publish"
+#define AppPublishPath "src\TotalMixVC\bin\" + AppBuildConfiguration + "\net10.0-windows\win-" + AppBuildArchitecture + "\publish"
 #define AppExeName "TotalMixVC.exe"
 #define AppVersion GetStringFileInfo(AddBackslash(AppPublishPath) + AppExeName, "ProductVersion")
 
