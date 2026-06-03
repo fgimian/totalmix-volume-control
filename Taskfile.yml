@@ -11,7 +11,7 @@ tasks:
 
   clean:
     desc: Clean all object and binary files along with test output.
-    cmd: rm -rf .coverage src/*/TestResults src/*/bin/{{.CONFIGURATION}} src/*/obj/{{.CONFIGURATION}}
+    cmd: rm -rf .coverage src/*/bin/{{.CONFIGURATION}}/*/TestResults src/*/bin/{{.CONFIGURATION}} src/*/obj/{{.CONFIGURATION}}
 
   icon:
     desc: Create the application icon.
@@ -39,15 +39,16 @@ tasks:
   test:
     desc: Run the unit tests.
     cmds:
-      - rm -f src/*/TestResults/*/coverage.cobertura.xml
+      - rm -f src/*/bin/{{.CONFIGURATION}}/*/TestResults/*.xml
       - >-
-          dotnet test
+          dotnet run
+          --project src/TotalMixVC.Tests
           --configuration {{.CONFIGURATION}}
-          --logger xunit
-          --verbosity normal
           --no-build
-          --collect:"XPlat Code Coverage"
-          {{if .FQN}}--filter "FullyQualifiedName~{{.FQN}}"{{end}}
+          --coverage
+          --coverage-output-format xml
+          {{if .TESTCLASS}}--filter-class "{{.TESTCLASS}}"{{end}}
+          {{if .TESTMETHOD}}--filter-method "{{.TESTMETHOD}}"{{end}}
     deps:
       - build
 
@@ -55,7 +56,7 @@ tasks:
     desc: Produce a coverage report for unit tests.
     cmd: >-
       dotnet reportgenerator
-      -reports:src/*/TestResults/*/coverage.cobertura.xml
+      -reports:src/*/bin/{{.CONFIGURATION}}/*/TestResults/*.xml
       -targetdir:.coverage
       -reporttypes:Cobertura,lcov,Html
       -filefilters:-*.g.cs
