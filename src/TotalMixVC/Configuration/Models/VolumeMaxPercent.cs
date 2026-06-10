@@ -5,8 +5,6 @@
 /// </summary>
 public record VolumeMaxPercent
 {
-    private float _value;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="VolumeMaxPercent"/> class.
     /// </summary>
@@ -22,7 +20,7 @@ public record VolumeMaxPercent
     /// </exception>
     public float Value
     {
-        get => _value;
+        get;
         set
         {
             if (value is <= 0.0f or > 1.0f)
@@ -32,7 +30,7 @@ public record VolumeMaxPercent
                 );
             }
 
-            _value = value;
+            field = value;
         }
     }
 }

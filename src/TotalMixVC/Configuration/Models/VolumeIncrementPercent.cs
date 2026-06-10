@@ -5,8 +5,6 @@
 /// </summary>
 public record VolumeIncrementPercent
 {
-    private float _value;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="VolumeIncrementPercent"/> class.
     /// </summary>
@@ -22,7 +20,7 @@ public record VolumeIncrementPercent
     /// </exception>
     public float Value
     {
-        get => _value;
+        get;
         set
         {
             if (value is <= 0.0f or > 0.10f)
@@ -32,7 +30,7 @@ public record VolumeIncrementPercent
                 );
             }
 
-            _value = value;
+            field = value;
         }
     }
 }

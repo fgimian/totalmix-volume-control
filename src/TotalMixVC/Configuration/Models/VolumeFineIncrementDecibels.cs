@@ -5,8 +5,6 @@
 /// </summary>
 public record VolumeFineIncrementDecibels
 {
-    private float _value;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="VolumeFineIncrementDecibels"/> class.
     /// </summary>
@@ -22,7 +20,7 @@ public record VolumeFineIncrementDecibels
     /// </exception>
     public float Value
     {
-        get => _value;
+        get;
         set
         {
             if (value <= 0.0 || value > 3.0 || value % 0.25f != 0.0f)
@@ -33,7 +31,7 @@ public record VolumeFineIncrementDecibels
                 );
             }
 
-            _value = value;
+            field = value;
         }
     }
 }

@@ -45,7 +45,7 @@ public partial record Config
                     value switch
                     {
                         string color when type == typeof(Color) => (Color)
-                            ColorConverter.ConvertFromString(color)!,
+                            ColorConverter.ConvertFromString(color),
                         string address when type == typeof(IPEndPoint) => IPEndPoint.Parse(address),
                         double increment when type == typeof(VolumeIncrementPercent) =>
                             new VolumeIncrementPercent((float)increment),

@@ -5,8 +5,6 @@
 /// </summary>
 public record VolumeMaxDecibels
 {
-    private float _value;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="VolumeMaxDecibels"/> class.
     /// </summary>
@@ -22,7 +20,7 @@ public record VolumeMaxDecibels
     /// </exception>
     public float Value
     {
-        get => _value;
+        get;
         set
         {
             if (value is > 6.0f)
@@ -30,7 +28,7 @@ public record VolumeMaxDecibels
                 throw new InvalidOperationException("The value must be less than or equal to 6.0.");
             }
 
-            _value = value;
+            field = value;
         }
     }
 }
