@@ -1,6 +1,4 @@
-﻿using System.Net;
-using System.Windows.Media;
-using Tomlyn.Syntax;
+﻿using System.Collections.ObjectModel;
 using TotalMixVC.Configuration;
 using Xunit;
 
@@ -9,9 +7,10 @@ namespace TotalMixVC.Tests;
 public sealed class ConfigTests
 {
     [Fact]
-    public void TryFromToml_ValidConfiguration_LoadsAllProperties()
+    public void FromToml_ValidConfiguration_LoadsAllProperties()
     {
-        var isValid = Config.TryFromToml(
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(
             """
             [osc]
             outgoing_endpoint = "127.0.0.1:7002"
@@ -45,39 +44,38 @@ public sealed class ConfigTests
             fade_out_time = 0.5
             show_remote_volume_changes = true
             """,
-            out var config,
-            out var diagnostics
+            diagnostics
         );
 
         var expectedConfig = new Config()
         {
             Osc = new Osc()
             {
-                OutgoingEndPoint = new IPEndPoint(IPAddress.Loopback, 7002),
-                IncomingEndPoint = new IPEndPoint(IPAddress.Loopback, 9002),
+                RawOutgoingEndPoint = "127.0.0.1:7002",
+                RawIncomingEndPoint = "127.0.0.1:9002",
             },
             Volume = new Volume()
             {
                 UseDecibels = true,
-                IncrementPercent = new(0.04f),
-                FineIncrementPercent = new(0.02f),
-                MaxPercent = new(0.8f),
-                IncrementDecibels = new(1.0f),
-                FineIncrementDecibels = new(0.5f),
-                MaxDecibels = new(0.0f),
+                IncrementPercent = 0.04f,
+                FineIncrementPercent = 0.02f,
+                MaxPercent = 0.8f,
+                IncrementDecibels = 1.0f,
+                FineIncrementDecibels = 0.5f,
+                MaxDecibels = 0.0f,
             },
             Theme = new Theme()
             {
                 BackgroundRounding = 5.0,
-                BackgroundColor = Color.FromRgb(0x1e, 0x43, 0x28),
-                HeadingTotalmixColor = Color.FromRgb(0xee, 0xee, 0xee),
-                HeadingVolumeColor = Color.FromRgb(0xe0, 0x54, 0x54),
-                VolumeReadoutColorNormal = Color.FromRgb(0xee, 0xee, 0xee),
-                VolumeReadoutColorDimmed = Color.FromRgb(0xee, 0xfa, 0x50),
-                VolumeBarBackgroundColor = Color.FromRgb(0x22, 0x22, 0x22),
-                VolumeBarForegroundColorNormal = Color.FromRgb(0x88, 0x88, 0x88),
-                VolumeBarForegroundColorDimmed = Color.FromRgb(0x88, 0x65, 0x00),
-                TrayTooltipMessageColor = Color.FromRgb(0xee, 0xee, 0xee),
+                RawBackgroundColor = "#1e4328",
+                RawHeadingTotalmixColor = "#eeeeee",
+                RawHeadingVolumeColor = "#e05454",
+                RawVolumeReadoutColorNormal = "#eeeeee",
+                RawVolumeReadoutColorDimmed = "#eefa50",
+                RawVolumeBarBackgroundColor = "#222222",
+                RawVolumeBarForegroundColorNormal = "#888888",
+                RawVolumeBarForegroundColorDimmed = "#886500",
+                RawTrayTooltipMessageColor = "#eeeeee",
             },
             Interface = new Interface()
             {
@@ -88,214 +86,385 @@ public sealed class ConfigTests
                 ShowRemoteVolumeChanges = true,
             },
         };
+        var expectedConfigDiagnostics = new Collection<string>();
+        expectedConfig.ParseAndValidate(expectedConfigDiagnostics);
 
-        Assert.True(isValid);
-        Assert.NotNull(config);
-        Assert.NotNull(diagnostics);
+        Assert.Empty(expectedConfigDiagnostics);
+        Assert.Equal(expectedConfig, config);
         Assert.Empty(diagnostics);
-        Assert.Equal(expectedConfig, config);
     }
 
     [Fact]
-    public void TryFromToml_InvalidColor_SkipsLoadingProperty()
+    public void FromToml_SemiValidConfiguration_LoadsSomeProperties()
     {
-        var isValid = Config.TryFromToml(
-            """
-            [theme]
-            background_color = "#1e4328"
-            heading_totalmix_color = "wow"
-            """,
-            out var config,
-            out var diagnostics
-        );
-
-        var expectedConfig = new Config()
-        {
-            Theme = new Theme() { BackgroundColor = Color.FromRgb(0x1e, 0x43, 0x28) },
-        };
-
-        Assert.False(isValid);
-        Assert.NotNull(config);
-        Assert.NotNull(diagnostics);
-        Assert.Equal(2, diagnostics.Count);
-        Assert.Equal(expectedConfig, config);
-    }
-
-    [Fact]
-    public void TryFromToml_InvalidIPEndPoint_SkipsLoadingProperty()
-    {
-        var isValid = Config.TryFromToml(
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(
             """
             [osc]
-            outgoing_endpoint = "127.0.0.1:7002"
-            incoming_endpoint = "oopsies"
+            outgoing_endpoint = "poop"
+            incoming_endpoint = "127.0.0.1:9002"
+
+            [volume]
+            use_decibels = true
+            increment_percent = 0.4
+            fine_increment_percent = 0.02
+            max_percent = 0.8
+            increment_decibels = 1.0
+            fine_increment_decibels = 0.5
+            max_decibels = 0.0
+
+            [theme]
+            background_rounding = 5.0
+            background_color = "#1e4328"
+            heading_totalmix_color = "#eeeeee"
+            heading_volume_color = "oops"
+            volume_readout_color_normal = "#eeeeee"
+            volume_readout_color_dimmed = "#eefa50"
+            volume_bar_background_color = "#222222"
+            volume_bar_foreground_color_normal = "#888888"
+            volume_bar_foreground_color_dimmed = "#886500"
+            tray_tooltip_message_color = "#eeeeee"
+
+            [interface]
+            scaling = 0.0
+            position_offset = 45.0
+            hide_delay = 3.0
+            fade_out_time = 0.5
+            show_remote_volume_changes = true
             """,
-            out var config,
-            out var diagnostics
+            diagnostics
         );
 
         var expectedConfig = new Config()
         {
-            Osc = new Osc()
+            Osc = new Osc() { RawIncomingEndPoint = "127.0.0.1:9002" },
+            Volume = new Volume()
             {
-                OutgoingEndPoint = new IPEndPoint(IPAddress.Loopback, 7002),
-                IncomingEndPoint = new IPEndPoint(IPAddress.Loopback, 9001),
+                UseDecibels = true,
+                FineIncrementPercent = 0.02f,
+                MaxPercent = 0.8f,
+                IncrementDecibels = 1.0f,
+                FineIncrementDecibels = 0.5f,
+                MaxDecibels = 0.0f,
+            },
+            Theme = new Theme()
+            {
+                BackgroundRounding = 5.0,
+                RawBackgroundColor = "#1e4328",
+                RawHeadingTotalmixColor = "#eeeeee",
+                RawVolumeReadoutColorNormal = "#eeeeee",
+                RawVolumeReadoutColorDimmed = "#eefa50",
+                RawVolumeBarBackgroundColor = "#222222",
+                RawVolumeBarForegroundColorNormal = "#888888",
+                RawVolumeBarForegroundColorDimmed = "#886500",
+                RawTrayTooltipMessageColor = "#eeeeee",
+            },
+            Interface = new Interface()
+            {
+                PositionOffset = 45.0,
+                HideDelay = 3.0,
+                FadeOutTime = 0.5,
+                ShowRemoteVolumeChanges = true,
             },
         };
+        var expectedConfigDiagnostics = new Collection<string>();
+        expectedConfig.ParseAndValidate(expectedConfigDiagnostics);
 
-        Assert.False(isValid);
-        Assert.NotNull(config);
-        Assert.NotNull(diagnostics);
-        Assert.Equal(2, diagnostics.Count);
+        Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
+        Assert.Equal(4, diagnostics.Count);
+        Assert.Equal(
+            [
+                "(osc.outgoing_endpoint) : error : An invalid endpoint address was specified.",
+                "(volume.increment_percent) : error : The value must be greater than 0 and less "
+                    + "than or equal to 0.1.",
+                "(theme.heading_volume_color) : error : The color specified was invalid.",
+                "(interface.scaling) : error : The value must be greater than 0.",
+            ],
+            diagnostics
+        );
     }
 
     [Fact]
-    public void TryFromToml_ValidVolumeIncrementPercent_LoadsProperty()
+    public void FromToml_InvalidConfiguration_ResetsPropertiesToDefaults()
     {
-        var isValid = Config.TryFromToml(
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(
+            """
+            [osc]
+            outgoing_endpoint = "oops"
+            incoming_endpoint = "oops"
+
+            [volume]
+            increment_percent = 0.4
+            fine_increment_percent = 0.2
+            max_percent = 8.0
+            increment_decibels = 10.0
+            fine_increment_decibels = 5.0
+            max_decibels = 16.0
+
+            [theme]
+            background_rounding = -1.0
+            background_color = "oops"
+            heading_totalmix_color = "oops"
+            heading_volume_color = "oops"
+            volume_readout_color_normal = "oops"
+            volume_readout_color_dimmed = "oops"
+            volume_bar_background_color = "oops"
+            volume_bar_foreground_color_normal = "oops"
+            volume_bar_foreground_color_dimmed = "oops"
+            tray_tooltip_message_color = "oops"
+
+            [interface]
+            scaling = 0.0
+            position_offset = -1.0
+            hide_delay = 0.0
+            fade_out_time = -1.0
+            """,
+            diagnostics
+        );
+
+        var expectedConfig = new Config();
+        var expectedConfigDiagnostics = new Collection<string>();
+        expectedConfig.ParseAndValidate(expectedConfigDiagnostics);
+
+        Assert.Empty(expectedConfigDiagnostics);
+        Assert.Equal(expectedConfig, config);
+        Assert.Equal(22, diagnostics.Count);
+    }
+
+    [Fact]
+    public void FromToml_InvalidToml_ReportsDiagnostics()
+    {
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(
+            """
+            [osc]
+            outgoing_endpoint
+            """,
+            diagnostics
+        );
+
+        var expectedConfig = new Config();
+        var expectedConfigDiagnostics = new Collection<string>();
+        expectedConfig.ParseAndValidate(expectedConfigDiagnostics);
+
+        Assert.Empty(expectedConfigDiagnostics);
+        Assert.Equal(expectedConfig, config);
+        Assert.Single(diagnostics);
+        Assert.Equal("(2,18) : error : Expected `=` after key but was `Eof`.", diagnostics[0]);
+    }
+
+    [Theory]
+    [InlineData("background_color")]
+    [InlineData("heading_totalmix_color")]
+    [InlineData("heading_volume_color")]
+    [InlineData("volume_readout_color_normal")]
+    [InlineData("volume_readout_color_dimmed")]
+    [InlineData("volume_bar_background_color")]
+    [InlineData("volume_bar_foreground_color_normal")]
+    [InlineData("volume_bar_foreground_color_dimmed")]
+    [InlineData("tray_tooltip_message_color")]
+    public void FromToml_InvalidColor_SkipsLoadingProperty(string name)
+    {
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(
+            $"""
+            [theme]
+            {name} = "wow"
+            """,
+            diagnostics
+        );
+
+        var expectedConfig = new Config();
+        var expectedConfigDiagnostics = new Collection<string>();
+        expectedConfig.ParseAndValidate(expectedConfigDiagnostics);
+
+        Assert.Empty(expectedConfigDiagnostics);
+        Assert.Equal(expectedConfig, config);
+        Assert.Single(diagnostics);
+        Assert.Equal($"(theme.{name}) : error : The color specified was invalid.", diagnostics[0]);
+    }
+
+    [Theory]
+    [InlineData("outgoing_endpoint")]
+    [InlineData("incoming_endpoint")]
+    public void FromToml_InvalidIPEndPoint_SkipsLoadingProperty(string name)
+    {
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(
+            $"""
+            [osc]
+            {name} = "oopsies"
+            """,
+            diagnostics
+        );
+
+        var expectedConfig = new Config();
+        var expectedConfigDiagnostics = new Collection<string>();
+        expectedConfig.ParseAndValidate(expectedConfigDiagnostics);
+
+        Assert.Empty(expectedConfigDiagnostics);
+        Assert.Equal(expectedConfig, config);
+        Assert.Single(diagnostics);
+        Assert.Equal(
+            $"(osc.{name}) : error : An invalid endpoint address was specified.",
+            diagnostics[0]
+        );
+    }
+
+    [Fact]
+    public void FromToml_ValidVolumeIncrementPercent_LoadsProperty()
+    {
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(
             """
             [volume]
             increment_percent = 0.03
             """,
-            out var config,
-            out var diagnostics
+            diagnostics
         );
 
-        var expectedConfig = new Config()
-        {
-            Volume = new Volume() { IncrementPercent = new(0.03f) },
-        };
+        var expectedConfig = new Config() { Volume = new Volume() { IncrementPercent = 0.03f } };
+        var expectedConfigDiagnostics = new Collection<string>();
+        expectedConfig.ParseAndValidate(expectedConfigDiagnostics);
 
-        Assert.True(isValid);
-        Assert.NotNull(config);
-        Assert.NotNull(diagnostics);
-        Assert.Empty(diagnostics);
+        Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
+        Assert.Empty(diagnostics);
     }
 
     [Theory]
     [InlineData(0.30f)]
     [InlineData(-0.01f)]
-    public void TryFromToml_InvalidVolumeIncrementPercent_SkipsLoadingProperty(
+    public void FromToml_InvalidVolumeIncrementPercent_SkipsLoadingProperty(
         float volumeIncrementPercent
     )
     {
-        var isValid = Config.TryFromToml(
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(
             $"""
             [volume]
             increment_percent = {volumeIncrementPercent:F2}
             """,
-            out var config,
-            out var diagnostics
+            diagnostics
         );
 
-        var expectedConfig = new Config()
-        {
-            Volume = new Volume() { IncrementPercent = new(0.02f) },
-        };
+        var expectedConfig = new Config();
+        var expectedConfigDiagnostics = new Collection<string>();
+        expectedConfig.ParseAndValidate(expectedConfigDiagnostics);
 
-        Assert.False(isValid);
-        Assert.NotNull(config);
-        Assert.NotNull(diagnostics);
-        Assert.Equal(2, diagnostics.Count);
+        Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
+        Assert.Single(diagnostics);
+        Assert.Equal(
+            "(volume.increment_percent) : error : The value must be greater than 0 and less "
+                + "than or equal to 0.1.",
+            diagnostics[0]
+        );
     }
 
     [Fact]
-    public void TryFromToml_ValidVolumeFineIncrementPercent_LoadsProperty()
+    public void FromToml_ValidVolumeFineIncrementPercent_LoadsProperty()
     {
-        var isValid = Config.TryFromToml(
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(
             """
             [volume]
             fine_increment_percent = 0.01
             """,
-            out var config,
-            out var diagnostics
+            diagnostics
         );
 
         var expectedConfig = new Config()
         {
-            Volume = new Volume() { FineIncrementPercent = new(0.01f) },
+            Volume = new Volume() { FineIncrementPercent = 0.01f },
         };
+        var expectedConfigDiagnostics = new Collection<string>();
+        expectedConfig.ParseAndValidate(expectedConfigDiagnostics);
 
-        Assert.True(isValid);
-        Assert.NotNull(config);
-        Assert.NotNull(diagnostics);
-        Assert.Empty(diagnostics);
+        Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
+        Assert.Empty(diagnostics);
     }
 
     [Theory]
     [InlineData(0.10f)]
     [InlineData(-0.03f)]
-    public void TryFromToml_InvalidVolumeFineIncrementPercent_SkipsLoadingProperty(
+    public void FromToml_InvalidVolumeFineIncrementPercent_SkipsLoadingProperty(
         float volumeFineIncrementPercent
     )
     {
-        var isValid = Config.TryFromToml(
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(
             $"""
             [volume]
             fine_increment_percent = {volumeFineIncrementPercent:F2}
             """,
-            out var config,
-            out var diagnostics
+            diagnostics
         );
 
-        var expectedConfig = new Config()
-        {
-            Volume = new Volume() { FineIncrementPercent = new(0.01f) },
-        };
+        var expectedConfig = new Config();
+        var expectedConfigDiagnostics = new Collection<string>();
+        expectedConfig.ParseAndValidate(expectedConfigDiagnostics);
 
-        Assert.False(isValid);
-        Assert.NotNull(config);
-        Assert.NotNull(diagnostics);
-        Assert.Equal(2, diagnostics.Count);
+        Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
+        Assert.Single(diagnostics);
+        Assert.Equal(
+            "(volume.fine_increment_percent) : error : The value must be greater than 0 and "
+                + "less than or equal to 0.05.",
+            diagnostics[0]
+        );
     }
 
     [Fact]
-    public void TryFromToml_ValidVolumeMaxPercent_LoadsProperty()
+    public void FromToml_ValidVolumeMaxPercent_LoadsProperty()
     {
-        var isValid = Config.TryFromToml(
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(
             """
             [volume]
             max_percent = 0.90
             """,
-            out var config,
-            out var diagnostics
+            diagnostics
         );
 
-        var expectedConfig = new Config() { Volume = new Volume() { MaxPercent = new(0.90f) } };
+        var expectedConfig = new Config() { Volume = new Volume() { MaxPercent = 0.90f } };
+        var expectedConfigDiagnostics = new Collection<string>();
+        expectedConfig.ParseAndValidate(expectedConfigDiagnostics);
 
-        Assert.True(isValid);
-        Assert.NotNull(config);
-        Assert.NotNull(diagnostics);
-        Assert.Empty(diagnostics);
+        Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
+        Assert.Empty(diagnostics);
     }
 
     [Theory]
     [InlineData(1.10f)]
     [InlineData(-0.15f)]
-    public void TryFromToml_InvalidVolumeMaxPercent_SkipsLoadingProperty(float volumeMaxPercent)
+    public void FromToml_InvalidVolumeMaxPercent_SkipsLoadingProperty(float volumeMaxPercent)
     {
-        var isValid = Config.TryFromToml(
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(
             $"""
             [volume]
             max_percent = {volumeMaxPercent:F2}
             """,
-            out var config,
-            out var diagnostics
+            diagnostics
         );
 
-        var expectedConfig = new Config() { Volume = new Volume() { MaxPercent = new(1.0f) } };
+        var expectedConfig = new Config();
+        var expectedConfigDiagnostics = new Collection<string>();
+        expectedConfig.ParseAndValidate(expectedConfigDiagnostics);
 
-        Assert.False(isValid);
-        Assert.NotNull(config);
-        Assert.NotNull(diagnostics);
-        Assert.Equal(2, diagnostics.Count);
+        Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
+        Assert.Single(diagnostics);
+        Assert.Equal(
+            "(volume.max_percent) : error : The value must be greater than 0 and less than or "
+                + "equal to 1.0.",
+            diagnostics[0]
+        );
     }
 
     [Theory]
@@ -307,29 +476,27 @@ public sealed class ConfigTests
     [InlineData(4.0f)]
     [InlineData(5.0f)]
     [InlineData(5.5f)]
-    public void TryFromToml_ValidVolumeIncrementDecibels_LoadsProperty(
-        float volumeIncrementDecibels
-    )
+    public void FromToml_ValidVolumeIncrementDecibels_LoadsProperty(float volumeIncrementDecibels)
     {
-        var isValid = Config.TryFromToml(
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(
             $"""
             [volume]
             increment_decibels = {volumeIncrementDecibels:F1}
             """,
-            out var config,
-            out var diagnostics
+            diagnostics
         );
 
         var expectedConfig = new Config()
         {
-            Volume = new Volume() { IncrementDecibels = new(volumeIncrementDecibels) },
+            Volume = new Volume() { IncrementDecibels = volumeIncrementDecibels },
         };
+        var expectedConfigDiagnostics = new Collection<string>();
+        expectedConfig.ParseAndValidate(expectedConfigDiagnostics);
 
-        Assert.True(isValid);
-        Assert.NotNull(config);
-        Assert.NotNull(diagnostics);
-        Assert.Empty(diagnostics);
+        Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
+        Assert.Empty(diagnostics);
     }
 
     [Theory]
@@ -345,29 +512,31 @@ public sealed class ConfigTests
     [InlineData(5.75f)]
     [InlineData(6.25f)]
     [InlineData(6.5f)]
-    public void TryFromToml_InvalidVolumeIncrementDecibels_SkipsLoadingProperty(
+    public void FromToml_InvalidVolumeIncrementDecibels_SkipsLoadingProperty(
         float volumeIncrementDecibels
     )
     {
-        var isValid = Config.TryFromToml(
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(
             $"""
             [volume]
             increment_decibels = {volumeIncrementDecibels:F2}
             """,
-            out var config,
-            out var diagnostics
+            diagnostics
         );
 
-        var expectedConfig = new Config()
-        {
-            Volume = new Volume() { IncrementDecibels = new(2.0f) },
-        };
+        var expectedConfig = new Config();
+        var expectedConfigDiagnostics = new Collection<string>();
+        expectedConfig.ParseAndValidate(expectedConfigDiagnostics);
 
-        Assert.False(isValid);
-        Assert.NotNull(config);
-        Assert.NotNull(diagnostics);
-        Assert.Equal(2, diagnostics.Count);
+        Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
+        Assert.Single(diagnostics);
+        Assert.Equal(
+            "(volume.increment_decibels) : error : The value must be a multiple of 0.5 while "
+                + "being greater than 0 and less than or equal to 6.0.",
+            diagnostics[0]
+        );
     }
 
     [Theory]
@@ -378,29 +547,29 @@ public sealed class ConfigTests
     [InlineData(1.5f)]
     [InlineData(2.0f)]
     [InlineData(2.75f)]
-    public void TryFromToml_ValidVolumeFineIncrementDecibels_LoadsProperty(
+    public void FromToml_ValidVolumeFineIncrementDecibels_LoadsProperty(
         float volumeFineIncrementDecibels
     )
     {
-        var isValid = Config.TryFromToml(
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(
             $"""
             [volume]
             fine_increment_decibels = {volumeFineIncrementDecibels:F2}
             """,
-            out var config,
-            out var diagnostics
+            diagnostics
         );
 
         var expectedConfig = new Config()
         {
-            Volume = new Volume() { FineIncrementDecibels = new(volumeFineIncrementDecibels) },
+            Volume = new Volume() { FineIncrementDecibels = volumeFineIncrementDecibels },
         };
+        var expectedConfigDiagnostics = new Collection<string>();
+        expectedConfig.ParseAndValidate(expectedConfigDiagnostics);
 
-        Assert.True(isValid);
-        Assert.NotNull(config);
-        Assert.NotNull(diagnostics);
-        Assert.Empty(diagnostics);
+        Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
+        Assert.Empty(diagnostics);
     }
 
     [Theory]
@@ -410,29 +579,31 @@ public sealed class ConfigTests
     [InlineData(1.9f)]
     [InlineData(3.25f)]
     [InlineData(3.5f)]
-    public void TryFromToml_InvalidVolumeFineIncrementDecibels_SkipsLoadingProperty(
+    public void FromToml_InvalidVolumeFineIncrementDecibels_SkipsLoadingProperty(
         float volumeFineIncrementDecibels
     )
     {
-        var isValid = Config.TryFromToml(
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(
             $"""
             [volume]
             fine_increment_decibels = {volumeFineIncrementDecibels}
             """,
-            out var config,
-            out var diagnostics
+            diagnostics
         );
 
-        var expectedConfig = new Config()
-        {
-            Volume = new Volume() { FineIncrementDecibels = new(1.0f) },
-        };
+        var expectedConfig = new Config();
+        var expectedConfigDiagnostics = new Collection<string>();
+        expectedConfig.ParseAndValidate(expectedConfigDiagnostics);
 
-        Assert.False(isValid);
-        Assert.NotNull(config);
-        Assert.NotNull(diagnostics);
-        Assert.Equal(2, diagnostics.Count);
+        Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
+        Assert.Single(diagnostics);
+        Assert.Equal(
+            "(volume.fine_increment_decibels) : error : The value must be a multiple of 0.25 "
+                + "while being greater than 0 and less than or equal to 3.0.",
+            diagnostics[0]
+        );
     }
 
     [Theory]
@@ -441,56 +612,61 @@ public sealed class ConfigTests
     [InlineData(0.0f)]
     [InlineData(3.5f)]
     [InlineData(6.0f)]
-    public void TryFromToml_ValidVolumeMaxDecibels_LoadsProperty(float volumeMaxDecibels)
+    public void FromToml_ValidVolumeMaxDecibels_LoadsProperty(float volumeMaxDecibels)
     {
-        var isValid = Config.TryFromToml(
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(
             $"""
             [volume]
             max_decibels = {volumeMaxDecibels:F1}
             """,
-            out var config,
-            out var diagnostics
+            diagnostics
         );
 
         var expectedConfig = new Config()
         {
-            Volume = new Volume() { MaxDecibels = new(volumeMaxDecibels) },
+            Volume = new Volume() { MaxDecibels = volumeMaxDecibels },
         };
+        var expectedConfigDiagnostics = new Collection<string>();
+        expectedConfig.ParseAndValidate(expectedConfigDiagnostics);
 
-        Assert.True(isValid);
-        Assert.NotNull(config);
-        Assert.NotNull(diagnostics);
-        Assert.Empty(diagnostics);
+        Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
+        Assert.Empty(diagnostics);
     }
 
     [Theory]
     [InlineData(6.1f)]
     [InlineData(10.0f)]
-    public void TryFromToml_InvalidVolumeMaxDecibels_SkipsLoadingProperty(float volumeMaxDecibels)
+    public void FromToml_InvalidVolumeMaxDecibels_SkipsLoadingProperty(float volumeMaxDecibels)
     {
-        var isValid = Config.TryFromToml(
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(
             $"""
             [volume]
             max_decibels = {volumeMaxDecibels:F1}
             """,
-            out var config,
-            out var diagnostics
+            diagnostics
         );
 
-        var expectedConfig = new Config() { Volume = new Volume() { MaxDecibels = new(6.0f) } };
+        var expectedConfig = new Config();
+        var expectedConfigDiagnostics = new Collection<string>();
+        expectedConfig.ParseAndValidate(expectedConfigDiagnostics);
 
-        Assert.False(isValid);
-        Assert.NotNull(config);
-        Assert.NotNull(diagnostics);
-        Assert.Equal(2, diagnostics.Count);
+        Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
+        Assert.Single(diagnostics);
+        Assert.Equal(
+            "(volume.max_decibels) : error : The value must be less than or equal to 6.0.",
+            diagnostics[0]
+        );
     }
 
     [Fact]
-    public void TryFromToml_InvalidDoubles_ResetsPropertiesToDefaults()
+    public void FromToml_InvalidDoubles_ResetsPropertiesToDefaults()
     {
-        var isValid = Config.TryFromToml(
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(
             """
             [theme]
             background_rounding = -1.0
@@ -501,132 +677,37 @@ public sealed class ConfigTests
             hide_delay = -10.0
             fade_out_time = -5.0
             """,
-            out var config,
-            out var diagnostics
+            diagnostics
         );
 
         var expectedConfig = new Config()
         {
-            Theme = new Theme() { BackgroundRounding = 0.0 },
+            Theme = new Theme() { BackgroundRounding = 1.0 },
             Interface = new Interface()
             {
-                Scaling = double.Epsilon,
-                PositionOffset = 0.0,
-                HideDelay = double.Epsilon,
-                FadeOutTime = 0.0,
+                Scaling = 1.0,
+                PositionOffset = 40.0,
+                HideDelay = 2.0,
+                FadeOutTime = 0.75,
             },
         };
+        var expectedConfigDiagnostics = new Collection<string>();
+        expectedConfig.ParseAndValidate(expectedConfigDiagnostics);
 
-        Assert.True(isValid);
-        Assert.NotNull(config);
-        Assert.NotNull(diagnostics);
-        Assert.Empty(diagnostics);
+        Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
-    }
-
-    [Fact]
-    public void CleanDiagnostics_InvalidProperties_ProvidesCleanMessages()
-    {
-        var diagnostics = new DiagnosticsBag([
-            new DiagnosticMessage(
-                DiagnosticMessageKind.Error,
-                new SourceSpan(
-                    fileName: string.Empty,
-                    start: new TextPosition(offset: 0, line: 0, column: 0),
-                    end: new TextPosition(offset: 27, line: 0, column: 27)
-                ),
-                "Exception while trying to convert System.String to type "
-                    + "System.Windows.Media.Color. Reason: Token is not valid."
-            ),
-            new DiagnosticMessage(
-                DiagnosticMessageKind.Error,
-                new SourceSpan(
-                    fileName: string.Empty,
-                    start: new TextPosition(offset: 0, line: 0, column: 0),
-                    end: new TextPosition(offset: 27, line: 0, column: 27)
-                ),
-                "The property value of type System.String couldn't be converted to "
-                    + "System.Windows.Media.Color for the property Config/background_color"
-            ),
-            new DiagnosticMessage(
-                DiagnosticMessageKind.Warning,
-                new SourceSpan(
-                    fileName: string.Empty,
-                    start: new TextPosition(offset: 59, line: 2, column: 0),
-                    end: new TextPosition(offset: 87, line: 2, column: 28)
-                ),
-                "The property `EndPoint` was not found, but `end_point` was. By default "
-                    + "property names are lowered and split by _ by PascalCase letters. This "
-                    + "behavior can be changed by passing a TomlModelOptions and specifying "
-                    + "the TomlModelOptions.ConvertPropertyName delegate."
-            ),
-            new DiagnosticMessage(
-                DiagnosticMessageKind.Error,
-                new SourceSpan(
-                    fileName: string.Empty,
-                    start: new TextPosition(offset: 59, line: 2, column: 0),
-                    end: new TextPosition(offset: 87, line: 2, column: 28)
-                ),
-                "The property EndPoint was not found on object type Config"
-            ),
-            new DiagnosticMessage(
-                DiagnosticMessageKind.Error,
-                new SourceSpan(
-                    fileName: string.Empty,
-                    start: new TextPosition(offset: 100, line: 5, column: 0),
-                    end: new TextPosition(offset: 112, line: 5, column: 12)
-                ),
-                "Unsupported type to convert System.String to type System.Single."
-            ),
-            new DiagnosticMessage(
-                DiagnosticMessageKind.Error,
-                new SourceSpan(
-                    fileName: string.Empty,
-                    start: new TextPosition(offset: 100, line: 5, column: 0),
-                    end: new TextPosition(offset: 112, line: 5, column: 12)
-                ),
-                "The property value of type System.String couldn't be converted to "
-                    + "System.Single for the property Volume/max"
-            ),
-        ]);
-
-        var diagnosticMessages = Config.CleanDiagnostics(diagnostics);
+        Assert.Equal(5, diagnostics.Count);
         Assert.Equal(
             [
-                "(1,1) : error : The property value of type System.String couldn't be converted "
-                    + "to System.Windows.Media.Color for the property Config/background_color. "
-                    + "Token is not valid.",
-                "(3,1) : warning : The property `EndPoint` was not found, but `end_point` was. "
-                    + "By default property names are lowered and split by _ by PascalCase "
-                    + "letters. This behavior can be changed by passing a TomlModelOptions and "
-                    + "specifying the TomlModelOptions.ConvertPropertyName delegate.",
-                "(3,1) : error : The property EndPoint was not found on object type Config.",
-                "(6,1) : error : The property value of type System.String couldn't be converted "
-                    + "to System.Single for the property Volume/max.",
+                "(theme.background_rounding) : error : The value must be greater than or equal "
+                    + "to 0.",
+                "(interface.scaling) : error : The value must be greater than 0.",
+                "(interface.position_offset) : error : The value must be greater than "
+                    + "or equal to 0.",
+                "(interface.hide_delay) : error : The value must be greater than 0.",
+                "(interface.fade_out_time) : error : The value must be greater than or equal to 0.",
             ],
-            diagnosticMessages
-        );
-    }
-
-    [Fact]
-    public void CleanDiagnostics_InvalidSyntax_DoesNotConsolidateMessages()
-    {
-        var diagnostics = new DiagnosticsBag([
-            new DiagnosticMessage(
-                DiagnosticMessageKind.Error,
-                new SourceSpan(
-                    fileName: string.Empty,
-                    start: new TextPosition(offset: 16, line: 0, column: 16),
-                    end: new TextPosition(offset: 16, line: 0, column: 16)
-                ),
-                "Expecting `=` after a key instead of !"
-            ),
-        ]);
-
-        var diagnosticMessages = Config.CleanDiagnostics(diagnostics);
-        Assert.Equal(
-            ["(1,17) : error : Expecting `=` after a key instead of !."],
-            diagnosticMessages
+            diagnostics
         );
     }
 }

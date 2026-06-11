@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -108,9 +109,10 @@ public partial class App : Application, IDisposable
     public bool LoadConfig(bool running = false)
     {
         var configText = File.ReadAllText(s_configPath);
-        var isValid = Config.TryFromToml(configText, out var config, out var diagnostics);
+        var diagnostics = new Collection<string>();
+        var config = Config.FromToml(configText, diagnostics);
 
-        if (!isValid && diagnostics is not null)
+        if (diagnostics.Count != 0)
         {
             var configDescription = running ? "existing" : "default";
             var message = new StringBuilder();
@@ -130,9 +132,9 @@ public partial class App : Application, IDisposable
                 );
             }
 
-            foreach (var diagnosticMessage in Config.CleanDiagnostics(diagnostics))
+            foreach (var diagnostic in diagnostics)
             {
-                message.Append(CultureInfo.InvariantCulture, $"- {diagnosticMessage}\n");
+                message.Append(CultureInfo.InvariantCulture, $"- {diagnostic}\n");
             }
 
             message.Append(
@@ -582,12 +584,12 @@ public partial class App : Application, IDisposable
     private void ConfigureVolumeManager()
     {
         _volumeManager.UseDecibels = _config.Volume.UseDecibels;
-        _volumeManager.VolumeIncrementPercent = _config.Volume.IncrementPercent.Value;
-        _volumeManager.VolumeFineIncrementPercent = _config.Volume.FineIncrementPercent.Value;
-        _volumeManager.VolumeMaxPercent = _config.Volume.MaxPercent.Value;
-        _volumeManager.VolumeIncrementDecibels = _config.Volume.IncrementDecibels.Value;
-        _volumeManager.VolumeFineIncrementDecibels = _config.Volume.FineIncrementDecibels.Value;
-        _volumeManager.VolumeMaxDecibels = _config.Volume.MaxDecibels.Value;
+        _volumeManager.VolumeIncrementPercent = _config.Volume.IncrementPercent;
+        _volumeManager.VolumeFineIncrementPercent = _config.Volume.FineIncrementPercent;
+        _volumeManager.VolumeMaxPercent = _config.Volume.MaxPercent;
+        _volumeManager.VolumeIncrementDecibels = _config.Volume.IncrementDecibels;
+        _volumeManager.VolumeFineIncrementDecibels = _config.Volume.FineIncrementDecibels;
+        _volumeManager.VolumeMaxDecibels = _config.Volume.MaxDecibels;
     }
 
     private void ConfigureInterface()

@@ -1,4 +1,6 @@
-﻿namespace TotalMixVC.Configuration;
+﻿using System.Collections.ObjectModel;
+
+namespace TotalMixVC.Configuration;
 
 /// <summary>Provides configuration related the behaviour of the widget user interface.</summary>
 public record Interface
@@ -31,4 +33,43 @@ public record Interface
     /// random times which is why this setting is disabled by default.
     /// </summary>
     public bool ShowRemoteVolumeChanges { get; set; }
+
+    /// <summary>
+    /// Validates that all properties are in the appropriate numeric range and resets their value
+    /// if they don't meet range requirements.
+    /// </summary>
+    /// <param name="diagnostics">
+    /// Error diagnostics recorded for properties which were not valid.
+    /// </param>
+    public void Validate(Collection<string> diagnostics)
+    {
+        if (Scaling <= 0.0)
+        {
+            Scaling = 1.0;
+            diagnostics.Add("(interface.scaling) : error : The value must be greater than 0.");
+        }
+
+        if (PositionOffset < 0.0)
+        {
+            PositionOffset = 40.0;
+            diagnostics.Add(
+                "(interface.position_offset) : error : The value must be greater than "
+                    + "or equal to 0."
+            );
+        }
+
+        if (HideDelay <= 0.0)
+        {
+            HideDelay = 2.0;
+            diagnostics.Add("(interface.hide_delay) : error : The value must be greater than 0.");
+        }
+
+        if (FadeOutTime < 0.0)
+        {
+            FadeOutTime = 0.75;
+            diagnostics.Add(
+                "(interface.fade_out_time) : error : The value must be greater than or equal to 0."
+            );
+        }
+    }
 }
