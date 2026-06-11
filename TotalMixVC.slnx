@@ -1,0 +1,12 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
+  <Project Path="src/TotalMixVC.Tests/TotalMixVC.Tests.csproj" />
+  <Project Path="src/TotalMixVC/TotalMixVC.csproj" />
+</Solution>
