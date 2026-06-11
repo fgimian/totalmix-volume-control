@@ -7,6 +7,9 @@ namespace TotalMixVC.Configuration;
 /// <summary>Provides configuration related to the theme of the widget.</summary>
 public record Theme
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Theme"/> class.
+    /// </summary>
     public Theme()
     {
         HeadingTotalmixColor = (Color)ColorConverter.ConvertFromString(RawHeadingTotalmixColor);

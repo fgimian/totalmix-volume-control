@@ -7,6 +7,9 @@ namespace TotalMixVC.Configuration;
 /// <summary>Provides configuration related to OSC communication with the device.</summary>
 public record Osc
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Osc"/> class.
+    /// </summary>
     public Osc()
     {
         OutgoingEndPoint = IPEndPoint.Parse(RawOutgoingEndPoint);
