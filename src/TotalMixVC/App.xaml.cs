@@ -128,7 +128,7 @@ public partial class App : Application, IDisposable
             {
                 message.Append(
                     CultureInfo.InvariantCulture,
-                    $"Unable to parse one or more more properties from the config file at {s_configPath}.\n\n"
+                    $"Unable to parse one or more properties from the config file at {s_configPath}.\n\n"
                 );
             }
 
@@ -179,7 +179,7 @@ public partial class App : Application, IDisposable
     {
         if (!File.Exists(s_configPath))
         {
-            // It is important to use specify the owner of the message box or it will be closed
+            // It is important to specify the owner of the message box or it will be closed
             // when the context menu is closed.
             // See https://github.com/hardcodet/wpf-notifyicon/issues/74 for more information.
             MessageBox.Show(
@@ -272,7 +272,7 @@ public partial class App : Application, IDisposable
         ConfigureInterface();
         ConfigureTheme();
 
-        // Create the volume indicator widget which displays volume changes and silently.
+        // Create the volume indicator widget which displays volume changes and silently
         // display it so the volume bar rectangle background width is initialized.
         _volumeIndicator = new(_config) { Opacity = 0.0 };
         _volumeIndicator.Show();
@@ -404,7 +404,7 @@ public partial class App : Application, IDisposable
                     .ReceiveVolumeAsync(3000, _taskCancellationTokenSource)
                     .ConfigureAwait(false);
 
-                // When volume updates are received, we display update the volume and display
+                // When volume updates are received, we update the volume and display
                 // the volume indicator.
                 if (snapshot is not null)
                 {
@@ -574,7 +574,7 @@ public partial class App : Application, IDisposable
                 _joinableTaskFactory
                     .RunAsync(async () =>
                     {
-                        await _volumeManager.ToggloDimAsync().ConfigureAwait(false);
+                        await _volumeManager.ToggleDimAsync().ConfigureAwait(false);
                         await _volumeIndicator.DisplayCurrentVolumeAsync().ConfigureAwait(false);
                     })
                     .Join(_taskCancellationTokenSource.Token)

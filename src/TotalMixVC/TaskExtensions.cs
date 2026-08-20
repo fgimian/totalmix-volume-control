@@ -40,7 +40,7 @@ public static class TaskExtensions
     {
         using var timeoutCancellationTokenSource = new CancellationTokenSource();
 
-        // Create a list of cancellation tokens containing the timout token and optionally
+        // Create a list of cancellation tokens containing the timeout token and optionally
         // a cancellation token provided by the caller.
         List<CancellationToken> cancellationTokens = [timeoutCancellationTokenSource.Token];
 
@@ -104,7 +104,7 @@ public static class TaskExtensions
     {
         using var timeoutCancellationTokenSource = new CancellationTokenSource();
 
-        // Create a list of cancellation tokens containing the timout token and optionally
+        // Create a list of cancellation tokens containing the timeout token and optionally
         // a cancellation token provided by the caller.
         List<CancellationToken> cancellationTokens = [timeoutCancellationTokenSource.Token];
 

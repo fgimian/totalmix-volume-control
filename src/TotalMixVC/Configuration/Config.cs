@@ -18,7 +18,7 @@ public record Config
     /// <summary>Gets configuration related to the theme of the widget.</summary>
     public Theme Theme { get; init; } = new Theme();
 
-    /// <summary>Gets configuration related the behaviour of the widget user interface.</summary>
+    /// <summary>Gets configuration related to the behaviour of the widget user interface.</summary>
     public Interface Interface { get; init; } = new Interface();
 
     /// <summary>

@@ -11,7 +11,7 @@ namespace TotalMixVC.Communicator;
 /// <remarks>
 /// Initializes a new instance of the <see cref="Sender"/> class.
 /// </remarks>
-/// <param name="ep">The endpoint to receive OSC data from.</param>
+/// <param name="ep">The endpoint to send OSC data to.</param>
 /// <exception cref="SocketException">An error occurred when accessing the socket.</exception>
 [ExcludeFromCodeCoverage]
 public class Sender(IPEndPoint ep) : ISender, IDisposable

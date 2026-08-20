@@ -37,10 +37,10 @@ for your respective architecture.
 
 After starting the application, the keyboard shortcut bindings are enabled:
 
-- **Volume Up / Down**: Increase or decrease the volume by 1% respectively.
-- **Shift + Volume Up / Down**: Increase or decrease the volume by 0.5% respectively
+- **Volume Up / Down**: Increase or decrease the volume by 2% respectively.
+- **Shift + Volume Up / Down**: Increase or decrease the volume by 1% respectively
   (fine adjustment).
-- **Mute**: Toggles the dim model of the device.
+- **Mute**: Toggles the dim mode of the device.
 
 **Note**: You can still access the regular volume indicator by using **Ctrl + Volume Up / Down**
 or **Alt + Volume Up / Down** and the regular mute functionality using **Ctrl + Mute**
@@ -112,7 +112,7 @@ After cloning the source code from GitHub, follow the steps below:
    task build CONFIGURATION=Release
    ```
 
-4. Once you're ready, you can publish a self-container version of the application and create the
+4. Once you're ready, you can publish a self-contained version of the application and create the
    installer using the **installer** target
 
    ```

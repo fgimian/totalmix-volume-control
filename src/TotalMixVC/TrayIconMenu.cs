@@ -63,7 +63,7 @@ public static class TrayIconMenu
     }
 
     /// <summary>
-    /// Gets the ommand which shuts down the application.
+    /// Gets the command which shuts down the application.
     /// </summary>
     public static ICommand ExitCommand => new DelegateCommand(Application.Current.Shutdown);
 }

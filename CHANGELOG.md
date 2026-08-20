@@ -80,7 +80,7 @@ to finally mark this as the first production-ready release!
 
 ## 0.3.0 (2021-11-23)
 
-This release updates the project to use .NET 6 and also embeds the runtime. This means that no
+This release updates the project to use .NET 6 and also embeds the runtime. This means that you no
 longer need any separate downloads for the application to run. Simply download and run the
 installer, and you're good to go!
 
@@ -99,7 +99,7 @@ I'll look at making this configurable in a future release.
 
 This is a rather major refinement and performance-oriented release of TotalMixVC! 🎵
 
-- The application application download and install size is significantly reduced
+- The application download and install size is significantly reduced
 - Code quality is generally improved and unit tests have been added
 - Various improvements have been made which should ultimately make the application more stable
 - The uninstaller for the application now has an icon

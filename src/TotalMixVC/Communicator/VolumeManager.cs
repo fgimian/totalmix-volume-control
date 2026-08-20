@@ -164,7 +164,7 @@ public class VolumeManager(ISender sender) : IDisposable
     /// Attempts to receive the device volume for the given timeout.
     /// </summary>
     /// <param name="timeout">
-    /// The amount of time wo wait for a volume message before giving up.
+    /// The amount of time to wait for a volume message before giving up.
     /// </param>
     /// <param name="cancellationTokenSource">
     /// An optional cancellation token source so the task may be cancelled by the caller while
@@ -193,7 +193,7 @@ public class VolumeManager(ISender sender) : IDisposable
             throw new InvalidOperationException();
         }
 
-        // Ping events are sent from the device every around every 1 second, so we only
+        // Ping events are sent from the device around every 1 second, so we only
         // wait until a given timeout of 5 seconds before giving up and forcing a fresh
         // receive request. This ensures that the receiver can detect a device which was
         // previous offline.
@@ -386,7 +386,7 @@ public class VolumeManager(ISender sender) : IDisposable
     /// The task object representing the asynchronous operation which will contain a boolean
     /// indicating whether or not the dim mode needed to be updated for the device.
     /// </returns>
-    public async Task<bool> ToggloDimAsync()
+    public async Task<bool> ToggleDimAsync()
     {
         await _volumeSemaphore.WaitAsync().ConfigureAwait(false);
         try

@@ -2,7 +2,7 @@
 
 namespace TotalMixVC.Configuration;
 
-/// <summary>Provides configuration related the behaviour of the widget user interface.</summary>
+/// <summary>Provides configuration related to the behaviour of the widget user interface.</summary>
 public record Interface
 {
     /// <summary>
@@ -23,7 +23,7 @@ public record Interface
     public double HideDelay { get; set; } = 2.0;
 
     /// <summary>
-    /// Gets or sets the number of second which the widget will take to fade out after hide delay.
+    /// Gets or sets the number of seconds which the widget will take to fade out after hide delay.
     /// </summary>
     public double FadeOutTime { get; set; } = 0.75;
 

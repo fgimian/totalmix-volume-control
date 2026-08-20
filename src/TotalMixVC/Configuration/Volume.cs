@@ -32,13 +32,13 @@ public record Volume
 
     /// <summary>
     /// Gets or sets the increment that is to be used when adjusting the volume. The max allowed
-    /// increment is 3.0 dB to avoid major jumps in volume.
+    /// increment is 6.0 dB to avoid major jumps in volume.
     /// </summary>
     public float IncrementDecibels { get; set; } = 2.0f;
 
     /// <summary>
     /// Gets or sets the fine increment that is to be used when adjusting the volume and holding
-    /// the Shift key. The max allowed fine increment is 1.5 dB to avoid major jumps in volume.
+    /// the Shift key. The max allowed fine increment is 3.0 dB to avoid major jumps in volume.
     /// </summary>
     public float FineIncrementDecibels { get; set; } = 1.0f;
 

@@ -458,7 +458,7 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task FineAfterVolumeInitializedPercent_UpdatesVolume_Async()
+    public async Task IncreaseVolumeAsync_FineAfterVolumeInitializedPercent_UpdatesVolume_Async()
     {
         _listener
             .ReceiveAsync(default)
@@ -495,7 +495,7 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task FineAfterVolumeInitializedDecibels_UpdatesVolume_Async()
+    public async Task IncreaseVolumeAsync_FineAfterVolumeInitializedDecibels_UpdatesVolume_Async()
     {
         _listener
             .ReceiveAsync(default)
@@ -812,14 +812,14 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task ToggloDimAsync_VolumeNotInitialized_DoesNotUpdateDim_Async()
+    public async Task ToggleDimAsync_VolumeNotInitialized_DoesNotUpdateDim_Async()
     {
-        var updated = await _volumeManager.ToggloDimAsync();
+        var updated = await _volumeManager.ToggleDimAsync();
         Assert.False(updated);
     }
 
     [Fact]
-    public async Task ToggloDimAsync_AfterVolumeInitialized_EnableDim_Async()
+    public async Task ToggleDimAsync_AfterVolumeInitialized_EnableDim_Async()
     {
         _listener
             .ReceiveAsync(default)
@@ -835,7 +835,7 @@ public sealed class VolumeManagerTests : IDisposable
             );
 
         await _volumeManager.ReceiveVolumeAsync();
-        var updated = await _volumeManager.ToggloDimAsync();
+        var updated = await _volumeManager.ToggleDimAsync();
 
         await _sender
             .Received()
@@ -853,7 +853,7 @@ public sealed class VolumeManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task ToggloDimAsync_AfterVolumeInitialized_DisableDim_Async()
+    public async Task ToggleDimAsync_AfterVolumeInitialized_DisableDim_Async()
     {
         _listener
             .ReceiveAsync(default)
@@ -869,7 +869,7 @@ public sealed class VolumeManagerTests : IDisposable
             );
 
         await _volumeManager.ReceiveVolumeAsync();
-        var updated = await _volumeManager.ToggloDimAsync();
+        var updated = await _volumeManager.ToggleDimAsync();
 
         await _sender
             .Received()
