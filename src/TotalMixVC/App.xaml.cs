@@ -439,23 +439,32 @@ public partial class App : Application, IDisposable
                     .UpdateVolumeAsync(volume: 0.0f, volumeDecibels: "-", isDimmed: false)
                     .ConfigureAwait(false);
 
-                // Switch to the UI thread and update the tray tooltip text.
-                await _joinableTaskFactory.SwitchToMainThreadAsync(
-                    _taskCancellationTokenSource.Token
-                );
-                _trayToolTipStatus.Text = string.Format(
-                    CultureInfo.InvariantCulture,
-                    s_listenerErrorFormatString,
-                    _config.Osc.IncomingEndPoint
-                );
-                _trayIcon.ToolTipText =
-                    "TotalMixVC - Unable to open listener to receive events from your RME device";
+                try
+                {
+                    // Switch to the UI thread and update the tray tooltip text.
+                    await _joinableTaskFactory.SwitchToMainThreadAsync(
+                        _taskCancellationTokenSource.Token
+                    );
+                    _trayToolTipStatus.Text = string.Format(
+                        CultureInfo.InvariantCulture,
+                        s_listenerErrorFormatString,
+                        _config.Osc.IncomingEndPoint
+                    );
+                    _trayIcon.ToolTipText =
+                        "TotalMixVC - Unable to open listener to receive events from your RME device";
 
-                // Switch to the background thread to avoid UI interruptions.
-                await TaskScheduler.Default;
+                    // Switch to the background thread to avoid UI interruptions.
+                    await TaskScheduler.Default;
 
-                // Sleep for a second before trying again.
-                await Task.Delay(1000, _taskCancellationTokenSource.Token).ConfigureAwait(false);
+                    // Sleep for a second before trying again.
+                    await Task.Delay(1000, _taskCancellationTokenSource.Token)
+                        .ConfigureAwait(false);
+                }
+                catch (OperationCanceledException)
+                {
+                    // This exception is raised when the app is exited so we exit the loop.
+                    break;
+                }
             }
             catch (TimeoutException)
             {
