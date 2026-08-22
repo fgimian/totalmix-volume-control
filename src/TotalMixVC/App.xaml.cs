@@ -274,7 +274,7 @@ public partial class App : Application, IDisposable
 
         // Create the volume indicator widget which displays volume changes and silently
         // display it so the volume bar rectangle background width is initialized.
-        _volumeIndicator = new(_config) { Opacity = 0.0 };
+        _volumeIndicator = new(_config, _joinableTaskFactory) { Opacity = 0.0 };
         _volumeIndicator.Show();
         _volumeIndicator.Hide();
         _volumeIndicator.Opacity = 1.0;
@@ -379,7 +379,6 @@ public partial class App : Application, IDisposable
             _volumeManager.Dispose();
             _listener?.Dispose();
             _sender.Dispose();
-            _volumeIndicator.Dispose();
             _trayIcon.Dispose();
         }
     }

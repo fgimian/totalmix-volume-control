@@ -12,10 +12,8 @@ namespace TotalMixVC;
 /// <summary>
 /// Interaction logic for VolumeIndicator.xaml.
 /// </summary>
-public partial class VolumeIndicator : Window, IDisposable
+public partial class VolumeIndicator : Window
 {
-    private readonly JoinableTaskContext _joinableTaskContext;
-
     private readonly JoinableTaskFactory _joinableTaskFactory;
 
     private readonly DispatcherTimer _hideWindowTimer;
@@ -26,15 +24,13 @@ public partial class VolumeIndicator : Window, IDisposable
     /// Initializes a new instance of the <see cref="VolumeIndicator"/> class.
     /// </summary>
     /// <param name="config">Configuration for the application.</param>
-    public VolumeIndicator(Config config)
+    /// <param name="joinableTaskFactory">The application's shared task factory.</param>
+    public VolumeIndicator(Config config, JoinableTaskFactory joinableTaskFactory)
     {
         InitializeComponent();
 
         _config = config;
-
-        // Create a task factory for the current thread (which is the UI thread).
-        _joinableTaskContext = new();
-        _joinableTaskFactory = new(_joinableTaskContext);
+        _joinableTaskFactory = joinableTaskFactory;
 
         // Create the timer that will hide the window after not used for a little while.
         _hideWindowTimer = new();
@@ -115,13 +111,6 @@ public partial class VolumeIndicator : Window, IDisposable
         VolumeWidgetReadout.Text = volumeDecibels;
     }
 
-    /// <summary>Disposes the current volume indicator.</summary>
-    public void Dispose()
-    {
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
-    }
-
     /// <summary>
     /// Ensures that it is impossible to close the volume indicator window.
     /// </summary>
@@ -141,16 +130,6 @@ public partial class VolumeIndicator : Window, IDisposable
         base.OnSourceInitialized(e);
         var hwnd = new WindowInteropHelper(this).Handle;
         WindowServices.SetWindowExTransparentTool(hwnd);
-    }
-
-    /// <summary>Disposes the current volume indicator.</summary>
-    /// <param name="disposing">Whether managed resources should be disposed.</param>
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            _joinableTaskContext.Dispose();
-        }
     }
 
     private void Hide(object? sender, EventArgs e)
