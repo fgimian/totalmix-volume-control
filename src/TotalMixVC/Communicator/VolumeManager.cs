@@ -10,7 +10,7 @@ namespace TotalMixVC.Communicator;
 public class VolumeManager(ISender sender) : IDisposable
 {
     /// <summary>
-    /// The address to be used to sending and receiving volume as a float.
+    /// The address to be used for sending and receiving volume as a float.
     /// </summary>
     private const string VolumeAddress = "/1/mastervolume";
 
@@ -196,7 +196,7 @@ public class VolumeManager(ISender sender) : IDisposable
         // Ping events are sent from the device around every 1 second, so we only
         // wait until a given timeout of 5 seconds before giving up and forcing a fresh
         // receive request. This ensures that the receiver can detect a device which was
-        // previous offline.
+        // previously offline.
         OscPacket packet;
         using var receiveCancellationTokenSource = new CancellationTokenSource();
         try
