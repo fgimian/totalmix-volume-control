@@ -41,14 +41,14 @@ tasks:
     cmds:
       - rm -f src/*/bin/{{.CONFIGURATION}}/*/TestResults/*.xml
       - >-
-          dotnet run
-          --project src/TotalMixVC.Tests
-          --configuration {{.CONFIGURATION}}
-          --no-build
-          --coverage
-          --coverage-output-format xml
-          {{if .TESTCLASS}}--filter-class "{{.TESTCLASS}}"{{end}}
-          {{if .TESTMETHOD}}--filter-method "{{.TESTMETHOD}}"{{end}}
+        dotnet run
+        --project src/TotalMixVC.Tests
+        --configuration {{.CONFIGURATION}}
+        --no-build
+        --coverage
+        --coverage-output-format xml
+        {{if .TESTCLASS}}--filter-class "{{.TESTCLASS}}"{{end}}
+        {{if .TESTMETHOD}}--filter-method "{{.TESTMETHOD}}"{{end}}
     deps:
       - build
 
