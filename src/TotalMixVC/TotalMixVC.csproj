@@ -30,21 +30,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" Version="6.7.0">
+    <PackageReference Include="GitVersion.MsBuild" Version="6.8.2">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Threading" Version="17.14.15" />
+    <PackageReference Include="Microsoft.VisualStudio.Threading" Version="18.7.23" />
     <PackageReference Include="OscCore" Version="1.0.5" />
-    <PackageReference Include="Tomlyn" Version="2.5.0" />
+    <PackageReference Include="Tomlyn" Version="2.10.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.14.15">
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="18.7.23">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Roslynator.Analyzers" Version="4.15.0">
+    <PackageReference Include="Roslynator.Analyzers" Version="5.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

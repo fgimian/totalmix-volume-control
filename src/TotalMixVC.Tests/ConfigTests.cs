@@ -251,8 +251,8 @@ public sealed class ConfigTests
 
         Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
-        Assert.Single(diagnostics);
-        Assert.Equal("(2,18) : error : Expected `=` after key but was `Eof`.", diagnostics[0]);
+        var diagnostic = Assert.Single(diagnostics);
+        Assert.Equal("(2,18) : error : Expected `=` after key but was `Eof`.", diagnostic);
     }
 
     [Theory]
@@ -282,8 +282,8 @@ public sealed class ConfigTests
 
         Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
-        Assert.Single(diagnostics);
-        Assert.Equal($"(theme.{name}) : error : The color specified was invalid.", diagnostics[0]);
+        var diagnostic = Assert.Single(diagnostics);
+        Assert.Equal($"(theme.{name}) : error : The color specified was invalid.", diagnostic);
     }
 
     [Theory]
@@ -306,10 +306,10 @@ public sealed class ConfigTests
 
         Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
-        Assert.Single(diagnostics);
+        var diagnostic = Assert.Single(diagnostics);
         Assert.Equal(
             $"(osc.{name}) : error : An invalid endpoint address was specified.",
-            diagnostics[0]
+            diagnostic
         );
     }
 
@@ -356,11 +356,11 @@ public sealed class ConfigTests
 
         Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
-        Assert.Single(diagnostics);
+        var diagnostic = Assert.Single(diagnostics);
         Assert.Equal(
             "(volume.increment_percent) : error : The value must be greater than 0 and less "
                 + "than or equal to 0.1.",
-            diagnostics[0]
+            diagnostic
         );
     }
 
@@ -410,11 +410,11 @@ public sealed class ConfigTests
 
         Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
-        Assert.Single(diagnostics);
+        var diagnostic = Assert.Single(diagnostics);
         Assert.Equal(
             "(volume.fine_increment_percent) : error : The value must be greater than 0 and "
                 + "less than or equal to 0.05.",
-            diagnostics[0]
+            diagnostic
         );
     }
 
@@ -459,11 +459,11 @@ public sealed class ConfigTests
 
         Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
-        Assert.Single(diagnostics);
+        var diagnostic = Assert.Single(diagnostics);
         Assert.Equal(
             "(volume.max_percent) : error : The value must be greater than 0 and less than or "
                 + "equal to 1.0.",
-            diagnostics[0]
+            diagnostic
         );
     }
 
@@ -531,11 +531,11 @@ public sealed class ConfigTests
 
         Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
-        Assert.Single(diagnostics);
+        var diagnostic = Assert.Single(diagnostics);
         Assert.Equal(
             "(volume.increment_decibels) : error : The value must be a multiple of 0.5 while "
                 + "being greater than 0 and less than or equal to 6.0.",
-            diagnostics[0]
+            diagnostic
         );
     }
 
@@ -598,11 +598,11 @@ public sealed class ConfigTests
 
         Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
-        Assert.Single(diagnostics);
+        var diagnostic = Assert.Single(diagnostics);
         Assert.Equal(
             "(volume.fine_increment_decibels) : error : The value must be a multiple of 0.25 "
                 + "while being greater than 0 and less than or equal to 3.0.",
-            diagnostics[0]
+            diagnostic
         );
     }
 
@@ -655,10 +655,10 @@ public sealed class ConfigTests
 
         Assert.Empty(expectedConfigDiagnostics);
         Assert.Equal(expectedConfig, config);
-        Assert.Single(diagnostics);
+        var diagnostic = Assert.Single(diagnostics);
         Assert.Equal(
             "(volume.max_decibels) : error : The value must be less than or equal to 6.0.",
-            diagnostics[0]
+            diagnostic
         );
     }
 
