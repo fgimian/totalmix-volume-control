@@ -582,7 +582,7 @@ public partial class App : Application, IDisposable
                 _joinableTaskFactory
                     .RunAsync(async () =>
                     {
-                        await _volumeManager.ToggleDimAsync().ConfigureAwait(false);
+                        await _volumeManager.ToggleMuteAsync().ConfigureAwait(false);
                         await _volumeIndicator.DisplayCurrentVolumeAsync().ConfigureAwait(false);
                     })
                     .Join(_taskCancellationTokenSource.Token)
