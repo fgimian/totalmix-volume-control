@@ -23,22 +23,24 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Install Task
-        uses: arduino/setup-task@v2
+      - name: Install just
+        uses: extractions/setup-just@v4
         with:
-          version: 3.x
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          just-version: "1"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install cargo-binstall
-        uses: cargo-bins/cargo-binstall@main
+      - name: Install FreSH
+        uses: S42yt/FreSH@master
+        with:
+          version: pre
 
       - name: Run unit tests and produce a coverage report
-        run: task report
+        run: just report
         env:
           CONFIGURATION: ${{ matrix.configuration }}
 
       - name: Publish a self-contained version of the app and create the installer
-        run: task installer
+        run: just installer
         env:
           CONFIGURATION: ${{ matrix.configuration }}
           ARCHITECTURE: ${{ matrix.architecture }}

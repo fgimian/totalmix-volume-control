@@ -94,10 +94,10 @@ tray icon and selecting "Reload Configuration" which will update all settings.
 After cloning the source code from GitHub, follow the steps below:
 
 1. Install the [.NET 9.0 SDK](https://dotnet.microsoft.com/download).
-2. Install Task and the cross-platform coreutils using WinGet
+2. Install just and the FreSH shell using WinGet
 
    ```
-   winget install Task.Task uutils.coreutils
+   winget install Casey.Just S42yt.FreSH
    ```
 
 3. Build the project using the default **Debug** configuration and create the installer
